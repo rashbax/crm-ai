@@ -1,0 +1,530 @@
+[
+  {
+    "sku": "Дев_кот белый",
+    "onHand": 486,
+    "inbound": 3,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "кю бежевый",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "кю черный",
+    "onHand": 1,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1953",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1953_кор",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1997",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив бел",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив в полоску",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив в полоску2",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив звезда",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив звезда_зел",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив медведь_бел",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив медведь_черн",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив сердце",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив черн",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив HAPPY",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив NAIT",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив SLIDE",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "майка черный",
+    "onHand": 9,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Паук белый",
+    "onHand": 2,
+    "inbound": 2,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Сердце без текста",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Сердце текст",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Спящие коты белый",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ЗЕЛЕН",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ОРАНЖ",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ФИОЛ",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ЧЕРНЫЙ",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТомИДжериРисунок.Б",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТомИДжериРисунок.Ч",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОП БЕЛЫЙ С КНОПКАМИ",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОП ЧЕРНЫЙ С ПРИНТОМ",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "утки коричневый",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "УТКИ ЧЕРНЫЙ",
+    "onHand": 1034,
+    "inbound": 32,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "футболка белый с принтом роза",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "футболка чёрный с принтом планета",
+    "onHand": 1,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА BLACK CAT",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА CATs",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА DONALD_B",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА DONALD_W",
+    "onHand": 383,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКИ Hello Kitty",
+    "onHand": 1,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКИ Kitty_Black",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКИ Kitty_Pink",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Brooklyn",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Cat.milk.BL",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CAT.Red",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CAT.unique",
+    "onHand": 3261,
+    "inbound": 4,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CAT.unique.BL",
+    "onHand": 1131,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CATMilk",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CATsummer",
+    "onHand": 982,
+    "inbound": 7,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CATsummer.BL",
+    "onHand": 1610,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CATsummer.BL.2",
+    "onHand": 4045,
+    "inbound": 2,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CowBoy",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Girl_BL",
+    "onHand": 1136,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Girl_W",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Heart_BL",
+    "onHand": 1780,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Hellokitty2",
+    "onHand": 344,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "HelloKitty3",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "HellowKitty.BL",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Hotdog",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Liza.M",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Lufi",
+    "onHand": 3973,
+    "inbound": 2,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Noct белый",
+    "onHand": 33,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "RockNRoll",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Space белый",
+    "onHand": 2474,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "StrawberryBear",
+    "onHand": 0,
+    "inbound": 0,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "T&J.B",
+    "onHand": 1,
+    "inbound": 1,
+    "updatedAt": "2026-02-19T10:49:14.810Z",
+    "marketplace": "ozon",
+    "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  }
+]

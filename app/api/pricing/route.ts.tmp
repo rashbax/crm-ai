@@ -1,0 +1,134 @@
+import { requireAuth } from '@/lib/auth-guard';
+/**
+ * API Route: GET /api/pricing
+ * Returns pricing dashboard data
+ */
+
+import { NextResponse } from "next/server";
+import { buildPricingDashboard } from "@/src/pricing/engine";
+import { demoPrices, demoCogs, demoFees } from "@/src/pricing/demoData";
+import { getEnabledConnections, filterByEnabledConnections } from "@/src/integrations/enabled";
+import { INTEGRATIONS_COPY } from "@/src/integrations/uiCopy";
+
+// Mock data generators (reuse from analytics if available)
+function generateMockOrders() {
+  const orders = [];
+  const skus = ['RJ-001-BLK-M', 'RJ-002-WHT-L', 'RJ-003-GRY-M', 'RJ-004-BLK-OS', 'RJ-005-WHT-42'];
+  const today = new Date();
+  
+  for (let day = 0; day < 28; day++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - (27 - day));
+    const dateStr = date.toISOString().split('T')[0];
+    
+    skus.forEach(sku => {
+      const baseQty = sku === 'RJ-001-BLK-M' ? 30 : 
+                      sku === 'RJ-002-WHT-L' ? 25 :
+                      sku === 'RJ-003-GRY-M' ? 15 : 
+                      sku === 'RJ-004-BLK-OS' ? 20 : 10;
+      
+      const variance = 0.7 + Math.random() * 0.6;
+      const qty = Math.floor(baseQty * variance);
+      
+      orders.push({
+        date: dateStr,
+        sku,
+        qty,
+      });
+    });
+  }
+  
+  return orders;
+}
+
+function generateMockStocks() {
+  return [
+    { sku: 'RJ-001-BLK-M', onHand: 150, inbound: 0 },
+    { sku: 'RJ-002-WHT-L', onHand: 350, inbound: 100 },
+    { sku: 'RJ-003-GRY-M', onHand: 750, inbound: 0 },
+    { sku: 'RJ-004-BLK-OS', onHand: 1200, inbound: 200 },
+    { sku: 'RJ-005-WHT-42', onHand: 280, inbound: 0 },
+  ];
+}
+
+function generateMockAds() {
+  const ads = [];
+  const skusWithAds = ['RJ-001-BLK-M', 'RJ-002-WHT-L', 'RJ-004-BLK-OS'];
+  const today = new Date();
+  
+  for (let day = 0; day < 14; day++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - (13 - day));
+    const dateStr = date.toISOString().split('T')[0];
+    
+    skusWithAds.forEach(sku => {
+      const spend = sku === 'RJ-001-BLK-M' ? 500 :
+                    sku === 'RJ-002-WHT-L' ? 600 : 450;
+      
+      ads.push({
+        date: dateStr,
+        sku,
+        spend,
+        ordersFromAds: Math.floor(spend / 50),
+      });
+    });
+  }
+  
+  return ads;
+}
+
+export async function GET() {
+  try {
+    // Check for enabled connections
+    const enabledConnections = await getEnabledConnections();
+    
+    // If no enabled connections, return empty state
+    if (enabledConnections.length === 0) {
+      return NextResponse.json({
+        mode: "demo",
+        warnings: ["No integrations connected"],
+        emptyState: {
+          title: INTEGRATIONS_COPY.emptyState.title,
+          body: INTEGRATIONS_COPY.emptyState.body,
+          ctaLabel: INTEGRATIONS_COPY.emptyState.ctaLabel,
+          ctaHref: INTEGRATIONS_COPY.emptyState.ctaHref,
+        },
+        summary: null,
+        rows: [],
+      });
+    }
+
+    // In production, load from files or database
+    // For now, use demo data
+    const prices = demoPrices;
+    const cogs = demoCogs;
+    const fees = demoFees;
+    const orders = generateMockOrders();
+    const stocks = generateMockStocks();
+    const ads = generateMockAds();
+
+    // Filter by enabled connections
+    const filteredPrices = filterByEnabledConnections(prices, enabledConnections);
+    const filteredOrders = filterByEnabledConnections(orders, enabledConnections);
+    const filteredStocks = filterByEnabledConnections(stocks, enabledConnections);
+    const filteredAds = filterByEnabledConnections(ads, enabledConnections);
+
+    const dashboard = buildPricingDashboard(
+      filteredPrices.length > 0 ? filteredPrices : prices, // Fallback to demo if empty
+      cogs,
+      fees,
+      filteredOrders.length > 0 ? filteredOrders : orders,
+      filteredStocks.length > 0 ? filteredStocks : stocks,
+      filteredAds.length > 0 ? filteredAds : ads,
+      "demo"
+    );
+
+    return NextResponse.json(dashboard);
+  } catch (error) {
+    console.error("Error in pricing API:", error);
+    return NextResponse.json(
+      { error: "Failed to generate pricing data" },
+      { status: 500 }
+    );
+  }
+}

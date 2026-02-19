@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-main;
+  }
+}
+
+@layer components {
+  /* Page layout */
+  .page-header {
+    @apply flex items-start justify-between mb-6;
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-text-main;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-text-muted mt-1;
+  }
+
+  /* Card grid */
+  .card-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6;
+  }
+
+  /* Tasks list */
+  .tasks-list {
+    @apply space-y-3 mt-4;
+  }
+
+  .task-item {
+    @apply flex items-center justify-between;
+  }
+
+  .task-label {
+    @apply flex items-center gap-2;
+  }
+
+  .task-counter {
+    @apply text-xs font-medium text-text-muted bg-background px-2 py-1 rounded;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    @apply flex items-center justify-between mb-4 bg-card p-4 rounded-card border border-border;
+  }
+
+  .toolbar-left {
+    @apply flex items-center gap-3;
+  }
+
+  .toolbar-right {
+    @apply flex items-center gap-2;
+  }
+
+  /* Price cell */
+  .price-cell {
+    @apply font-semibold text-text-main;
+  }
+
+  /* Actions link */
+  .actions-link {
+    @apply text-primary hover:text-primary-dark font-medium text-sm;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

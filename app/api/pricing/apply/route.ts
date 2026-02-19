@@ -1,0 +1,155 @@
+import { requireAuth } from '@/lib/auth-guard';
+/**
+ * API Route: POST /api/pricing/apply
+ * Validate draft and return execution plan (no real marketplace calls in MVP)
+ */
+
+import { NextResponse } from "next/server";
+import type {
+  ApplyDraftRequest,
+  ApplyDraftResponse,
+  PriceDraft,
+  PlannedWrite,
+} from "@/src/pricing/types";
+import { demoPrices, demoCogs, demoFees } from "@/src/pricing/demoData";
+import { calculateMinPrice, validatePriceChange } from "@/src/pricing/calculator";
+import fs from "fs/promises";
+import path from "path";
+
+const DRAFTS_FILE = path.join(process.cwd(), "data", "canonical", "priceDrafts.json");
+
+// Load drafts
+async function loadDrafts(): Promise<PriceDraft[]> {
+  try {
+    const data = await fs.readFile(DRAFTS_FILE, "utf-8");
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+// Save drafts
+async function saveDrafts(drafts: PriceDraft[]): Promise<void> {
+  const dir = path.dirname(DRAFTS_FILE);
+  try {
+    await fs.access(dir);
+  } catch {
+    await fs.mkdir(dir, { recursive: true });
+  }
+  await fs.writeFile(DRAFTS_FILE, JSON.stringify(drafts, null, 2));
+}
+
+export async function POST(request: Request)  {
+	const { error } = await requireAuth();
+	if (error) return error;
+  try {
+    const body: ApplyDraftRequest = await request.json();
+    const { draftId, overrideBlocked = false } = body;
+
+    // Load draft
+    const drafts = await loadDrafts();
+    const draft = drafts.find((d) => d.id === draftId);
+
+    if (!draft) {
+      return NextResponse.json(
+        { ok: false, message: "Draft not found" },
+        { status: 404 }
+      );
+    }
+
+    // Validate each item
+    const blockedItems: typeof draft.items = [];
+    const plannedWrites: PlannedWrite[] = [];
+
+    for (const item of draft.items) {
+      // Get current price
+      const currentPrice = demoPrices.find(
+        (p) => p.sku === item.sku && p.marketplace === item.marketplace
+      );
+
+      if (!currentPrice) {
+        blockedItems.push({
+          ...item,
+          reason: "Current price not found",
+        });
+        continue;
+      }
+
+      // Get COGS
+      const cogs = demoCogs.find((c) => c.sku === item.sku);
+      if (!cogs) {
+        blockedItems.push({
+          ...item,
+          reason: "Cost data not found",
+        });
+        continue;
+      }
+
+      // Get fees
+      const fees = demoFees.find((f) => f.marketplace === item.marketplace);
+      if (!fees) {
+        blockedItems.push({
+          ...item,
+          reason: "Fee configuration not found",
+        });
+        continue;
+      }
+
+      // Validate new price
+      const newPrice = item.newPrice || currentPrice.price;
+      const minPrice = calculateMinPrice(cogs.cogs, fees);
+      const validation = validatePriceChange(newPrice, minPrice, cogs.cogs, fees);
+
+      if (!validation.valid && !overrideBlocked) {
+        blockedItems.push({
+          ...item,
+          reason: validation.warnings.join("; "),
+        });
+        continue;
+      }
+
+      // Add to planned writes
+      plannedWrites.push({
+        sku: item.sku,
+        marketplace: item.marketplace,
+        oldPrice: currentPrice.price,
+        newPrice: newPrice,
+        oldDiscount: currentPrice.discountPct,
+        newDiscount: item.newDiscountPct,
+      });
+    }
+
+    // If there are blocked items and no override, return error
+    if (blockedItems.length > 0 && !overrideBlocked) {
+      return NextResponse.json({
+        ok: false,
+        message: `${blockedItems.length} items blocked. Use overrideBlocked=true to force.`,
+        blockedItems,
+      } as ApplyDraftResponse, { status: 400 });
+    }
+
+    // Update draft status
+    const updatedDrafts = drafts.map((d) =>
+      d.id === draftId
+        ? { ...d, status: "APPROVED" as const, updatedAt: new Date().toISOString() }
+        : d
+    );
+    await saveDrafts(updatedDrafts);
+
+    // Return success with plan
+    const response: ApplyDraftResponse = {
+      ok: true,
+      message: `Plan generated for ${plannedWrites.length} price changes. In MVP, no actual marketplace API calls are made.`,
+      plannedWrites,
+      blockedItems: blockedItems.length > 0 ? blockedItems : undefined,
+    };
+
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("Error applying draft:", error);
+    return NextResponse.json(
+      { ok: false, message: "Failed to apply draft" },
+      { status: 500 }
+    );
+  }
+}
