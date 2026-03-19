@@ -207,6 +207,7 @@ export function makeAutomationDecision(
 ): AutomationDecision {
   const metrics = calculateStockMetrics(stock);
   const triggeredResults = evaluateAllRules(stock, rules);
+  const adCampaign = currentAds?.find((campaign) => campaign.sku === stock.sku);
   
   // Build recommended actions from triggered rules
   const recommendedActions = triggeredResults.map((result) => {
@@ -229,11 +230,82 @@ export function makeAutomationDecision(
 
     return {
       action: result.recommendedAction,
+      source: "rule",
       reason,
       impact,
       priority: result.priority,
     };
   });
+
+  if (adCampaign && adCampaign.status === "active") {
+    const daysCover = metrics.daysUntilStockout === Infinity ? 999 : metrics.daysUntilStockout;
+    const clicks = Math.max(0, adCampaign.clicks);
+    const conversions = Math.max(0, adCampaign.conversions);
+    const spend = Math.max(0, adCampaign.spendToday);
+    const revenue = Math.max(0, adCampaign.attributedRevenueToday ?? 0);
+    const minClicksForEfficiency = 80;
+
+    if (daysCover < 4) {
+      recommendedActions.push({
+        action: "pause",
+        source: "stock_cover",
+        reason: `Days of cover is ${daysCover}. Stock is near stockout while ads are still active.`,
+        impact: "Stops accelerated stockout risk and prevents pre-OOS ad waste.",
+        priority: 0,
+      });
+    } else if (daysCover < 10) {
+      recommendedActions.push({
+        action: "reduce",
+        source: "stock_cover",
+        reason: `Days of cover is ${daysCover}. Reduce demand acceleration for low inventory.`,
+        impact: "Cuts ad pressure while retaining limited traffic.",
+        priority: 1,
+      });
+    } else if (daysCover < 21) {
+      recommendedActions.push({
+        action: "reduce",
+        source: "stock_cover",
+        reason: `Days of cover is ${daysCover}. Inventory is tightening.`,
+        impact: "Reduces spend pace to extend SKU availability.",
+        priority: 2,
+      });
+    }
+
+    if (clicks >= minClicksForEfficiency) {
+      const cvr = clicks > 0 ? conversions / clicks : 0;
+      const targetAcos = adCampaign.targetAcos ?? 0.3;
+      const hasRevenue = revenue > 0;
+      const acos = hasRevenue ? spend / revenue : Infinity;
+
+      if (conversions === 0 && clicks >= 120 && spend >= adCampaign.dailyBudget * 0.5) {
+        recommendedActions.push({
+          action: "reduce",
+          source: "efficiency",
+          reason: `High spend with no conversions (${clicks} clicks, ${conversions} conv).`,
+          impact: "Prevents inefficient spend until campaign relevance improves.",
+          priority: 1,
+        });
+      } else if (hasRevenue && acos > targetAcos * 1.3) {
+        recommendedActions.push({
+          action: "reduce",
+          source: "efficiency",
+          reason: `ACOS ${Math.round(acos * 100)}% exceeds target ${Math.round(targetAcos * 100)}%.`,
+          impact: "Improves promotion efficiency and protects margin.",
+          priority: 1,
+        });
+      } else if (!hasRevenue && cvr < 0.01 && spend >= adCampaign.dailyBudget * 0.4) {
+        recommendedActions.push({
+          action: "reduce",
+          source: "efficiency",
+          reason: `Low CVR ${(cvr * 100).toFixed(2)}% with meaningful spend.`,
+          impact: "Reduces likely overpayment for low-quality traffic.",
+          priority: 2,
+        });
+      }
+    }
+  }
+
+  recommendedActions.sort((a, b) => a.priority - b.priority);
 
   return {
     id: `DEC-${Date.now()}-${stock.sku}`,
@@ -260,16 +332,18 @@ export function makeAutomationDecision(
 export function processBatch(
   stockItems: StockItem[],
   rules: AutomationRule[],
-  mode: AutomationMode = "manual"
+  mode: AutomationMode = "manual",
+  ads: AdCampaign[] = []
 ): AutomationDecision[] {
   const decisions: AutomationDecision[] = [];
 
   for (const stock of stockItems) {
     const metrics = calculateStockMetrics(stock);
+    const hasAds = ads.some((ad) => ad.sku === stock.sku && ad.status === "active");
     
     // Only process items that need attention
-    if (metrics.criticalLevel || metrics.shouldReorder) {
-      const decision = makeAutomationDecision(stock, rules);
+    if (metrics.criticalLevel || metrics.shouldReorder || hasAds) {
+      const decision = makeAutomationDecision(stock, rules, ads);
       
       // Only include if there are recommended actions
       if (decision.recommendedActions.length > 0) {
@@ -337,11 +411,14 @@ export function calculateMoneySaved(
   daysUntilRestock: number,
   action: "pause" | "reduce"
 ): number {
+  if (!Number.isFinite(daysUntilRestock) || daysUntilRestock <= 0) return 0;
+  const cappedDays = Math.min(daysUntilRestock, 30);
+
   if (action === "pause") {
-    return dailyBudget * daysUntilRestock;
+    return dailyBudget * cappedDays;
   } else {
     // Reduce by 30%
-    return dailyBudget * 0.3 * daysUntilRestock;
+    return dailyBudget * 0.3 * cappedDays;
   }
 }
 
@@ -373,5 +450,3 @@ export function calculateTotalSavings(
 
   return totalSavings;
 }
-
-

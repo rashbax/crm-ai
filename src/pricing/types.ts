@@ -8,6 +8,13 @@ export type Currency = "UZS" | "RUB";
 export type DraftStatus = "DRAFT" | "APPROVED" | "APPLIED" | "CANCELLED";
 export type RiskLevel = "NONE" | "LOW" | "MED" | "HIGH" | "CRITICAL";
 
+export interface PriceIndexPair {
+  ownPrice: number;
+  marketPrice: number;
+  orders?: number;
+  source?: string;
+}
+
 /**
  * Normalized order event from any marketplace
  */
@@ -58,6 +65,10 @@ export interface PriceState {
   price: number;
   discountPct?: number; // 0..100
   promoPrice?: number;
+  status?: string;
+  visibility?: string;
+  onSale?: boolean;
+  priceIndexPairs?: PriceIndexPair[];
   updatedAt: string; // ISO
   connectionId?: string; // Optional connection ID for multi-shop support
 }
@@ -128,6 +139,12 @@ export interface MarketplacePricing {
     discountPct?: number;
     promoPrice?: number;
   };
+  listing?: {
+    status?: string;
+    visibility?: string;
+    onSale?: boolean;
+  };
+  priceIndexPairs?: PriceIndexPair[];
   recommended: {
     price: number;
     discountPct: number;
@@ -172,15 +189,35 @@ export interface PricingSummary {
   highRiskCount: number;
 }
 
+export interface PricingEmptyState {
+  title: string;
+  body: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+export interface PricingRules {
+  indexThresholds: {
+    badMaxMarginPct: number;
+    moderateMaxMarginPct: number;
+    goodMaxMarginPct: number;
+  };
+  guardrails: {
+    lowMarginBlockPct: number;
+  };
+}
+
 /**
  * Complete pricing dashboard response
  */
 export interface PricingDashboardResponse {
-  mode: "live" | "demo";
+  mode: "live";
   warnings: string[];
   fees: FeesConfig[];
+  rules: Record<Marketplace, PricingRules>;
   rows: PricingRow[];
-  summary: PricingSummary;
+  summary: PricingSummary | null;
+  emptyState?: PricingEmptyState;
 }
 
 /**

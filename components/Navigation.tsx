@@ -9,6 +9,8 @@ import type { Language } from "@/types";
 
 const navItems = [
   { href: "/dashboard", key: "nav_main" },
+  { href: "/tasks", key: "nav_tasks" },
+  { href: "/responsibilities", key: "nav_responsibilities" },
   { href: "/orders", key: "nav_orders" },
   { href: "/products", key: "nav_products" },
   { href: "/automation", key: "nav_automation" },

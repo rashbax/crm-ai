@@ -1,422 +1,407 @@
-"use client";
+﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "@/components/Layout";
 import { storage } from "@/lib/storage";
-import { getTranslation } from "@/lib/translations";
 import type { Language } from "@/types";
-import type { AutomationMode, AutomationStats, AutomationDecision } from "@/types/automation";
+import type { AdCampaign, AdAction, AutomationMode, StockItem } from "@/types/automation";
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-  Button,
   Badge,
-  StatusPill,
-  MetricMain,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardSubtitle,
+  CardTitle,
   MetricLabel,
+  MetricMain,
+  StatusPill,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui";
-import {
-  processBatch,
-  calculateStockStatus,
-  calculateDaysUntilStockout,
-  calculateTotalSavings,
-} from "@/lib/automation-engine";
-import { DEFAULT_AUTOMATION_RULES, getActiveRules } from "@/lib/automation-rules";
-import type { StockItem, AdCampaign } from "@/types/automation";
 
-// Format currency
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'decimal',
+type DecisionKind = "pause" | "reduce" | "no_scale" | "keep";
+type RowSeverity = "critical" | "low" | "normal" | "good";
+
+type DecisionRow = {
+  sku: string;
+  productName: string;
+  qty: number;
+  dailySales: number;
+  daysLeft: number;
+  status: RowSeverity;
+  adStatus: string;
+  spendToday: number;
+  spend7d: number;
+  conversionsToday: number;
+  conversions7d: number;
+  decision: DecisionKind;
+  action: AdAction;
+  reason: string;
+  estimatedSaved7d: number;
+  wasteFlag: boolean;
+};
+
+const formatMoney = (amount: number) =>
+  new Intl.NumberFormat("ru-RU", {
+    style: "decimal",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
-};
+  }).format(Math.round(amount));
 
-// Generate mock stock data
-const generateMockStock = (): StockItem[] => {
-  const products = [
-    { name: "Футболка oversize Rubi&Jons", sku: "RJ-001-BLK-M" },
-    { name: "Толстовка с капюшоном", sku: "RJ-002-WHT-L" },
-    { name: "Спортивные брюки", sku: "RJ-003-GRY-M" },
-    { name: "Рюкзак 25L", sku: "RJ-004-BLK-OS" },
-    { name: "Кроссовки беговые", sku: "RJ-005-WHT-42" },
-    { name: "Бейсболка", sku: "RJ-006-BLK-OS" },
-    { name: "Носки спортивные", sku: "RJ-007-WHT-M" },
-    { name: "Шорты летние", sku: "RJ-008-BLU-L" },
-    { name: "Куртка ветровка", sku: "RJ-009-BLK-XL" },
-    { name: "Перчатки", sku: "RJ-010-GRY-L" },
-  ];
+function statusByQty(qty: number): RowSeverity {
+  if (qty < 200) return "critical";
+  if (qty < 500) return "low";
+  if (qty < 1000) return "normal";
+  return "good";
+}
 
-  const marketplaces: ("Ozon" | "Wildberries")[] = ["Ozon", "Wildberries"];
-  
-  return products.map((p, i) => {
-    const qty = i === 0 ? 150 : i === 1 ? 350 : i === 2 ? 750 : i === 3 ? 1200 : Math.floor(Math.random() * 1500);
-    const dailySales = Math.floor(Math.random() * 50) + 10;
-    
-    return {
-      id: `STK-${1000 + i}`,
-      sku: p.sku,
-      name: p.name,
-      marketplace: marketplaces[i % 2],
-      qty,
-      dailySales,
-      rop: Math.floor(dailySales * 7 + 50),
-      leadTime: 7,
-      safetyStock: 50,
-      lastUpdated: new Date().toISOString(),
-      status: calculateStockStatus(qty, dailySales),
-    };
-  });
-};
+function baseDecisionByQty(qty: number): DecisionKind {
+  if (qty < 200) return "pause";
+  if (qty < 500) return "reduce";
+  if (qty < 1000) return "no_scale";
+  return "keep";
+}
 
-// Generate mock ads
-const generateMockAds = (): AdCampaign[] => {
-  return [
-    {
-      id: "AD-001",
-      sku: "RJ-001-BLK-M",
-      name: "Футболка Campaign",
-      platform: "Ozon",
-      status: "active",
-      dailyBudget: 500,
-      currentBudget: 500,
-      spendToday: 320,
-      impressions: 12500,
-      clicks: 380,
-      conversions: 15,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      id: "AD-002",
-      sku: "RJ-002-WHT-L",
-      name: "Толстовка Campaign",
-      platform: "Wildberries",
-      status: "active",
-      dailyBudget: 600,
-      currentBudget: 600,
-      spendToday: 450,
-      impressions: 15200,
-      clicks: 420,
-      conversions: 18,
-      lastUpdated: new Date().toISOString(),
-    },
-  ];
-};
+function normalizeAction(kind: DecisionKind): AdAction {
+  if (kind === "pause") return "pause";
+  if (kind === "reduce") return "reduce";
+  return "keep";
+}
+
+function buildDecisionRows(stocks: StockItem[], ads: AdCampaign[]): DecisionRow[] {
+  const adBySku = new Map(ads.map((ad) => [ad.sku, ad]));
+
+  return stocks
+    .map((stock) => {
+      const ad = adBySku.get(stock.sku);
+      const baseDecision = baseDecisionByQty(stock.qty);
+      const status = statusByQty(stock.qty);
+      const daysLeft = stock.dailySales > 0 ? Math.floor(stock.qty / stock.dailySales) : Infinity;
+
+      const spendToday = ad?.spendToday ?? 0;
+      const spend7d = ad?.spend7d ?? 0;
+      const conversionsToday = ad?.conversionsToday ?? 0;
+      const conversions7d = ad?.conversions7d ?? ad?.conversions ?? 0;
+      const hasActiveAds = ad?.status === "active";
+
+      const spendingWithoutSalesToday = hasActiveAds && spendToday > 0 && conversionsToday === 0;
+      const spendingWithoutSales7d = hasActiveAds && spend7d > 0 && conversions7d === 0;
+      const wasteFlag = Boolean(spendingWithoutSalesToday || spendingWithoutSales7d);
+
+      let decision = baseDecision;
+      let reason = "";
+
+      if (baseDecision === "pause") {
+        reason = "qty < 200: STOP (PAUSE)";
+      } else if (baseDecision === "reduce") {
+        reason = "qty 200-499: REDUCE -30%";
+      } else if (baseDecision === "no_scale") {
+        reason = "qty 500-999: NO SCALE";
+      } else {
+        reason = "qty >= 1000: KEEP";
+      }
+
+      if (wasteFlag) {
+        if (baseDecision === "keep" || baseDecision === "no_scale") {
+          decision = "reduce";
+          reason = "Ads spending without sales: REDUCE";
+        } else if (baseDecision === "reduce") {
+          reason = "Low stock + spending without sales: keep REDUCE";
+        } else {
+          reason = "Critical stock + spending without sales: PAUSE";
+        }
+      }
+
+      const action = normalizeAction(decision);
+      const estimatedSaved7d =
+        action === "pause"
+          ? spendToday * 7
+          : action === "reduce"
+            ? spendToday * 7 * 0.3
+            : 0;
+
+      return {
+        sku: stock.sku,
+        productName: stock.name,
+        qty: stock.qty,
+        dailySales: stock.dailySales,
+        daysLeft,
+        status,
+        adStatus: ad?.status ?? "none",
+        spendToday,
+        spend7d,
+        conversionsToday,
+        conversions7d,
+        decision,
+        action,
+        reason,
+        estimatedSaved7d,
+        wasteFlag,
+      };
+    })
+    .sort((a, b) => {
+      const rank = { pause: 0, reduce: 1, no_scale: 2, keep: 3 };
+      if (rank[a.decision] !== rank[b.decision]) return rank[a.decision] - rank[b.decision];
+      return a.qty - b.qty;
+    });
+}
 
 export default function AutomationPage() {
   const [lang, setLang] = useState<Language>("ru");
   const [mode, setMode] = useState<AutomationMode>("dry_run");
   const [enabled, setEnabled] = useState(true);
-  const [stockItems] = useState<StockItem[]>(generateMockStock());
-  const [adCampaigns] = useState<AdCampaign[]>(generateMockAds());
-  const [decisions, setDecisions] = useState<AutomationDecision[]>([]);
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
+  const [adCampaigns, setAdCampaigns] = useState<AdCampaign[]>([]);
+  const [rows, setRows] = useState<DecisionRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastCheck, setLastCheck] = useState<string>("");
+  const [whyBySku, setWhyBySku] = useState<Record<string, string>>({});
+  const [whyLoadingSku, setWhyLoadingSku] = useState<string | null>(null);
+
+  const labels = useMemo(
+    () => ({
+      title: lang === "ru" ? "Ads Control" : "Reklama nazorati",
+      subtitle:
+        lang === "ru"
+          ? "Client logic: STOP/REDUCE/NO SCALE/KEEP + budget waste watch"
+          : "Mijoz logikasi: STOP/REDUCE/NO SCALE/KEEP + byudjet yeb qo'yishni nazorat",
+      check: lang === "ru" ? "Refresh" : "Yangilash",
+      enabled: lang === "ru" ? "Enabled" : "Yoqilgan",
+      disabled: lang === "ru" ? "Disabled" : "O'chirilgan",
+      modeTitle: lang === "ru" ? "Mode" : "Rejim",
+      modeManual: lang === "ru" ? "MANUAL" : "QO'LDA",
+      modeDry: lang === "ru" ? "TEST" : "TEST",
+      modeAuto: lang === "ru" ? "AUTO" : "AVTO",
+      monitored: lang === "ru" ? "SKU monitored" : "Nazoratdagi SKU",
+      pauseNow: lang === "ru" ? "PAUSE now" : "Darhol PAUSE",
+      reduceNow: lang === "ru" ? "REDUCE now" : "Hozir REDUCE",
+      spendRisk: lang === "ru" ? "Risk spend today" : "Bugungi xavfli spend",
+      decisionTitle: lang === "ru" ? "SKU decisions" : "SKU bo'yicha qarorlar",
+      ruleTitle: lang === "ru" ? "Client business rules" : "Mijoz biznes qoidalari",
+      lastCheck: lang === "ru" ? "Last check" : "Oxirgi tekshiruv",
+      notRun: lang === "ru" ? "not run" : "bajarilmagan",
+      loading: lang === "ru" ? "Loading..." : "Yuklanmoqda...",
+      empty: lang === "ru" ? "No data" : "Hali ma'lumot yo'q",
+      colSku: "SKU",
+      colQty: lang === "ru" ? "Stock" : "Qoldiq",
+      colDays: lang === "ru" ? "Days" : "Kun",
+      colAds: lang === "ru" ? "Ads" : "Reklama",
+      colSpend: "Spend",
+      colConv: lang === "ru" ? "Conversions" : "Konversiya",
+      colDecision: lang === "ru" ? "Decision" : "Qaror",
+      colReason: lang === "ru" ? "Reason" : "Sabab",
+      colSave: lang === "ru" ? "Save 7d" : "7 kun tejam",
+      actionPause: "PAUSE",
+      actionReduce: "REDUCE -30%",
+      actionNoScale: "NO SCALE",
+      actionKeep: "KEEP",
+      wasteFlag: lang === "ru" ? "WASTE" : "YEB QO'YAPTI",
+      error: lang === "ru" ? "Failed to load automation API" : "automation API yuklanmadi",
+      why: lang === "ru" ? "Why?" : "Nega?",
+      whyLoading: lang === "ru" ? "Explaining..." : "Izohlanmoqda...",
+    }),
+    [lang]
+  );
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("/api/automation", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      const stocks = Array.isArray(data?.stockItems) ? (data.stockItems as StockItem[]) : [];
+      const ads = Array.isArray(data?.adCampaigns) ? (data.adCampaigns as AdCampaign[]) : [];
+
+      setStockItems(stocks);
+      setAdCampaigns(ads);
+      setRows(buildDecisionRows(stocks, ads));
+      setWhyBySku({});
+      setLastCheck(new Date().toLocaleTimeString(lang === "ru" ? "ru-RU" : "uz-UZ"));
+    } catch (e) {
+      console.error(e);
+      setError(labels.error);
+      setRows([]);
+      setStockItems([]);
+      setAdCampaigns([]);
+      setWhyBySku({});
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setLang(storage.getLang());
-    runAutomationCheck();
+    void loadData();
   }, []);
 
-  const runAutomationCheck = () => {
-    const rules = getActiveRules();
-    const newDecisions = processBatch(stockItems, rules, mode);
-    setDecisions(newDecisions);
-    setLastCheck(new Date().toLocaleTimeString('ru-RU'));
+  const stats = {
+    monitored: rows.length,
+    pauseNow: rows.filter((r) => r.decision === "pause").length,
+    reduceNow: rows.filter((r) => r.decision === "reduce").length,
+    spendRisk: rows
+      .filter((r) => r.wasteFlag)
+      .reduce((sum, row) => sum + row.spendToday, 0),
   };
 
-  // Calculate stats
-  const stats: AutomationStats = {
-    totalProducts: stockItems.length,
-    activeRules: DEFAULT_AUTOMATION_RULES.filter(r => r.enabled).length,
-    todayDecisions: decisions.length,
-    moneySaved: calculateTotalSavings(decisions, adCampaigns),
-    criticalAlerts: stockItems.filter(s => s.status === "critical").length,
-    pausedAds: decisions.filter(d => d.recommendedActions[0]?.action === "pause").length,
-    reducedAds: decisions.filter(d => d.recommendedActions[0]?.action === "reduce").length,
-    lastCheck: lastCheck,
+  const decisionLabel = (decision: DecisionKind) => {
+    if (decision === "pause") return labels.actionPause;
+    if (decision === "reduce") return labels.actionReduce;
+    if (decision === "no_scale") return labels.actionNoScale;
+    return labels.actionKeep;
   };
 
-  const handleModeChange = (newMode: AutomationMode) => {
-    setMode(newMode);
-    // In real app, this would trigger automation re-evaluation
-  };
-
-  const handleExecuteDecision = (decisionId: string) => {
-    // In real app, this would execute the action via API
-    alert(lang === "ru" 
-      ? `Решение ${decisionId} будет выполнено. В реальном приложении это вызовет API для управления рекламой.`
-      : `Qaror ${decisionId} bajariladi. Haqiqiy ilovada bu reklama boshqaruvi API ni chaqiradi.`
-    );
+  const handleExplain = async (sku: string) => {
+    try {
+      setWhyLoadingSku(sku);
+      const response = await fetch("/api/ai/explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sku, lang }),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (data?.explanation) {
+        setWhyBySku((prev) => ({ ...prev, [sku]: String(data.explanation) }));
+      }
+    } catch (error) {
+      console.error("Explain request failed:", error);
+    } finally {
+      setWhyLoadingSku(null);
+    }
   };
 
   return (
     <Layout>
-      {/* Page Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">
-            {lang === "ru" ? "Автоматизация" : "Avtomatlashtirish"}
-          </h1>
-          <p className="page-subtitle">
-            {lang === "ru" 
-              ? "Автоматическое управление рекламой на основе остатков"
-              : "Qoldiqlar asosida reklama boshqaruvi"
-            }
-          </p>
+          <h1 className="page-title">{labels.title}</h1>
+          <p className="page-subtitle">{labels.subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant={enabled ? "success" : "ghost"}
-            onClick={() => setEnabled(!enabled)}
-          >
-            {enabled 
-              ? (lang === "ru" ? "✓ Включено" : "✓ Yoqilgan")
-              : (lang === "ru" ? "Выключено" : "O'chirilgan")
-            }
+          <Button variant={enabled ? "success" : "ghost"} onClick={() => setEnabled((v) => !v)}>
+            {enabled ? labels.enabled : labels.disabled}
           </Button>
-          <Button variant="primary" onClick={runAutomationCheck}>
-            {lang === "ru" ? "Проверить" : "Tekshirish"}
-          </Button>
+          <Button variant="primary" onClick={() => void loadData()}>{labels.check}</Button>
         </div>
       </div>
 
-      {/* Mode Selector */}
       <Card className="mb-6">
         <CardBody>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-text-main mb-1">
-                {lang === "ru" ? "Режим работы" : "Ish rejimi"}
-              </h3>
-              <p className="text-sm text-text-muted">
-                {mode === "manual" && (lang === "ru" 
-                  ? "Показывает рекомендации, не выполняет действия автоматически"
-                  : "Tavsiyalarni ko'rsatadi, avtomatik bajarmaydi"
-                )}
-                {mode === "dry_run" && (lang === "ru"
-                  ? "Логирует решения, показывает что будет сделано (безопасный режим)"
-                  : "Qarorlarni yozadi, nima qilinishini ko'rsatadi (xavfsiz rejim)"
-                )}
-                {mode === "auto" && (lang === "ru"
-                  ? "Автоматически выполняет действия по правилам"
-                  : "Qoidalar bo'yicha avtomatik bajaradi"
-                )}
-              </p>
+              <h3 className="text-lg font-semibold text-text-main mb-1">{labels.modeTitle}</h3>
+              <p className="text-sm text-text-muted">{mode === "manual" ? labels.modeManual : mode === "dry_run" ? labels.modeDry : labels.modeAuto}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant={mode === "manual" ? "primary" : "ghost"}
-                size="sm"
-                onClick={() => handleModeChange("manual")}
-              >
-                {lang === "ru" ? "РУЧНОЙ" : "QOʻLDA"}
-              </Button>
-              <Button
-                variant={mode === "dry_run" ? "primary" : "ghost"}
-                size="sm"
-                onClick={() => handleModeChange("dry_run")}
-              >
-                {lang === "ru" ? "ТЕСТОВЫЙ" : "TEST"}
-              </Button>
-              <Button
-                variant={mode === "auto" ? "primary" : "ghost"}
-                size="sm"
-                onClick={() => handleModeChange("auto")}
-              >
-                {lang === "ru" ? "АВТО" : "AVTO"}
-              </Button>
+              <Button variant={mode === "manual" ? "primary" : "ghost"} size="sm" onClick={() => setMode("manual")}>{labels.modeManual}</Button>
+              <Button variant={mode === "dry_run" ? "primary" : "ghost"} size="sm" onClick={() => setMode("dry_run")}>{labels.modeDry}</Button>
+              <Button variant={mode === "auto" ? "primary" : "ghost"} size="sm" onClick={() => setMode("auto")}>{labels.modeAuto}</Button>
             </div>
           </div>
         </CardBody>
       </Card>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardBody>
-            <MetricLabel>{lang === "ru" ? "Решения сегодня" : "Bugungi qarorlar"}</MetricLabel>
-            <MetricMain className="text-primary">{stats.todayDecisions}</MetricMain>
-            <p className="text-xs text-text-muted mt-1">
-              {lang === "ru" ? "Требуют внимания" : "E'tibor talab qiladi"}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <MetricLabel>{lang === "ru" ? "Потенциальная экономия" : "Potensial tejamkorlik"}</MetricLabel>
-            <MetricMain className="text-success">₽{formatCurrency(stats.moneySaved)}</MetricMain>
-            <p className="text-xs text-text-muted mt-1">
-              {lang === "ru" ? "За период до пополнения" : "To'ldirilgunga qadar"}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <MetricLabel>{lang === "ru" ? "Критические товары" : "Kritik mahsulotlar"}</MetricLabel>
-            <MetricMain className="text-danger">{stats.criticalAlerts}</MetricMain>
-            <p className="text-xs text-text-muted mt-1">
-              {lang === "ru" ? "Требуют действий" : "Harakat talab qiladi"}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody>
-            <MetricLabel>{lang === "ru" ? "Активные правила" : "Aktiv qoidalar"}</MetricLabel>
-            <MetricMain>{stats.activeRules}</MetricMain>
-            <p className="text-xs text-text-muted mt-1">
-              {lang === "ru" ? "Из 6 правил" : "6 qoidadan"}
-            </p>
-          </CardBody>
-        </Card>
+        <Card><CardBody><MetricLabel>{labels.monitored}</MetricLabel><MetricMain>{stats.monitored}</MetricMain></CardBody></Card>
+        <Card><CardBody><MetricLabel>{labels.pauseNow}</MetricLabel><MetricMain className="text-danger">{stats.pauseNow}</MetricMain></CardBody></Card>
+        <Card><CardBody><MetricLabel>{labels.reduceNow}</MetricLabel><MetricMain className="text-warning">{stats.reduceNow}</MetricMain></CardBody></Card>
+        <Card><CardBody><MetricLabel>{labels.spendRisk}</MetricLabel><MetricMain className="text-danger">RUB {formatMoney(stats.spendRisk)}</MetricMain></CardBody></Card>
       </div>
 
-      {/* Decisions Table */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>{labels.ruleTitle}</CardTitle>
+          <CardSubtitle>qty &lt; 200 = PAUSE | 200-499 = REDUCE -30% | 500-999 = NO SCALE | 1000+ = KEEP</CardSubtitle>
+        </CardHeader>
+      </Card>
+
+      {error && (
+        <Card className="mb-6 border-danger">
+          <CardBody><p className="text-sm text-danger">{error}</p></CardBody>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>{lang === "ru" ? "Решения автоматизации" : "Avtomatlashtirish qarorlari"}</CardTitle>
-              <CardSubtitle>
-                {lang === "ru" 
-                  ? `Последняя проверка: ${lastCheck || "Не проводилась"}`
-                  : `Oxirgi tekshiruv: ${lastCheck || "O'tkazilmagan"}`
-                }
-              </CardSubtitle>
-            </div>
-            {stats.todayDecisions > 0 && (
-              <Badge variant="danger">
-                {stats.todayDecisions} {lang === "ru" ? "требуют внимания" : "e'tibor kerak"}
-              </Badge>
-            )}
-          </div>
+          <CardTitle>{labels.decisionTitle}</CardTitle>
+          <CardSubtitle>{labels.lastCheck}: {lastCheck || labels.notRun}</CardSubtitle>
         </CardHeader>
         <CardBody>
-          {decisions.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12 text-text-muted">{labels.loading}</div>
+          ) : rows.length === 0 ? (
+            <div className="text-center py-12 text-text-muted">{labels.empty}</div>
+          ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{lang === "ru" ? "SKU" : "SKU"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Товар" : "Mahsulot"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Остаток" : "Qoldiq"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Дней" : "Kunlar"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Статус" : "Status"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Рекомендация" : "Tavsiya"}</TableHead>
-                  <TableHead>{lang === "ru" ? "Действия" : "Amallar"}</TableHead>
+                  <TableHead>{labels.colSku}</TableHead>
+                  <TableHead>{labels.colQty}</TableHead>
+                  <TableHead>{labels.colDays}</TableHead>
+                  <TableHead>{labels.colAds}</TableHead>
+                  <TableHead>{labels.colSpend}</TableHead>
+                  <TableHead>{labels.colConv}</TableHead>
+                  <TableHead>{labels.colDecision}</TableHead>
+                  <TableHead>{labels.colReason}</TableHead>
+                  <TableHead>{labels.colSave}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {decisions.map((decision) => {
-                  const topAction = decision.recommendedActions[0];
-                  return (
-                    <TableRow key={decision.id}>
-                      <TableCell className="font-mono text-xs">{decision.sku}</TableCell>
-                      <TableCell>
-                        <div className="max-w-xs truncate">{decision.productName}</div>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`font-semibold ${
-                          decision.status === "critical" ? "text-danger" :
-                          decision.status === "low" ? "text-warning" :
-                          "text-text-main"
-                        }`}>
-                          {decision.currentQty}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm">
-                          {decision.daysLeft === Infinity ? "∞" : decision.daysLeft}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <StatusPill status={decision.status}>
-                          {lang === "ru" 
-                            ? decision.status === "critical" ? "Критично" : decision.status === "low" ? "Низкий" : "Норма"
-                            : decision.status === "critical" ? "Kritik" : decision.status === "low" ? "Past" : "Normal"
-                          }
-                        </StatusPill>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">
-                            {topAction?.action === "pause" && "⏸️ " + (lang === "ru" ? "Остановить рекламу" : "Reklamani to'xtatish")}
-                            {topAction?.action === "reduce" && "📉 " + (lang === "ru" ? "Снизить бюджет" : "Byudjetni kamaytirish")}
-                            {topAction?.action === "resume" && "▶️ " + (lang === "ru" ? "Возобновить" : "Qayta boshlash")}
-                          </div>
-                          <div className="text-xs text-text-muted mt-1">
-                            {topAction?.impact}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
+                {rows.map((row) => (
+                  <TableRow key={row.sku}>
+                    <TableCell className="font-mono text-xs">{row.sku}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span>{row.qty}</span>
+                        <StatusPill status={row.status}>{row.status.toUpperCase()}</StatusPill>
+                      </div>
+                    </TableCell>
+                    <TableCell>{row.daysLeft === Infinity ? "INF" : row.daysLeft}</TableCell>
+                    <TableCell>
+                      <Badge variant={row.adStatus === "active" ? "success" : "default"}>{row.adStatus.toUpperCase()}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div>Today: RUB {formatMoney(row.spendToday)}</div>
+                      <div className="text-xs text-text-muted">7d: RUB {formatMoney(row.spend7d)}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div>Today: {row.conversionsToday}</div>
+                      <div className="text-xs text-text-muted">7d: {row.conversions7d}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={row.decision === "pause" ? "danger" : row.decision === "reduce" ? "warning" : "default"}>
+                        {decisionLabel(row.decision)}
+                      </Badge>
+                      {row.wasteFlag && <Badge variant="danger" className="ml-2">{labels.wasteFlag}</Badge>}
+                    </TableCell>
+                    <TableCell className="text-xs text-text-muted max-w-xs">
+                      <div>{row.reason}</div>
+                      <div className="mt-2">
                         <Button
-                          variant={mode === "auto" ? "ghost" : "primary"}
                           size="sm"
-                          onClick={() => handleExecuteDecision(decision.id)}
-                          disabled={mode === "auto"}
+                          variant="ghost"
+                          onClick={() => void handleExplain(row.sku)}
+                          disabled={whyLoadingSku === row.sku}
                         >
-                          {mode === "auto" 
-                            ? (lang === "ru" ? "Авто" : "Avto")
-                            : (lang === "ru" ? "Выполнить" : "Bajarish")
-                          }
+                          {whyLoadingSku === row.sku ? labels.whyLoading : labels.why}
                         </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                      </div>
+                      {whyBySku[row.sku] && <div className="mt-2 text-xs text-text-main">{whyBySku[row.sku]}</div>}
+                    </TableCell>
+                    <TableCell>RUB {formatMoney(row.estimatedSaved7d)}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-lg font-medium text-text-main mb-2">
-                ✓ {lang === "ru" ? "Все товары в норме" : "Barcha mahsulotlar normal"}
-              </p>
-              <p className="text-sm text-text-muted">
-                {lang === "ru" 
-                  ? "Нет товаров, требующих внимания. Система работает нормально."
-                  : "E'tibor talab qiladigan mahsulotlar yo'q. Tizim normal ishlayapti."
-                }
-              </p>
-            </div>
           )}
-        </CardBody>
-      </Card>
-
-      {/* Active Rules Summary */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>{lang === "ru" ? "Активные правила" : "Aktiv qoidalar"}</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {DEFAULT_AUTOMATION_RULES.filter(r => r.enabled).map((rule) => (
-              <div key={rule.id} className="p-4 bg-background rounded-lg">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-text-main">{rule.name}</h4>
-                  <Badge variant="primary">P{rule.priority}</Badge>
-                </div>
-                <p className="text-sm text-text-muted mb-2">{rule.description}</p>
-                <div className="text-xs text-text-muted">
-                  {rule.action.type === "ads_pause" && "⏸️ Останавливает рекламу"}
-                  {rule.action.type === "ads_reduce" && "📉 Снижает бюджет"}
-                  {rule.action.type === "ads_resume" && "▶️ Возобновляет рекламу"}
-                  {rule.action.type === "send_alert" && "🔔 Отправляет уведомление"}
-                </div>
-              </div>
-            ))}
-          </div>
         </CardBody>
       </Card>
     </Layout>

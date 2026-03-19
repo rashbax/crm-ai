@@ -14,6 +14,7 @@ import type {
   Marketplace,
   RiskLevel,
 } from "./types";
+import { getPricingRules, getPricingRulesMap } from "./config";
 import {
   calculateMinPrice,
   calculateTargetPrice,
@@ -33,15 +34,94 @@ try {
 }
 
 /**
- * Simple moving average forecast (fallback when analytics unavailable)
+ * Forecast settings tuned for real API order streams.
+ */
+const FORECAST_WINDOW_DAYS = 28;
+const TREND_WINDOW_DAYS = 14;
+
+function toUtcDayKey(date: Date): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function parseOrderDay(value: unknown): Date | null {
+  if (typeof value !== "string" || !value.trim()) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
+function normalizeQty(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.max(0, value);
+  }
+  if (typeof value === "string") {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+  }
+  return 0;
+}
+
+function getSkuDailySeries(orders: any[], sku: string, days: number): { daily: number[]; daysSinceLastSale: number | null } {
+  const today = new Date();
+  const endDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  const byDay = new Map<string, number>();
+  let latestSaleTime: number | null = null;
+
+  for (const order of orders) {
+    if (order?.sku !== sku) continue;
+    const qty = normalizeQty(order?.qty);
+    if (qty <= 0) continue;
+
+    const day = parseOrderDay(order?.date);
+    if (!day) continue;
+    const key = toUtcDayKey(day);
+    byDay.set(key, (byDay.get(key) || 0) + qty);
+
+    const ts = day.getTime();
+    if (latestSaleTime == null || ts > latestSaleTime) latestSaleTime = ts;
+  }
+
+  const daily: number[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const day = new Date(endDay.getTime() - i * 24 * 60 * 60 * 1000);
+    const key = toUtcDayKey(day);
+    daily.push(byDay.get(key) || 0);
+  }
+
+  const daysSinceLastSale =
+    latestSaleTime == null
+      ? null
+      : Math.floor((endDay.getTime() - latestSaleTime) / (24 * 60 * 60 * 1000));
+
+  return { daily, daysSinceLastSale };
+}
+
+/**
+ * Real-data sales forecast from daily demand history.
+ * Uses 28-day baseline + 7-day recency, including zero-sale days.
  */
 function simpleForecast(orders: any[], sku: string): number {
-  const skuOrders = orders.filter((o) => o.sku === sku);
-  if (skuOrders.length === 0) return 0;
+  const { daily, daysSinceLastSale } = getSkuDailySeries(orders, sku, FORECAST_WINDOW_DAYS);
+  const total28 = daily.reduce((sum, q) => sum + q, 0);
+  if (total28 <= 0) return 0;
 
-  const last7Days = skuOrders.slice(-7);
-  const totalQty = last7Days.reduce((sum, o) => sum + o.qty, 0);
-  return totalQty / Math.max(1, last7Days.length);
+  const recent7 = daily.slice(-7);
+  const avg28 = total28 / FORECAST_WINDOW_DAYS;
+  const avg7 = recent7.reduce((sum, q) => sum + q, 0) / 7;
+  let forecast = avg7 * 0.65 + avg28 * 0.35;
+
+  // If there were no sales for a long time, dampen forecast.
+  if (daysSinceLastSale != null && daysSinceLastSale > 14) {
+    forecast *= 0.5;
+  }
+  if (daysSinceLastSale != null && daysSinceLastSale > 30) {
+    forecast = 0;
+  }
+
+  return Math.max(0, forecast);
 }
 
 /**
@@ -93,18 +173,17 @@ function simpleLoss(
  * Detect sales trend from order history
  */
 function detectSalesTrend(orders: any[], sku: string): "falling" | "stable" | "rising" {
-  const skuOrders = orders.filter((o) => o.sku === sku);
-  if (skuOrders.length < 14) return "stable";
+  const { daily } = getSkuDailySeries(orders, sku, TREND_WINDOW_DAYS);
+  if (daily.length < TREND_WINDOW_DAYS) return "stable";
 
-  const recent7 = skuOrders.slice(-7);
-  const previous7 = skuOrders.slice(-14, -7);
+  const previous7 = daily.slice(0, 7);
+  const recent7 = daily.slice(7, 14);
+  const recentQty = recent7.reduce((sum, q) => sum + q, 0);
+  const previousQty = previous7.reduce((sum, q) => sum + q, 0);
+  if (recentQty === 0 && previousQty === 0) return "stable";
+  if (previousQty === 0 && recentQty > 0) return "rising";
 
-  const recentQty = recent7.reduce((sum, o) => sum + o.qty, 0);
-  const previousQty = previous7.reduce((sum, o) => sum + o.qty, 0);
-
-  if (previousQty === 0) return "stable";
-
-  const change = (recentQty - previousQty) / previousQty;
+  const change = previousQty > 0 ? (recentQty - previousQty) / previousQty : 0;
 
   if (change < -0.15) return "falling"; // -15%
   if (change > 0.15) return "rising"; // +15%
@@ -176,6 +255,7 @@ export function buildPricingRow(
   const notes: string[] = [];
 
   for (const priceState of prices.filter((p) => p.sku === sku)) {
+    const rules = getPricingRules(priceState.marketplace);
     const feeConfig = fees.find((f) => f.marketplace === priceState.marketplace);
     if (!feeConfig) continue;
 
@@ -215,7 +295,10 @@ export function buildPricingRow(
       cogsData.cogs,
       feeConfig,
       riskLevel,
-      adsData?.acos
+      adsData?.acos,
+      {
+        lowMarginBlockPct: rules.guardrails.lowMarginBlockPct,
+      }
     );
 
     marketplaces.push({
@@ -225,6 +308,12 @@ export function buildPricingRow(
         discountPct: currentDiscount,
         promoPrice: priceState.promoPrice,
       },
+      listing: {
+        status: priceState.status,
+        visibility: priceState.visibility,
+        onSale: priceState.onSale,
+      },
+      priceIndexPairs: priceState.priceIndexPairs,
       recommended: {
         price: recommended.price,
         discountPct: recommended.discountPct,
@@ -270,6 +359,7 @@ export function buildPricingDashboard(
   mode: "live" | "demo" = "demo"
 ): PricingDashboardResponse {
   const warnings: string[] = [];
+  const rulesMap = getPricingRulesMap();
 
   if (mode === "demo") {
     warnings.push("Running in DEMO mode with sample data");
@@ -295,7 +385,10 @@ export function buildPricingDashboard(
       r.marketplaces.some((m) => m.guardrails.blocked)
     ).length,
     lowMarginCount: rows.filter((r) =>
-      r.marketplaces.some((m) => m.guardrails.marginPct < 0.1)
+      r.marketplaces.some((m) => {
+        const rules = rulesMap[m.marketplace];
+        return m.guardrails.marginPct < rules.indexThresholds.moderateMaxMarginPct;
+      })
     ).length,
     highRiskCount: rows.filter(
       (r) => r.stock.riskLevel === "HIGH" || r.stock.riskLevel === "CRITICAL"
@@ -306,6 +399,7 @@ export function buildPricingDashboard(
     mode,
     warnings,
     fees,
+    rules: rulesMap,
     rows,
     summary,
   };

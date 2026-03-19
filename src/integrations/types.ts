@@ -25,6 +25,24 @@ export interface Connection {
   lastSyncAt?: string; // Last successful sync
   lastError?: string; // Last error message
   accountLabel?: string; // From connector test (e.g., "WB Account 12345")
+  capabilities?: Partial<Record<ConnectionCapabilityKey, ConnectionCapability>>;
+}
+
+export type ConnectionCapabilityKey = "core" | "ads" | "premium";
+
+export interface ConnectionCapability {
+  enabled: boolean;
+  creds?: Record<string, string> | string;
+  enabledData?: Partial<{
+    orders: boolean;
+    stocks: boolean;
+    ads: boolean;
+    prices: boolean;
+  }>;
+  lastTestAt?: string;
+  lastSyncAt?: string;
+  lastError?: string;
+  accountLabel?: string;
 }
 
 /**
@@ -42,6 +60,13 @@ export interface EnabledConnection {
   id: string; // Connection ID
   marketplaceId: string;
   name: string;
+  enabledData?: {
+    orders: boolean;
+    stocks: boolean;
+    ads: boolean;
+    prices: boolean;
+  };
+  capabilities?: Partial<Record<ConnectionCapabilityKey, { enabled: boolean }>>;
 }
 
 /**
@@ -64,4 +89,5 @@ export interface ConnectionSummary {
   accountLabel?: string;
   createdAt: string;
   updatedAt: string;
+  capabilities?: Partial<Record<ConnectionCapabilityKey, Omit<ConnectionCapability, "creds">>>;
 }

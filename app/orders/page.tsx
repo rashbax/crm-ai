@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Layout from "@/components/Layout";
+import { getBusinessTimeZone } from "@/lib/date";
 import { storage } from "@/lib/storage";
 import { getTranslation } from "@/lib/translations";
 import type { Language } from "@/types";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui";
 
 type OrderStatus = "new" | "processing" | "shipped" | "cancelled";
-type Marketplace = "Ozon" | "WB" | "Wildberries";
+type Marketplace = "Ozon" | "Wildberries";
 
 interface Order {
   id: string;
@@ -45,6 +46,7 @@ function formatDate(value: string, lang: Language) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString(lang === "ru" ? "ru-RU" : "uz-UZ", {
+    timeZone: getBusinessTimeZone(),
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -102,7 +104,17 @@ export default function OrdersPage() {
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ordersPerPage));
+
+  const pageNumbers = useMemo(() => {
+    const visiblePages = 5;
+    const windowStart = Math.max(
+      1,
+      Math.min(currentPage - 2, Math.max(1, totalPages - visiblePages + 1))
+    );
+    const windowEnd = Math.min(totalPages, windowStart + visiblePages - 1);
+    return Array.from({ length: windowEnd - windowStart + 1 }, (_, i) => windowStart + i);
+  }, [currentPage, totalPages]);
 
   const summary = useMemo(() => {
     const totalRevenue = filteredOrders.reduce((sum, o) => sum + o.revenue, 0);
@@ -123,8 +135,8 @@ export default function OrdersPage() {
   const labels = {
     subtitle:
       lang === "ru"
-        ? "Реальные данные Ozon API: SKU, количество, цена за единицу, выручка"
-        : "Real Ozon API ma'lumotlari: SKU, soni, birlik narxi, tushum",
+        ? "Реальные данные API: SKU, количество, цена за единицу, выручка"
+        : "Real API ma'lumotlari: SKU, soni, birlik narxi, tushum",
     refresh: lang === "ru" ? "Обновить" : "Yangilash",
     rows: lang === "ru" ? "Строк" : "Qatorlar",
     totalQty: lang === "ru" ? "Общее кол-во" : "Jami soni",
@@ -169,6 +181,13 @@ export default function OrdersPage() {
     setMarketplaceFilter("all");
     setCurrentPage(1);
   };
+
+  useEffect(() => {
+    setCurrentPage((prev) => {
+      if (filteredOrders.length === 0) return 1;
+      return Math.min(prev, totalPages);
+    });
+  }, [filteredOrders.length, totalPages]);
 
   return (
     <Layout>
@@ -225,7 +244,6 @@ export default function OrdersPage() {
                     <option value="all">{labels.allMarketplaces}</option>
                     <option value="Ozon">Ozon</option>
                     <option value="Wildberries">Wildberries</option>
-                    <option value="WB">WB</option>
                   </select>
                 </div>
                 {(search || statusFilter !== "all" || marketplaceFilter !== "all") && (
@@ -262,7 +280,7 @@ export default function OrdersPage() {
                     <TableRow key={order.id}>
                       <TableCell className="font-medium">{order.id}</TableCell>
                       <TableCell className="text-text-muted text-xs">{formatDate(order.sourceDate, lang)}</TableCell>
-                      <TableCell><Badge variant="secondary">{order.marketplace}</Badge></TableCell>
+                      <TableCell><Badge variant="default">{order.marketplace}</Badge></TableCell>
                       <TableCell className="font-mono text-xs">{order.sku}</TableCell>
                       <TableCell>{order.qty.toLocaleString(lang === "ru" ? "ru-RU" : "uz-UZ")}</TableCell>
                       <TableCell>{formatMoney(order.unitPrice)}</TableCell>
@@ -303,6 +321,21 @@ export default function OrdersPage() {
                     >
                       {labels.prev}
                     </Button>
+                    <div className="flex items-center gap-1">
+                      {pageNumbers.map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            page === currentPage
+                              ? "bg-primary text-white font-medium"
+                              : "hover:bg-background text-text-main"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"

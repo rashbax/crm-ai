@@ -38,6 +38,12 @@ export interface AdCampaign {
   dailyBudget: number;
   currentBudget: number;
   spendToday: number;
+  attributedRevenueToday?: number;
+  targetAcos?: number;
+  spend7d?: number;
+  conversionsToday?: number;
+  conversions7d?: number;
+  revenue7d?: number;
   impressions: number;
   clicks: number;
   conversions: number;
@@ -145,6 +151,7 @@ export interface AutomationDecision {
   triggeredRules: AutomationRule[];
   recommendedActions: {
     action: AdAction;
+    source: "rule" | "stock_cover" | "efficiency";
     reason: string;
     impact: string;
     priority: number;

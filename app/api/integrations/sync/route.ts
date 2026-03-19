@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import { z } from 'zod';
 import { syncMarketplace, syncAll } from '@/src/integrations/syncRunner';
+import { getEffectiveEnabledData } from '@/src/integrations/capabilities';
 import { findConnectionById } from '@/src/integrations/storage';
 import { requireAuth } from '@/lib/auth-guard';
 
@@ -39,12 +40,7 @@ export async function POST(request: Request) {
 
 			const result = await syncMarketplace(
 				connection.marketplaceId,
-				connection.enabledData || {
-					orders: true,
-					stocks: true,
-					ads: true,
-					prices: true,
-				},
+				getEffectiveEnabledData(connection),
 				connection.id,
 			);
 			results = [result];

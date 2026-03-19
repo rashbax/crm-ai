@@ -1,0 +1,382 @@
+{
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-01T00:00:00.000Z|2026-02-27T23:59:59.999Z": {
+    "updatedAt": 1772193468391,
+    "currentBalance": 2357013.18,
+    "breakdown": {
+      "sales": 8049614.23,
+      "refunds": 318748.17,
+      "ozonReward": 203275.84,
+      "deliveryServices": 13300.65,
+      "agentServices": 40660,
+      "fboServices": 0,
+      "adsPromotion": 81723.65,
+      "otherServicesFines": 244412.24,
+      "compensations": 2329.32,
+      "commissions": 203275.84,
+      "withdrawals": 0,
+      "adjustments": 2596.26,
+      "totalAccrued": 7152419.26
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-01-31T00:00:00.000Z|2026-02-27T23:59:59.999Z": {
+    "updatedAt": 1772201037775,
+    "currentBalance": 2344677.63,
+    "breakdown": {
+      "sales": 8375150.15,
+      "refunds": 334101.63,
+      "ozonReward": 211637.19,
+      "deliveryServices": 14678.09,
+      "agentServices": 42348.91,
+      "fboServices": 0,
+      "adsPromotion": 85033.03,
+      "otherServicesFines": 281893.59,
+      "compensations": 23760.02,
+      "commissions": 211637.19,
+      "withdrawals": 0,
+      "adjustments": 2729.64,
+      "totalAccrued": 7431947.37
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-01T00:00:00.000Z|2026-02-28T23:59:59.999Z": {
+    "updatedAt": 1772282795781,
+    "currentBalance": 2421299.24,
+    "breakdown": {
+      "sales": 8365341.23,
+      "refunds": 331162.78,
+      "ozonReward": 211436.2,
+      "deliveryServices": 14486.65,
+      "agentServices": 42288.19,
+      "fboServices": 0,
+      "adsPromotion": 84502.52,
+      "otherServicesFines": 284651.86,
+      "compensations": 2329.32,
+      "commissions": 211436.2,
+      "withdrawals": 0,
+      "adjustments": 2682.42,
+      "totalAccrued": 7401824.77
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-15T00:00:00.000Z|2026-02-28T23:59:59.999Z": {
+    "updatedAt": 1772281287503,
+    "currentBalance": 2419510.41,
+    "breakdown": {
+      "sales": 3283439.72,
+      "refunds": 127325.08,
+      "ozonReward": 83099.43,
+      "deliveryServices": 6270.85,
+      "agentServices": 16608.35,
+      "fboServices": 0,
+      "adsPromotion": 32684.47,
+      "otherServicesFines": 122765.68,
+      "compensations": 498.29,
+      "commissions": 83099.43,
+      "withdrawals": 0,
+      "adjustments": 1087.23,
+      "totalAccrued": 2896271.38
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-22T00:00:00.000Z|2026-02-28T23:59:59.999Z": {
+    "updatedAt": 1772281282001,
+    "currentBalance": 2419510.41,
+    "breakdown": {
+      "sales": 1840786,
+      "refunds": 62844.14,
+      "ozonReward": 46525.93,
+      "deliveryServices": 3170.87,
+      "agentServices": 9293.06,
+      "fboServices": 0,
+      "adsPromotion": 18101.37,
+      "otherServicesFines": 71986.63,
+      "compensations": 498.29,
+      "commissions": 46525.93,
+      "withdrawals": 0,
+      "adjustments": 567.76,
+      "totalAccrued": 1629930.05
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-07T00:00:00.000Z|2026-03-06T23:59:59.999Z": {
+    "updatedAt": 1772815526706,
+    "currentBalance": 2307776.05,
+    "breakdown": {
+      "sales": 8229120.76,
+      "refunds": 304491.24,
+      "ozonReward": 208064.97,
+      "deliveryServices": 14993.3,
+      "agentServices": 41626.54,
+      "fboServices": 0,
+      "adsPromotion": 72016.46,
+      "otherServicesFines": 316883.78,
+      "compensations": 19925.87,
+      "commissions": 208064.97,
+      "withdrawals": 0,
+      "adjustments": 2776.65,
+      "totalAccrued": 7293746.99
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-03-01|2026-03-07": {
+    "updatedAt": 1772825236556,
+    "currentBalance": 2317726.12,
+    "breakdown": {
+      "sales": 1914235.84,
+      "refunds": 67339.74,
+      "ozonReward": 48380.97,
+      "deliveryServices": 3254.56,
+      "agentServices": 9676.86,
+      "fboServices": 0,
+      "adsPromotion": 8106.65,
+      "otherServicesFines": 91597.73,
+      "compensations": 17596.55,
+      "commissions": 48380.97,
+      "withdrawals": 0,
+      "adjustments": 883.51,
+      "totalAccrued": 1704359.39
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-08|2026-03-07": {
+    "updatedAt": 1772825244954,
+    "currentBalance": 2317726.12,
+    "breakdown": {
+      "sales": 8253732.76,
+      "refunds": 305047.48,
+      "ozonReward": 208773.77,
+      "deliveryServices": 14993.3,
+      "agentServices": 41758.95,
+      "fboServices": 0,
+      "adsPromotion": 72040.94,
+      "otherServicesFines": 317066.04,
+      "compensations": 19925.87,
+      "commissions": 208773.77,
+      "withdrawals": 0,
+      "adjustments": 2845.85,
+      "totalAccrued": 7316824
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|2026-02-14|2026-03-13": {
+    "updatedAt": 1773405089943,
+    "currentBalance": 1910750.68,
+    "breakdown": {
+      "sales": 7422355.28,
+      "refunds": 275920.26,
+      "ozonReward": 187521.18,
+      "deliveryServices": 11940.54,
+      "agentServices": 37508.53,
+      "fboServices": 0,
+      "adsPromotion": 50738.05,
+      "otherServicesFines": 352456.53,
+      "compensations": 19569.28,
+      "commissions": 187521.18,
+      "withdrawals": 0,
+      "adjustments": 2602.96,
+      "totalAccrued": 6528442.43
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-02-14|2026-03-13": {
+    "updatedAt": 1773414490657,
+    "currentBalance": 1930704.17,
+    "breakdown": {
+      "sales": 7469288.28,
+      "refunds": 276339.54,
+      "ozonReward": 188694.51,
+      "deliveryServices": 11940.54,
+      "agentServices": 37743.2,
+      "fboServices": 0,
+      "adsPromotion": 50746.19,
+      "otherServicesFines": 352657.83,
+      "compensations": 19569.28,
+      "commissions": 188694.51,
+      "withdrawals": 0,
+      "adjustments": 2602.96,
+      "totalAccrued": 6573338.71
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-02-15|2026-03-14": {
+    "updatedAt": 1773500353888,
+    "currentBalance": 1996819.58,
+    "breakdown": {
+      "sales": 7168658.72,
+      "refunds": 268257.13,
+      "ozonReward": 181145.91,
+      "deliveryServices": 11731.52,
+      "agentServices": 36237.34,
+      "fboServices": 0,
+      "adsPromotion": 45865.64,
+      "otherServicesFines": 350977.43,
+      "compensations": 19569.28,
+      "commissions": 181145.91,
+      "withdrawals": 0,
+      "adjustments": 2582.27,
+      "totalAccrued": 6296595.3
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-03-01|2026-03-14": {
+    "updatedAt": 1773512718542,
+    "currentBalance": 2010351.57,
+    "breakdown": {
+      "sales": 3638914,
+      "refunds": 132031.29,
+      "ozonReward": 91765.53,
+      "deliveryServices": 4571.39,
+      "agentServices": 18355.17,
+      "fboServices": 0,
+      "adsPromotion": 10080.74,
+      "otherServicesFines": 196281.3,
+      "compensations": 19070.99,
+      "commissions": 91765.53,
+      "withdrawals": 0,
+      "adjustments": 1426.47,
+      "totalAccrued": 3206326.04
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-03-01|2026-03-15": {
+    "updatedAt": 1773517398029,
+    "currentBalance": 2010618.01,
+    "breakdown": {
+      "sales": 3639728,
+      "refunds": 132031.29,
+      "ozonReward": 91785.88,
+      "deliveryServices": 4571.39,
+      "agentServices": 18359.24,
+      "fboServices": 0,
+      "adsPromotion": 10080.74,
+      "otherServicesFines": 196305.17,
+      "compensations": 19070.99,
+      "commissions": 91785.88,
+      "withdrawals": 0,
+      "adjustments": 1433.39,
+      "totalAccrued": 3207098.67
+    }
+  },
+  "ozon-breakdown|2026-03-01|2026-03-15": {
+    "updatedAt": 1773517398247,
+    "currentBalance": 2010618.01,
+    "breakdown": {
+      "sales": 3639728,
+      "refunds": 132031.29,
+      "ozonReward": 91785.88,
+      "deliveryServices": 4571.39,
+      "agentServices": 18359.24,
+      "fboServices": 0,
+      "adsPromotion": 10080.74,
+      "otherServicesFines": 196305.17,
+      "compensations": 19070.99,
+      "commissions": 91785.88,
+      "withdrawals": 0,
+      "adjustments": 1433.39,
+      "totalAccrued": 3207098.67
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-02-17|2026-03-16": {
+    "updatedAt": 1773686638545,
+    "currentBalance": 2112944.63,
+    "breakdown": {
+      "sales": 6767083.72,
+      "refunds": 257233.69,
+      "ozonReward": 169428.32,
+      "deliveryServices": 10183.82,
+      "agentServices": 34178.94,
+      "fboServices": 0,
+      "adsPromotion": 38477.74,
+      "otherServicesFines": 326509.73,
+      "compensations": 19569.28,
+      "commissions": 169428.32,
+      "withdrawals": 0,
+      "adjustments": 2614.09,
+      "totalAccrued": 5953254.85
+    }
+  },
+  "ozon-breakdown|2026-02-17|2026-03-16": {
+    "updatedAt": 1773686638551,
+    "currentBalance": 2112944.63,
+    "breakdown": {
+      "sales": 6767083.72,
+      "refunds": 257233.69,
+      "ozonReward": 169428.32,
+      "deliveryServices": 10183.82,
+      "agentServices": 34178.94,
+      "fboServices": 0,
+      "adsPromotion": 38477.74,
+      "otherServicesFines": 326509.73,
+      "compensations": 19569.28,
+      "commissions": 169428.32,
+      "withdrawals": 0,
+      "adjustments": 2614.09,
+      "totalAccrued": 5953254.85
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-03-01|2026-03-16": {
+    "updatedAt": 1773685767315,
+    "currentBalance": 2112975.48,
+    "breakdown": {
+      "sales": 3942174,
+      "refunds": 148191.53,
+      "ozonReward": 97899.55,
+      "deliveryServices": 4571.39,
+      "agentServices": 19871.49,
+      "fboServices": 0,
+      "adsPromotion": 10130.07,
+      "otherServicesFines": 213857.03,
+      "compensations": 19070.99,
+      "commissions": 97899.55,
+      "withdrawals": 0,
+      "adjustments": 1666.17,
+      "totalAccrued": 3468390.1
+    }
+  },
+  "ozon-breakdown|2026-03-01|2026-03-16": {
+    "updatedAt": 1773685767321,
+    "currentBalance": 2112975.48,
+    "breakdown": {
+      "sales": 3942174,
+      "refunds": 148191.53,
+      "ozonReward": 97899.55,
+      "deliveryServices": 4571.39,
+      "agentServices": 19871.49,
+      "fboServices": 0,
+      "adsPromotion": 10130.07,
+      "otherServicesFines": 213857.03,
+      "compensations": 19070.99,
+      "commissions": 97899.55,
+      "withdrawals": 0,
+      "adjustments": 1666.17,
+      "totalAccrued": 3468390.1
+    }
+  },
+  "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-02-20|2026-03-19": {
+    "updatedAt": 1773924960404,
+    "currentBalance": 1723386.14,
+    "breakdown": {
+      "sales": 6502564.44,
+      "refunds": 244811.9,
+      "ozonReward": 157868.41,
+      "deliveryServices": 8712.17,
+      "agentServices": 32796.02,
+      "fboServices": 0,
+      "adsPromotion": 32383.2,
+      "otherServicesFines": 413393.91,
+      "compensations": 19569.28,
+      "commissions": 157868.41,
+      "withdrawals": 0,
+      "adjustments": 2511.82,
+      "totalAccrued": 5634679.93
+    }
+  },
+  "ozon-breakdown|2026-02-20|2026-03-19": {
+    "updatedAt": 1773924960411,
+    "currentBalance": 1723386.14,
+    "breakdown": {
+      "sales": 6502564.44,
+      "refunds": 244811.9,
+      "ozonReward": 157868.41,
+      "deliveryServices": 8712.17,
+      "agentServices": 32796.02,
+      "fboServices": 0,
+      "adsPromotion": 32383.2,
+      "otherServicesFines": 413393.91,
+      "compensations": 19569.28,
+      "commissions": 157868.41,
+      "withdrawals": 0,
+      "adjustments": 2511.82,
+      "totalAccrued": 5634679.93
+    }
+  }
+}

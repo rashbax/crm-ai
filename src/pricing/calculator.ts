@@ -99,20 +99,33 @@ export function calculateTargetPrice(
 export function determineTargetMargin(
   riskLevel: RiskLevel,
   availableUnits: number,
-  daysOfCover: number
+  daysOfCover: number,
+  config?: {
+    highRiskTargetMarginPct?: number;
+    highStockTargetMarginPct?: number;
+    defaultTargetMarginPct?: number;
+    highStockUnitsThreshold?: number;
+    highStockDaysOfCoverThreshold?: number;
+  }
 ): number {
+  const highRiskTargetMarginPct = config?.highRiskTargetMarginPct ?? 0.25;
+  const highStockTargetMarginPct = config?.highStockTargetMarginPct ?? 0.15;
+  const defaultTargetMarginPct = config?.defaultTargetMarginPct ?? 0.2;
+  const highStockUnitsThreshold = config?.highStockUnitsThreshold ?? 2000;
+  const highStockDaysOfCoverThreshold = config?.highStockDaysOfCoverThreshold ?? 30;
+
   // High risk: protect margin (slower sales)
   if (riskLevel === "HIGH" || riskLevel === "CRITICAL") {
-    return 0.25; // 25%
+    return highRiskTargetMarginPct;
   }
 
   // Very high stock: move inventory
-  if (availableUnits > 2000 || daysOfCover > 30) {
-    return 0.15; // 15%
+  if (availableUnits > highStockUnitsThreshold || daysOfCover > highStockDaysOfCoverThreshold) {
+    return highStockTargetMarginPct;
   }
 
   // Default target margin
-  return 0.20; // 20%
+  return defaultTargetMarginPct;
 }
 
 /**
@@ -185,11 +198,22 @@ export function calculateGuardrails(
   cogs: number,
   fees: FeesConfig,
   riskLevel: RiskLevel,
-  acos?: number
+  acos?: number,
+  config?: {
+    lowMarginBlockPct?: number;
+    targetMargin?: {
+      highRiskTargetMarginPct?: number;
+      highStockTargetMarginPct?: number;
+      defaultTargetMarginPct?: number;
+      highStockUnitsThreshold?: number;
+      highStockDaysOfCoverThreshold?: number;
+    };
+  }
 ): PriceGuardrails {
   const minPrice = calculateMinPrice(cogs, fees);
-  const targetMarginPct = determineTargetMargin(riskLevel, 0, 0);
+  const targetMarginPct = determineTargetMargin(riskLevel, 0, 0, config?.targetMargin);
   const targetPrice = calculateTargetPrice(cogs, fees, targetMarginPct);
+  const lowMarginBlockPct = config?.lowMarginBlockPct ?? 0.05;
 
   const currentMarginPerUnit = calculateNetProfit(currentPrice, cogs, fees);
   const currentMarginPct = calculateMarginPct(currentPrice, cogs, fees);
@@ -210,8 +234,8 @@ export function calculateGuardrails(
   }
 
   // Check low margin
-  if (currentMarginPct < 0.05) {
-    warnings.push("Margin dangerously low (<5%)");
+  if (currentMarginPct < lowMarginBlockPct) {
+    warnings.push(`Margin dangerously low (<${Math.round(lowMarginBlockPct * 100)}%)`);
     blocked = true;
   }
 

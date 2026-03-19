@@ -50,9 +50,9 @@ export function TableHead({ children, className = "" }: TableProps) {
   );
 }
 
-export function TableCell({ children, className = "" }: TableProps) {
+export function TableCell({ children, className = "", colSpan, rowSpan }: TableProps & { colSpan?: number; rowSpan?: number }) {
   return (
-    <td className={`px-6 py-4 text-text-main ${className}`}>
+    <td className={`px-6 py-4 text-text-main ${className}`} colSpan={colSpan} rowSpan={rowSpan}>
       {children}
     </td>
   );

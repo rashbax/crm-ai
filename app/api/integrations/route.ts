@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import { listMarketplaces } from '@/src/marketplaces/registry';
 import { getAllConnections } from '@/src/integrations/enabled';
+import { getEffectiveEnabledData, sanitizeCapabilities } from '@/src/integrations/capabilities';
 import { requireAuth } from '@/lib/auth-guard';
 import type { ConnectionSummary } from '@/src/integrations/types';
 
@@ -29,13 +30,14 @@ export async function GET() {
 			marketplaceId: conn.marketplaceId,
 			name: conn.name,
 			enabled: conn.enabled,
-			enabledData: conn.enabledData,
+			enabledData: getEffectiveEnabledData(conn),
 			lastTestAt: conn.lastTestAt,
 			lastSyncAt: conn.lastSyncAt,
 			lastError: conn.lastError,
 			accountLabel: conn.accountLabel,
 			createdAt: conn.createdAt,
 			updatedAt: conn.updatedAt,
+			capabilities: sanitizeCapabilities(conn.capabilities),
 		}));
 
 		if (connections.length === 0 && !isDryRun)

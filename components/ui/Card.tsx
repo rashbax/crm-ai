@@ -1,13 +1,14 @@
 import React from "react";
 
-interface CardProps {
+export interface CardProps {
   children: React.ReactNode;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export function Card({ children, className = "" }: CardProps) {
+export function Card({ children, className = "", onClick }: CardProps) {
   return (
-    <div className={`bg-card rounded-card shadow-card border border-border ${className}`}>
+    <div className={`bg-card rounded-card shadow-card border border-border ${className}`} onClick={onClick}>
       {children}
     </div>
   );

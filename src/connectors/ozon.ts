@@ -4,11 +4,12 @@
 
 import type {
   MarketplaceConnector,
+  ConnectionCapabilityTestKey,
   TestConnectionResult,
   DateRange,
   OzonCredentials,
 } from "./types";
-import type { OrderEvent, StockState, AdsDaily, PriceState } from "@/src/pricing/types";
+import type { OrderEvent, StockState, AdsDaily, PriceState, PriceIndexPair } from "@/src/pricing/types";
 
 const REAL_API = process.env.REAL_API === "1";
 const DRY_RUN = process.env.DRY_RUN === "1";
@@ -16,6 +17,7 @@ const OZON_API_BASE = "https://api-seller.ozon.ru";
 const DEFAULT_ORDERS_LOOKBACK_DAYS = 365;
 const ORDERS_PAGE_LIMIT = 100;
 const MAX_ORDER_PAGES = 100;
+const OZON_PERFORMANCE_API_BASE = "https://api-performance.ozon.ru";
 
 function assertCredentials(creds: OzonCredentials): void {
   if (!creds?.clientId || !creds?.apiKey) {
@@ -40,6 +42,146 @@ function parseNumber(input: unknown): number {
     return Number.isFinite(num) ? num : 0;
   }
   return 0;
+}
+
+function normalizeString(input: unknown): string | undefined {
+  if (typeof input !== "string") return undefined;
+  const value = input.trim();
+  return value ? value : undefined;
+}
+
+function normalizeBoolean(input: unknown): boolean | undefined {
+  if (typeof input === "boolean") return input;
+  if (typeof input === "string") {
+    const s = input.trim().toLowerCase();
+    if (["true", "1", "yes", "active", "visible", "on_sale", "onsale"].includes(s)) return true;
+    if (["false", "0", "no", "inactive", "hidden", "not_on_sale", "notsale"].includes(s)) return false;
+  }
+  return undefined;
+}
+
+function deriveOnSale(status?: string, visibility?: string): boolean | undefined {
+  const s = (status || "").toLowerCase();
+  const v = (visibility || "").toLowerCase();
+
+  const visible =
+    !v || v.includes("visible") || v.includes("in_sale") || v.includes("sale") || v.includes("published");
+  const disabledByVisibility =
+    v.includes("hidden") || v.includes("inactive") || v.includes("blocked") || v.includes("out_of_stock");
+  const disabledByStatus =
+    s.includes("archiv") || s.includes("disabled") || s.includes("blocked") || s.includes("not_for_sale");
+
+  if (!status && !visibility) return undefined;
+  if (disabledByVisibility || disabledByStatus) return false;
+  return visible;
+}
+
+function tryBuildPriceIndexPair(raw: any, fallbackOwnPrice: number): PriceIndexPair | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const ownPrice = parseNumber(
+    raw.own_price ??
+      raw.seller_price ??
+      raw.your_price ??
+      raw.my_price ??
+      fallbackOwnPrice
+  );
+  const marketPrice = parseNumber(
+    raw.market_price ??
+      raw.external_price ??
+      raw.competitor_price ??
+      raw.index_price ??
+      raw.reference_price
+  );
+
+  if (ownPrice <= 0 || marketPrice <= 0) return null;
+
+  const ordersRaw =
+    raw.orders ??
+    raw.orders_count ??
+    raw.sales ??
+    raw.sales_count;
+  const ordersParsed = parseNumber(ordersRaw);
+  const source = normalizeString(raw.source ?? raw.type ?? raw.name);
+
+  return {
+    ownPrice,
+    marketPrice,
+    orders: ordersParsed > 0 ? Math.round(ordersParsed) : undefined,
+    source,
+  };
+}
+
+function collectPriceIndexPairs(input: any, fallbackOwnPrice: number, depth: number = 0): PriceIndexPair[] {
+  if (!input || depth > 4) return [];
+
+  const out: PriceIndexPair[] = [];
+  const pushPair = (pair: PriceIndexPair | null) => {
+    if (pair) out.push(pair);
+  };
+
+  if (Array.isArray(input)) {
+    for (const item of input) {
+      out.push(...collectPriceIndexPairs(item, fallbackOwnPrice, depth + 1));
+    }
+    return out;
+  }
+
+  if (typeof input !== "object") return out;
+
+  pushPair(tryBuildPriceIndexPair(input, fallbackOwnPrice));
+
+  const nestedKeys = [
+    "pairs",
+    "items",
+    "values",
+    "data",
+    "prices",
+    "external_index_data",
+    "price_indexes",
+    "price_index",
+  ];
+  for (const key of nestedKeys) {
+    if (key in input) {
+      out.push(...collectPriceIndexPairs((input as any)[key], fallbackOwnPrice, depth + 1));
+    }
+  }
+
+  return out;
+}
+
+function dedupePriceIndexPairs(pairs: PriceIndexPair[]): PriceIndexPair[] {
+  const seen = new Set<string>();
+  const out: PriceIndexPair[] = [];
+
+  for (const pair of pairs) {
+    const key = `${pair.ownPrice.toFixed(2)}-${pair.marketPrice.toFixed(2)}-${pair.source || ""}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(pair);
+  }
+
+  return out;
+}
+
+function extractOzonPriceIndexPairs(item: any, currentPrice: number): PriceIndexPair[] | undefined {
+  const rawSources = [
+    item?.price_index,
+    item?.price_indexes,
+    item?.price_index_data,
+    item?.index_data,
+    item?.price?.price_index,
+    item?.price?.price_indexes,
+    item?.price?.external_index_data,
+  ];
+
+  const collected = rawSources.flatMap((src) => collectPriceIndexPairs(src, currentPrice));
+  const pairs = dedupePriceIndexPairs(collected)
+    .filter((pair) => pair.ownPrice > 0 && pair.marketPrice > 0)
+    .sort((a, b) => (b.orders || 0) - (a.orders || 0))
+    .slice(0, 3);
+
+  return pairs.length > 0 ? pairs : undefined;
 }
 
 function normalizeDateTime(input: unknown): string {
@@ -79,6 +221,58 @@ async function ozonPost<T>(
   }
 
   return (body ?? {}) as T;
+}
+
+async function ozonPerformanceProbe(creds: OzonCredentials): Promise<TestConnectionResult> {
+  if (!creds?.clientId || !creds?.apiKey) {
+    return { ok: false, error: "Client ID and API key are required" };
+  }
+
+  if (DRY_RUN) {
+    return { ok: true, accountLabel: `Demo Ozon Ads (${creds.clientId})` };
+  }
+
+  if (!REAL_API) {
+    return {
+      ok: true,
+      accountLabel: `Ozon Ads (${creds.clientId})`,
+      warning: "Live Ads API verification is skipped because REAL_API is disabled.",
+    };
+  }
+
+  try {
+    const response = await fetch(`${OZON_PERFORMANCE_API_BASE}/api/client/campaign`, {
+      method: "GET",
+      headers: {
+        "Client-Id": creds.clientId,
+        "Api-Key": creds.apiKey,
+      },
+      cache: "no-store",
+    });
+
+    const text = await response.text();
+    if (response.ok) {
+      return { ok: true, accountLabel: `Ozon Ads (${creds.clientId})` };
+    }
+
+    if (response.status === 401 || response.status === 403) {
+      return {
+        ok: false,
+        error: text || "Ads API credentials were rejected by Ozon Performance API.",
+      };
+    }
+
+    return {
+      ok: true,
+      accountLabel: `Ozon Ads (${creds.clientId})`,
+      warning: `Ads API responded with HTTP ${response.status}; credentials may be valid but account access still needs verification.`,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Ads API connection failed",
+    };
+  }
 }
 
 async function tryEndpoints<T>(
@@ -372,6 +566,45 @@ export const ozonConnector: MarketplaceConnector = {
         error: error instanceof Error ? error.message : "Connection failed",
       };
     }
+  },
+
+  async testCapability(
+    capability: ConnectionCapabilityTestKey,
+    creds: OzonCredentials
+  ): Promise<TestConnectionResult> {
+    if (capability === "core") {
+      return this.testConnection(creds);
+    }
+
+    if (capability === "ads") {
+      return ozonPerformanceProbe(creds);
+    }
+
+    if (!creds?.clientId || !creds?.apiKey) {
+      return { ok: false, error: "Client ID and API key are required" };
+    }
+
+    if (DRY_RUN) {
+      return { ok: true, accountLabel: `Demo Ozon Premium (${creds.clientId})` };
+    }
+
+    if (!REAL_API) {
+      return {
+        ok: true,
+        accountLabel: `Ozon Premium (${creds.clientId})`,
+        warning: "Premium capability was saved without live verification because REAL_API is disabled.",
+      };
+    }
+
+    const priceResult = await this.fetchPrices(creds);
+    return {
+      ok: true,
+      accountLabel: `Ozon Premium (${creds.clientId})`,
+      warning:
+        priceResult.length > 0
+          ? "Base price data is reachable. Premium competitor access still requires a dedicated endpoint integration."
+          : "Core API is reachable, but premium competitor access is not separately verified yet.",
+    };
   },
 
   async fetchOrders(creds: OzonCredentials, range?: DateRange): Promise<OrderEvent[]> {
@@ -730,11 +963,37 @@ export const ozonConnector: MarketplaceConnector = {
           discountPct = Math.round(item.discount_percent);
         }
 
+        const status = normalizeString(
+          item?.status ||
+            item?.state ||
+            item?.product_status ||
+            item?.status_name ||
+            item?.status_type
+        );
+        const visibility = normalizeString(
+          item?.visibility ||
+            item?.visible ||
+            item?.visibility_state ||
+            item?.offer_visibility
+        );
+        const explicitOnSale = normalizeBoolean(
+          item?.on_sale ??
+            item?.is_on_sale ??
+            item?.selling ??
+            item?.is_visible
+        );
+        const onSale = explicitOnSale ?? deriveOnSale(status, visibility);
+        const priceIndexPairs = extractOzonPriceIndexPairs(item, price);
+
         const state: PriceState = {
           sku,
           marketplace: "ozon",
           price,
           discountPct,
+          status,
+          visibility,
+          onSale,
+          priceIndexPairs,
           updatedAt,
         };
         return state;

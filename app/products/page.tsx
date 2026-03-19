@@ -24,6 +24,7 @@ type StockHealth = "critical" | "low" | "normal" | "good";
 interface Product {
   id: string;
   sku: string;
+  marketplace: string;
   marketplaces: string[];
   connectionIds: string[];
   avgPrice: number;
@@ -35,24 +36,11 @@ interface Product {
   soldLast30d: number;
   status: ProductStatus;
   stockHealth: StockHealth;
-  firstSeenAt: string;
   updatedAt: string;
 }
 
 function formatMoney(value: number) {
   return `${value.toLocaleString("ru-RU", { maximumFractionDigits: 2 })} RUB`;
-}
-
-function formatDate(value: string, lang: Language) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString(lang === "ru" ? "ru-RU" : "uz-UZ", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 export default function ProductsPage() {
@@ -136,7 +124,7 @@ export default function ProductsPage() {
   const marketplaceOptions = useMemo(() => {
     const set = new Set<string>();
     for (const p of allProducts) {
-      for (const m of p.marketplaces) set.add(m);
+      set.add(p.marketplace);
     }
     return Array.from(set.values()).sort();
   }, [allProducts]);
@@ -146,12 +134,12 @@ export default function ProductsPage() {
     return allProducts.filter((p) => {
       const matchesSearch =
         p.sku.toLowerCase().includes(term) ||
-        p.marketplaces.join(",").toLowerCase().includes(term) ||
+        p.marketplace.toLowerCase().includes(term) ||
         String(p.avgPrice).includes(term);
 
       const matchesStatus = statusFilter === "all" || p.status === statusFilter;
       const matchesStock = stockFilter === "all" || p.stockHealth === stockFilter;
-      const matchesMarketplace = marketplaceFilter === "all" || p.marketplaces.includes(marketplaceFilter);
+      const matchesMarketplace = marketplaceFilter === "all" || p.marketplace === marketplaceFilter;
 
       return matchesSearch && matchesStatus && matchesStock && matchesMarketplace;
     });
@@ -187,7 +175,17 @@ export default function ProductsPage() {
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
+
+  const pageNumbers = useMemo(() => {
+    const visiblePages = 5;
+    const windowStart = Math.max(
+      1,
+      Math.min(currentPage - 2, Math.max(1, totalPages - visiblePages + 1))
+    );
+    const windowEnd = Math.min(totalPages, windowStart + visiblePages - 1);
+    return Array.from({ length: windowEnd - windowStart + 1 }, (_, i) => windowStart + i);
+  }, [currentPage, totalPages]);
 
   const handleResetFilters = () => {
     setSearch("");
@@ -196,6 +194,13 @@ export default function ProductsPage() {
     setMarketplaceFilter("all");
     setCurrentPage(1);
   };
+
+  useEffect(() => {
+    setCurrentPage((prev) => {
+      if (filteredProducts.length === 0) return 1;
+      return Math.min(prev, totalPages);
+    });
+  }, [filteredProducts.length, totalPages]);
 
   return (
     <Layout>
@@ -301,7 +306,6 @@ export default function ProductsPage() {
                   <TableHead>{labels.inbound}</TableHead>
                   <TableHead>{lang === "ru" ? "Продано 30д" : "30 kun sotuv"}</TableHead>
                   <TableHead>{labels.stockHealthCol}</TableHead>
-                  <TableHead>{lang === "ru" ? "Первое появление" : "Birinchi paydo bo'lish"}</TableHead>
                   <TableHead>{labels.status}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -312,9 +316,7 @@ export default function ProductsPage() {
                       <TableCell className="font-mono text-xs">{product.sku}</TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
-                          {product.marketplaces.map((m) => (
-                            <Badge key={`${product.id}-${m}`} variant="secondary">{m.toUpperCase()}</Badge>
-                          ))}
+                          <Badge variant="default">{product.marketplace.toUpperCase()}</Badge>
                         </div>
                       </TableCell>
                       <TableCell>{formatMoney(product.minPrice)} - {formatMoney(product.maxPrice)}</TableCell>
@@ -331,7 +333,7 @@ export default function ProductsPage() {
                       </TableCell>
                       <TableCell>{product.soldLast30d.toLocaleString(lang === "ru" ? "ru-RU" : "uz-UZ")}</TableCell>
                       <TableCell>
-                        <Badge variant={product.stockHealth === "critical" ? "danger" : product.stockHealth === "low" ? "secondary" : product.stockHealth === "normal" ? "default" : "success"}>
+                        <Badge variant={product.stockHealth === "critical" ? "danger" : product.stockHealth === "low" ? "warning" : product.stockHealth === "normal" ? "default" : "success"}>
                           {product.stockHealth === "critical"
                             ? labels.stockCritical
                             : product.stockHealth === "low"
@@ -341,7 +343,6 @@ export default function ProductsPage() {
                                 : labels.stockGood}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs text-text-muted">{formatDate(product.firstSeenAt, lang)}</TableCell>
                       <TableCell>
                         <StatusPill status={product.status}>
                           {product.status === "active" ? labels.statusActive : product.status === "draft" ? labels.statusDraft : labels.statusBlocked}
@@ -351,7 +352,7 @@ export default function ProductsPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-text-muted">
+                    <TableCell colSpan={9} className="text-center py-8 text-text-muted">
                       {labels.empty}
                     </TableCell>
                   </TableRow>
@@ -359,7 +360,7 @@ export default function ProductsPage() {
               </TableBody>
             </Table>
 
-            {totalPages > 1 && (
+            {filteredProducts.length > 0 && (
               <div className="px-6 py-4 border-t border-border">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-text-muted">{labels.page} {currentPage} / {totalPages}</p>
@@ -372,6 +373,21 @@ export default function ProductsPage() {
                     >
                       {labels.prev}
                     </Button>
+                    <div className="flex items-center gap-1">
+                      {pageNumbers.map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            page === currentPage
+                              ? "bg-primary text-white font-medium"
+                              : "hover:bg-background text-text-main"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"

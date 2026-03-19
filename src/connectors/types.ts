@@ -45,7 +45,10 @@ export interface TestConnectionResult {
   ok: boolean;
   accountLabel?: string;
   error?: string;
+  warning?: string;
 }
+
+export type ConnectionCapabilityTestKey = "core" | "ads" | "premium";
 
 /**
  * Date range for fetching
@@ -63,6 +66,14 @@ export interface MarketplaceConnector {
    * Test connection with credentials
    */
   testConnection(creds: any): Promise<TestConnectionResult>;
+
+  /**
+   * Test a marketplace-specific capability, if supported.
+   */
+  testCapability?(
+    capability: ConnectionCapabilityTestKey,
+    creds: any
+  ): Promise<TestConnectionResult>;
 
   /**
    * Fetch orders

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/Layout";
-import { RevenueChart } from "@/components/RevenueChart";
+import { formatIsoDayForLocale, getBusinessIsoDay } from "@/lib/date";
 import { storage } from "@/lib/storage";
 import { getTranslation } from "@/lib/translations";
+import { useEnabledConnections } from "@/src/integrations/useEnabledConnections";
 import type { Language } from "@/types";
 import {
   Badge,
@@ -14,36 +15,29 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  MetricChange,
   MetricLabel,
   MetricMain,
-  SearchInput,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@/components/ui";
 
-type TransactionType = "sale" | "refund" | "commission" | "withdrawal" | "adjustment";
-type Marketplace = "Ozon" | "Wildberries";
-
-interface Transaction {
-  id: string;
-  date: string;
-  type: TransactionType;
-  marketplace: Marketplace;
-  orderId?: string;
-  amount: number;
-  balance: number;
-  description: string;
+interface FinancePeriod {
+  from: string;
+  to: string;
 }
 
-interface ChartDataPoint {
-  date: string;
-  revenue: number;
-  orders: number;
+interface FinanceBreakdown {
+  sales: number;
+  refunds: number;
+  ozonReward: number;
+  deliveryServices: number;
+  agentServices: number;
+  fboServices: number;
+  adsPromotion: number;
+  otherServicesFines: number;
+  compensations: number;
+  commissions: number;
+  withdrawals: number;
+  adjustments: number;
+  totalAccrued: number;
 }
 
 interface FinanceSummary {
@@ -54,10 +48,24 @@ interface FinanceSummary {
   isEstimatedBalance?: boolean;
 }
 
+interface FinanceTypeCounts {
+  total: number;
+  sale: number;
+  refund: number;
+  commission: number;
+  withdrawal: number;
+  adjustment: number;
+}
+
 interface FinanceResponse {
-  transactions: Transaction[];
-  chartData: ChartDataPoint[];
+  period?: FinancePeriod;
+  breakdown?: FinanceBreakdown;
+  typeCounts?: FinanceTypeCounts;
   summary: FinanceSummary;
+  snapshot?: {
+    status: "fresh" | "stale" | "missing";
+    updatedAt?: string;
+  };
 }
 
 const formatCurrency = (amount: number) =>
@@ -67,88 +75,117 @@ const formatCurrency = (amount: number) =>
     maximumFractionDigits: 0,
   }).format(amount);
 
-function toInputDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function formatDateTime(value: string, lang: Language): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString(lang === "ru" ? "ru-RU" : "uz-UZ", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function toChartLabel(dateStr: string, lang: Language): string {
-  const date = new Date(`${dateStr}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return dateStr;
-  return date.toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", {
-    day: "numeric",
-    month: "short",
-  });
-}
-
-function toDateOnly(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+function formatPeriodRange(from: string, to: string, lang: Language): string {
+  const locale = lang === "ru" ? "ru-RU" : "uz-UZ";
+  return `${formatIsoDayForLocale(from, locale)} - ${formatIsoDayForLocale(to, locale)}`;
 }
 
 export default function FinancePage() {
+  const { enabledConnections } = useEnabledConnections();
+  const financeAbortRef = useRef<AbortController | null>(null);
+  const requestSeqRef = useRef(0);
   const [lang, setLang] = useState<Language>("ru");
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
-  const [marketplaceFilter, setMarketplaceFilter] = useState<Marketplace | "all">("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 15;
-
-  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
-  const [allChartData, setAllChartData] = useState<ChartDataPoint[]>([]);
+  const [appliedStartDate, setAppliedStartDate] = useState("");
+  const [appliedEndDate, setAppliedEndDate] = useState("");
+  const [period, setPeriod] = useState<FinancePeriod | null>(null);
+  const [breakdown, setBreakdown] = useState<FinanceBreakdown>({
+    sales: 0,
+    refunds: 0,
+    ozonReward: 0,
+    deliveryServices: 0,
+    agentServices: 0,
+    fboServices: 0,
+    adsPromotion: 0,
+    otherServicesFines: 0,
+    compensations: 0,
+    commissions: 0,
+    withdrawals: 0,
+    adjustments: 0,
+    totalAccrued: 0,
+  });
   const [summary, setSummary] = useState<FinanceSummary>({
     totalIncome: 0,
     totalExpenses: 0,
     currentBalance: 0,
     netIncome: 0,
   });
+  const [typeCounts, setTypeCounts] = useState<FinanceTypeCounts>({
+    total: 0,
+    sale: 0,
+    refund: 0,
+    commission: 0,
+    withdrawal: 0,
+    adjustment: 0,
+  });
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snapshotStatus, setSnapshotStatus] = useState<"fresh" | "stale" | "missing" | null>(null);
+  const [snapshotPollTick, setSnapshotPollTick] = useState(0);
+  const [snapshotPollAttempts, setSnapshotPollAttempts] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLang(storage.getLang());
 
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    setEndDate(toInputDate(today));
-    setStartDate(toInputDate(firstDayOfMonth));
+    const initialEnd = getBusinessIsoDay();
+    const initialStart = `${initialEnd.slice(0, 7)}-01`;
+    setStartDate(initialStart);
+    setEndDate(initialEnd);
+    setAppliedStartDate(initialStart);
+    setAppliedEndDate(initialEnd);
   }, []);
 
   useEffect(() => {
-    if (!startDate || !endDate) return;
+    if (!appliedStartDate || !appliedEndDate) return;
 
     const loadFinance = async () => {
-      setLoading(true);
+      const requestId = ++requestSeqRef.current;
+      financeAbortRef.current?.abort();
+      const controller = new AbortController();
+      financeAbortRef.current = controller;
+      const isInitial = requestId === 1;
+      if (isInitial) setLoading(true);
+      else setRefreshing(true);
       setError(null);
       try {
-        const query = new URLSearchParams({ startDate, endDate });
-        const response = await fetch(`/api/finance?${query.toString()}`, { cache: "no-store" });
+        const query = new URLSearchParams({
+          startDate: appliedStartDate,
+          endDate: appliedEndDate,
+        });
+        const response = await fetch(`/api/finance?${query.toString()}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
         const data = (await response.json()) as FinanceResponse;
-        setAllTransactions(Array.isArray(data.transactions) ? data.transactions : []);
-        setAllChartData(Array.isArray(data.chartData) ? data.chartData : []);
+        if (requestId !== requestSeqRef.current) return;
+        const status = data.snapshot?.status ?? null;
+        setSnapshotStatus(status);
+        if (status === "fresh") {
+          setSnapshotPollAttempts(0);
+        }
+        setPeriod(data.period || null);
+        setBreakdown(
+          data.breakdown || {
+            sales: 0,
+            refunds: 0,
+            ozonReward: 0,
+            deliveryServices: 0,
+            agentServices: 0,
+            fboServices: 0,
+            adsPromotion: 0,
+            otherServicesFines: 0,
+            compensations: 0,
+            commissions: 0,
+            withdrawals: 0,
+            adjustments: 0,
+            totalAccrued: 0,
+          }
+        );
         setSummary(
           data.summary || {
             totalIncome: 0,
@@ -157,107 +194,53 @@ export default function FinancePage() {
             netIncome: 0,
           }
         );
+        setTypeCounts(
+          data.typeCounts || {
+            total: 0,
+            sale: 0,
+            refund: 0,
+            commission: 0,
+            withdrawal: 0,
+            adjustment: 0,
+          }
+        );
       } catch (e) {
+        if ((e as Error)?.name === "AbortError") return;
+        if (requestId !== requestSeqRef.current) return;
         const msg = e instanceof Error ? e.message : "Unknown error";
         setError(msg);
       } finally {
-        setLoading(false);
+        if (requestId === requestSeqRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
     };
 
     loadFinance();
-  }, [startDate, endDate]);
-
-  const filteredTransactions = useMemo(() => {
-    return allTransactions.filter((transaction) => {
-      const matchesSearch =
-        transaction.id.toLowerCase().includes(search.toLowerCase()) ||
-        transaction.description.toLowerCase().includes(search.toLowerCase()) ||
-        (transaction.orderId || "").toLowerCase().includes(search.toLowerCase());
-
-      const matchesType = typeFilter === "all" || transaction.type === typeFilter;
-      const matchesMarketplace =
-        marketplaceFilter === "all" || transaction.marketplace === marketplaceFilter;
-
-      let matchesDate = true;
-      if (startDate && endDate) {
-        const txTime = new Date(transaction.date).getTime();
-        const startTime = new Date(`${startDate}T00:00:00`).getTime();
-        const endTime = new Date(`${endDate}T23:59:59`).getTime();
-        matchesDate = txTime >= startTime && txTime <= endTime;
-      }
-
-      return matchesSearch && matchesType && matchesMarketplace && matchesDate;
-    });
-  }, [allTransactions, search, typeFilter, marketplaceFilter, startDate, endDate]);
-
-  const chartData = useMemo(() => {
-    return allChartData
-      .filter((point) => {
-        if (!startDate || !endDate) return true;
-        return point.date >= startDate && point.date <= endDate;
-      })
-      .map((point) => ({
-        ...point,
-        date: toChartLabel(point.date, lang),
-      }));
-  }, [allChartData, startDate, endDate, lang]);
-
-  const availableRange = useMemo(() => {
-    if (allTransactions.length === 0) return null;
-
-    const sorted = allTransactions
-      .map((t) => toDateOnly(t.date))
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b));
-
-    if (sorted.length === 0) return null;
-    return { min: sorted[0], max: sorted[sorted.length - 1] };
-  }, [allTransactions]);
-
-  const typeCounts = useMemo(
-    () => ({
-      sale: allTransactions.filter((t) => t.type === "sale").length,
-      refund: allTransactions.filter((t) => t.type === "refund").length,
-      commission: allTransactions.filter((t) => t.type === "commission").length,
-      withdrawal: allTransactions.filter((t) => t.type === "withdrawal").length,
-      adjustment: allTransactions.filter((t) => t.type === "adjustment").length,
-    }),
-    [allTransactions]
-  );
-
-  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / transactionsPerPage));
-  const indexOfLastTransaction = currentPage * transactionsPerPage;
-  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = filteredTransactions.slice(
-    indexOfFirstTransaction,
-    indexOfLastTransaction
-  );
-
-  const profitability =
-    summary.totalIncome > 0 ? (summary.netIncome / summary.totalIncome) * 100 : 0;
-
-  const getTypeName = (type: TransactionType): string => {
-    const names = {
-      sale: lang === "ru" ? "Продажа" : "Sotuv",
-      refund: lang === "ru" ? "Возврат" : "Qaytarish",
-      commission: lang === "ru" ? "Комиссия" : "Komissiya",
-      withdrawal: lang === "ru" ? "Вывод" : "Yechib olish",
-      adjustment: lang === "ru" ? "Корректировка" : "Tuzatish",
+    return () => {
+      financeAbortRef.current?.abort();
     };
-    return names[type];
-  };
+  }, [
+    appliedStartDate,
+    appliedEndDate,
+    snapshotPollTick,
+  ]);
 
-  const handleResetFilters = () => {
-    setSearch("");
-    setTypeFilter("all");
-    setMarketplaceFilter("all");
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    setEndDate(toInputDate(today));
-    setStartDate(toInputDate(firstDayOfMonth));
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    setSnapshotPollAttempts(0);
+    setSnapshotPollTick(0);
+  }, [appliedStartDate, appliedEndDate]);
+
+  useEffect(() => {
+    if (snapshotStatus === null || snapshotStatus === "fresh") return;
+    if (snapshotPollAttempts >= 6) return;
+    const timer = setTimeout(() => {
+      setSnapshotPollAttempts((prev) => prev + 1);
+      setSnapshotPollTick((prev) => prev + 1);
+    }, 10_000);
+    return () => clearTimeout(timer);
+  }, [snapshotStatus, snapshotPollAttempts]);
 
   if (loading) {
     return (
@@ -334,234 +317,198 @@ export default function FinancePage() {
               {summary.netIncome >= 0 ? "+" : ""}
               {formatCurrency(summary.netIncome)} ₽
             </MetricMain>
-            <MetricChange value={`${profitability.toFixed(1)}%`} positive={summary.netIncome >= 0} />
           </CardBody>
         </Card>
       </div>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>{lang === "ru" ? "Динамика доходов" : "Daromad dinamikasi"}</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <div className="flex flex-wrap items-end gap-4 mb-4">
-            <div className="flex-1 min-w-[200px]">
-              <Input
-                type="date"
-                label={lang === "ru" ? "Начало периода" : "Davr boshlanishi"}
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <CardTitle>{lang === "ru" ? "Начислено за период" : "Davr bo'yicha hisoblangan"}</CardTitle>
+                <Badge variant="default" className="font-medium">
+                  {period ? formatPeriodRange(period.from, period.to, lang) : "—"}
+                </Badge>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <Input
+                  type="date"
+                  label={lang === "ru" ? "Начало периода" : "Davr boshlanishi"}
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <Input
+                  type="date"
+                  label={lang === "ru" ? "Конец периода" : "Davr tugashi"}
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+                <div className="flex items-end">
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      if (!startDate || !endDate) return;
+                      setAppliedStartDate(startDate);
+                      setAppliedEndDate(endDate);
+                    }}
+                    disabled={!startDate || !endDate || refreshing}
+                    className="w-full"
+                  >
+                    {lang === "ru" ? "Применить" : "Qo'llash"}
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="flex-1 min-w-[200px]">
-              <Input
-                type="date"
-                label={lang === "ru" ? "Конец периода" : "Davr tugashi"}
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
+          </CardHeader>
+          <CardBody>
+            <div className="space-y-2">
+              {[
+                {
+                  key: "sales",
+                  labelRu: "Продажи",
+                  labelUz: "Sotuvlar",
+                  value: breakdown.sales,
+                  tone: "text-success",
+                },
+                {
+                  key: "refunds",
+                  labelRu: "Возвраты",
+                  labelUz: "Qaytarishlar",
+                  value: -breakdown.refunds,
+                  tone: "text-danger",
+                },
+                {
+                  key: "ozonReward",
+                  labelRu: "Вознаграждение Ozon",
+                  labelUz: "Ozon mukofoti",
+                  value: -breakdown.ozonReward,
+                  tone: "text-danger",
+                },
+                {
+                  key: "deliveryServices",
+                  labelRu: "Услуги доставки",
+                  labelUz: "Yetkazib berish xizmatlari",
+                  value: -breakdown.deliveryServices,
+                  tone: "text-danger",
+                },
+                {
+                  key: "agentServices",
+                  labelRu: "Услуги агентов",
+                  labelUz: "Agent xizmatlari",
+                  value: -breakdown.agentServices,
+                  tone: "text-danger",
+                },
+                {
+                  key: "fboServices",
+                  labelRu: "Услуги FBO",
+                  labelUz: "FBO xizmatlari",
+                  value: -breakdown.fboServices,
+                  tone: "text-danger",
+                },
+                {
+                  key: "adsPromotion",
+                  labelRu: "Продвижение и реклама",
+                  labelUz: "Rag'batlantirish va reklama",
+                  value: -breakdown.adsPromotion,
+                  tone: "text-danger",
+                },
+                {
+                  key: "otherServicesFines",
+                  labelRu: "Другие услуги и штрафы",
+                  labelUz: "Boshqa xizmatlar va jarimalar",
+                  value: -breakdown.otherServicesFines,
+                  tone: "text-danger",
+                },
+                {
+                  key: "compensations",
+                  labelRu: "Компенсации и декомпенсации",
+                  labelUz: "Kompensatsiyalar va dekompensatsiyalar",
+                  value: breakdown.compensations,
+                  tone: breakdown.compensations >= 0 ? "text-success" : "text-danger",
+                },
+                {
+                  key: "withdrawals",
+                  labelRu: "Выводы",
+                  labelUz: "Yechib olishlar",
+                  value: -breakdown.withdrawals,
+                  tone: "text-danger",
+                },
+                {
+                  key: "adjustments",
+                  labelRu: "Корректировки",
+                  labelUz: "Tuzatishlar",
+                  value: breakdown.adjustments,
+                  tone: breakdown.adjustments >= 0 ? "text-success" : "text-danger",
+                },
+              ].map((row) => (
+                <div key={row.key} className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
+                  <p className="text-sm text-text-main">
+                    {lang === "ru" ? row.labelRu : row.labelUz}
+                  </p>
+                  <p className={`text-sm font-semibold tabular-nums ${row.tone}`}>
+                    {row.value > 0 ? "+" : ""}
+                    {formatCurrency(row.value)} ₽
+                  </p>
+                </div>
+              ))}
             </div>
-          </div>
-          {availableRange && (
+
+            <div className="mt-4 flex items-center justify-between rounded-xl bg-background px-4 py-3">
+              <p className="text-sm font-medium text-text-main">
+                {lang === "ru" ? "Итог начислено" : "Jami hisoblangan"}
+              </p>
+              <p className={`text-base font-bold tabular-nums ${breakdown.totalAccrued >= 0 ? "text-success" : "text-danger"}`}>
+                {breakdown.totalAccrued > 0 ? "+" : ""}
+                {formatCurrency(breakdown.totalAccrued)} ₽
+              </p>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{lang === "ru" ? "Площадки" : "Platformalar"}</CardTitle>
+          </CardHeader>
+          <CardBody>
             <p className="text-xs text-text-muted mb-3">
               {lang === "ru"
-                ? `Данные доступны с ${availableRange.min} по ${availableRange.max}`
-                : `Ma'lumotlar oralig'i: ${availableRange.min} - ${availableRange.max}`}
+                ? "Переход к детальной финансовой странице каждой подключенной площадки"
+                : "Har bir ulangan platformaning batafsil moliya sahifasiga o'tish"}
             </p>
-          )}
-
-          <RevenueChart data={chartData} lang={lang} />
-        </CardBody>
-      </Card>
-
-      <Card className="mb-6">
-        <div className="p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 min-w-[250px]">
-              <SearchInput
-                placeholder={
-                  lang === "ru"
-                    ? "Поиск по транзакциям..."
-                    : "Tranzaksiyalar bo'yicha qidirish..."
-                }
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
+            <div className="space-y-2">
+              {enabledConnections.map((connection) => {
+                const labelMap: Record<string, string> = {
+                  ozon: "Ozon",
+                  wb: "Wildberries",
+                  ym: "Yandex Market",
+                  uzum: "Uzum",
+                };
+                const title = labelMap[connection.marketplaceId] || connection.marketplaceId;
+                const hasDetailPage = connection.marketplaceId === "ozon" || connection.marketplaceId === "wb";
+                return (
+                  <a
+                    key={connection.id}
+                    href={`/finance/${connection.marketplaceId}`}
+                    target={hasDetailPage ? "_blank" : undefined}
+                    rel={hasDetailPage ? "noopener noreferrer" : undefined}
+                    className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm hover:bg-background transition-colors"
+                  >
+                    <span>{title}</span>
+                    <span className="text-text-muted">→</span>
+                  </a>
+                );
+              })}
+              {enabledConnections.length === 0 && (
+                <p className="text-xs text-text-muted">
+                  {lang === "ru" ? "Нет подключенных площадок" : "Ulangan platformalar yo'q"}
+                </p>
+              )}
             </div>
-
-            <div>
-              <select
-                value={typeFilter}
-                onChange={(e) => {
-                  setTypeFilter(e.target.value as TransactionType | "all");
-                  setCurrentPage(1);
-                }}
-                className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="all">
-                  {lang === "ru" ? "Все типы" : "Barcha turlar"} ({allTransactions.length})
-                </option>
-                <option value="sale">{getTypeName("sale")} ({typeCounts.sale})</option>
-                <option value="refund">{getTypeName("refund")} ({typeCounts.refund})</option>
-                <option value="commission">{getTypeName("commission")} ({typeCounts.commission})</option>
-                <option value="withdrawal">{getTypeName("withdrawal")} ({typeCounts.withdrawal})</option>
-                <option value="adjustment">{getTypeName("adjustment")} ({typeCounts.adjustment})</option>
-              </select>
-            </div>
-
-            <div>
-              <select
-                value={marketplaceFilter}
-                onChange={(e) => {
-                  setMarketplaceFilter(e.target.value as Marketplace | "all");
-                  setCurrentPage(1);
-                }}
-                className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="all">{lang === "ru" ? "Все площадки" : "Barcha platformalar"}</option>
-                <option value="Ozon">Ozon</option>
-                <option value="Wildberries">Wildberries</option>
-              </select>
-            </div>
-
-            {(search || typeFilter !== "all" || marketplaceFilter !== "all") && (
-              <div>
-                <Button variant="ghost" size="sm" onClick={handleResetFilters}>
-                  {lang === "ru" ? "Сбросить" : "Tozalash"}
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-text-muted">
-          {lang === "ru"
-            ? `Показано ${currentTransactions.length} из ${filteredTransactions.length} транзакций`
-            : `${currentTransactions.length} dan ${filteredTransactions.length} ta tranzaksiya ko'rsatilmoqda`}
-        </p>
-        <Badge variant="default">
-          {lang === "ru" ? "Всего" : "Jami"}: {filteredTransactions.length}
-        </Badge>
+          </CardBody>
+        </Card>
       </div>
 
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>{lang === "ru" ? "Дата" : "Sana"}</TableHead>
-              <TableHead>{lang === "ru" ? "Тип" : "Turi"}</TableHead>
-              <TableHead>{lang === "ru" ? "Описание" : "Tavsif"}</TableHead>
-              <TableHead>{lang === "ru" ? "Площадка" : "Platforma"}</TableHead>
-              <TableHead>{lang === "ru" ? "Сумма" : "Summa"}</TableHead>
-              <TableHead>{lang === "ru" ? "Баланс" : "Balans"}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentTransactions.length > 0 ? (
-              currentTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell className="font-medium font-mono text-xs">{transaction.id}</TableCell>
-                  <TableCell className="text-xs text-text-muted">
-                    {formatDateTime(transaction.date, lang)}
-                  </TableCell>
-                  <TableCell className="text-xs text-text-muted">{getTypeName(transaction.type)}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="text-sm">{transaction.description}</p>
-                      {transaction.orderId && (
-                        <p className="text-xs text-text-muted">{transaction.orderId}</p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">{transaction.marketplace}</TableCell>
-                  <TableCell
-                    className={`font-semibold ${transaction.amount > 0 ? "text-success" : "text-danger"}`}
-                  >
-                    {transaction.amount > 0 ? "+" : ""}
-                    {formatCurrency(transaction.amount)} ₽
-                  </TableCell>
-                  <TableCell className="font-medium text-sm">
-                    {formatCurrency(transaction.balance)} ₽
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell className="py-8 text-text-muted">
-                  {lang === "ru"
-                    ? "Транзакции не найдены. Попробуйте изменить фильтры."
-                    : "Tranzaksiyalar topilmadi. Filtrlarni o'zgartirib ko'ring."}
-                </TableCell>
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-
-        {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-border">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-text-muted">
-                {lang === "ru"
-                  ? `Страница ${currentPage} из ${totalPages}`
-                  : `${currentPage}-sahifa, jami ${totalPages} ta`}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                >
-                  {lang === "ru" ? "Назад" : "Orqaga"}
-                </Button>
-
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-1 rounded text-sm ${
-                        page === currentPage
-                          ? "bg-primary text-white font-medium"
-                          : "hover:bg-background text-text-main"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  {lang === "ru" ? "Вперёд" : "Oldinga"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Card>
     </Layout>
   );
 }

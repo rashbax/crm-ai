@@ -1,4 +1,5 @@
-﻿import { requireAuth } from "@/lib/auth-guard";
+import { requireAuth } from "@/lib/auth-guard";
+import { getBusinessIsoDay } from "@/lib/date";
 import { NextResponse } from "next/server";
 import path from "path";
 import { readJsonFile } from "@/src/integrations/storage";
@@ -19,13 +20,12 @@ interface CanonicalOrder {
 
 const ORDERS_FILE = path.join(process.cwd(), "data", "canonical", "orders.json");
 
-function toMarketplaceLabel(marketplace?: string): "Ozon" | "Wildberries" | "WB" {
+function toMarketplaceLabel(marketplace?: string): "Ozon" | "Wildberries" {
   if (marketplace === "ozon") return "Ozon";
-  if (marketplace === "wb") return "Wildberries";
-  return "WB";
+  return "Wildberries";
 }
 
-function mapOzonStatusToUi(status?: string): OrderStatus | null {
+function mapSourceStatusToUi(status?: string): OrderStatus | null {
   if (!status) return null;
   const s = status.toLowerCase();
 
@@ -33,7 +33,9 @@ function mapOzonStatusToUi(status?: string): OrderStatus | null {
     s.includes("cancel") ||
     s.includes("canceled") ||
     s.includes("cancelled") ||
-    s.includes("отмен")
+    s.includes("отмен") ||
+    s.includes("return") ||
+    s.includes("возврат")
   ) {
     return "cancelled";
   }
@@ -43,8 +45,12 @@ function mapOzonStatusToUi(status?: string): OrderStatus | null {
     s.includes("delivered") ||
     s.includes("shipped") ||
     s.includes("awaiting_deliver") ||
+    s.includes("sold") ||
+    s.includes("complete") ||
+    s.includes("received") ||
     s.includes("в пути") ||
-    s.includes("достав")
+    s.includes("достав") ||
+    s.includes("получен")
   ) {
     return "shipped";
   }
@@ -56,7 +62,9 @@ function mapOzonStatusToUi(status?: string): OrderStatus | null {
     s.includes("accept") ||
     s.includes("awaiting") ||
     s.includes("pending") ||
-    s.includes("ожида")
+    s.includes("ordered") ||
+    s.includes("ожида") ||
+    s.includes("сборк")
   ) {
     return "processing";
   }
@@ -69,7 +77,7 @@ function mapOzonStatusToUi(status?: string): OrderStatus | null {
 }
 
 function deriveStatus(dateStr: string, sourceStatus?: string): OrderStatus {
-  const mapped = mapOzonStatusToUi(sourceStatus);
+  const mapped = mapSourceStatusToUi(sourceStatus);
   if (mapped) return mapped;
 
   const now = new Date();
@@ -84,7 +92,7 @@ function deriveStatus(dateStr: string, sourceStatus?: string): OrderStatus {
 
 function parseOrderDate(input: string): number {
   if (!input) return 0;
-  const normalized = input.includes("T") ? input : `${input}T00:00:00`;
+  const normalized = input.includes("T") ? input : `${input}T00:00:00.000Z`;
   const ts = new Date(normalized).getTime();
   return Number.isFinite(ts) ? ts : 0;
 }
@@ -106,7 +114,9 @@ export async function GET() {
 
     const orders = sorted.map((order, index) => {
       const sourceDate = order.date;
-      const normalizedDate = order.date.includes("T") ? order.date : `${order.date}T00:00:00`;
+      const normalizedDate = order.date.includes("T")
+        ? order.date
+        : `${getBusinessIsoDay(order.date)}T00:00:00.000Z`;
       const qty = Number.isFinite(order.qty) ? order.qty : 0;
       const revenue = typeof order.revenue === "number" ? order.revenue : (order.price || 0) * qty;
       const unitPrice = qty > 0 ? revenue / qty : (order.price || 0);

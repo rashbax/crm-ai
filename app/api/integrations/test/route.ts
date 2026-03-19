@@ -7,13 +7,19 @@ import { requireAuth } from '@/lib/auth-guard';
 import { NextResponse } from "next/server";
 import { getMarketplace } from "@/src/marketplaces/registry";
 import { getConnector } from "@/src/connectors";
+import type { ConnectionCapabilityTestKey } from "@/src/connectors/types";
 
 export async function POST(request: Request) {
 	const { error } = await requireAuth();
 	if (error) return error;
   try {
     const body = await request.json();
-    const { marketplace, marketplaceId, creds } = body;
+    const { marketplace, marketplaceId, creds, capability } = body as {
+      marketplace?: string;
+      marketplaceId?: string;
+      creds?: Record<string, string>;
+      capability?: ConnectionCapabilityTestKey;
+    };
     const selectedMarketplace = marketplaceId ?? marketplace;
 
     if (!selectedMarketplace || !creds) {
@@ -42,7 +48,10 @@ export async function POST(request: Request) {
     }
 
     // Test connection
-    const result = await connector.testConnection(creds);
+    const result =
+      capability && connector.testCapability
+        ? await connector.testCapability(capability, creds)
+        : await connector.testConnection(creds);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error testing connection:", error);

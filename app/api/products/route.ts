@@ -10,7 +10,9 @@ type StockHealth = "critical" | "low" | "normal" | "good";
 
 interface ProductRow {
   id: string;
+  name: string;
   sku: string;
+  marketplace: string;
   marketplaces: string[];
   connectionIds: string[];
   avgPrice: number;
@@ -30,7 +32,36 @@ const PRICES_FILE = path.join(process.cwd(), "data", "canonical", "prices.json")
 const STOCKS_FILE = path.join(process.cwd(), "data", "canonical", "stocks.json");
 const ORDERS_FILE = path.join(process.cwd(), "data", "canonical", "orders.json");
 
-function getStockHealth(onHand: number): StockHealth {
+function asNonEmptyString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function pickNameFromRecord(record: Record<string, unknown> | null | undefined): string | null {
+  if (!record) return null;
+  return (
+    asNonEmptyString(record.name) ||
+    asNonEmptyString(record.title) ||
+    asNonEmptyString(record.productName) ||
+    asNonEmptyString(record.product_name) ||
+    asNonEmptyString(record.offerName) ||
+    asNonEmptyString(record.offer_name) ||
+    asNonEmptyString(record.itemName) ||
+    asNonEmptyString(record.item_name) ||
+    null
+  );
+}
+
+function getStockHealth(onHand: number, soldLast30d: number): StockHealth {
+  const dailyAvgSold = Math.max(0, soldLast30d) / 30;
+  const leadTimeDays = 7;
+  const leadTimeDemand = dailyAvgSold * leadTimeDays;
+  const projectedStockAtReplenishment = onHand - leadTimeDemand;
+
+  // Reorder point: current stock won't cover expected demand during replenishment lead time.
+  if (projectedStockAtReplenishment < 0) return "critical";
+
   if (onHand <= 0) return "critical";
   if (onHand < 200) return "critical";
   if (onHand < 500) return "low";
@@ -78,7 +109,10 @@ export async function GET() {
     const stocks = filterByEnabledConnections(stocksRaw, enabledConnections);
     const orders = filterByEnabledConnections(ordersRaw, enabledConnections);
 
-    const bySku = new Map<string, {
+    const bySkuMarketplace = new Map<string, {
+      sku: string;
+      name: string;
+      marketplace: string;
       marketplaces: Set<string>;
       connectionIds: Set<string>;
       prices: number[];
@@ -90,11 +124,17 @@ export async function GET() {
       updatedAtTs: number;
     }>();
 
-    const ensure = (sku: string) => {
-      const existing = bySku.get(sku);
+    const buildKey = (sku: string, marketplace: string) => `${sku}::${marketplace}`;
+
+    const ensure = (sku: string, marketplace: string) => {
+      const key = buildKey(sku, marketplace);
+      const existing = bySkuMarketplace.get(key);
       if (existing) return existing;
       const created = {
-        marketplaces: new Set<string>(),
+        sku,
+        name: sku,
+        marketplace,
+        marketplaces: new Set<string>([marketplace]),
         connectionIds: new Set<string>(),
         prices: [],
         onHand: 0,
@@ -104,12 +144,14 @@ export async function GET() {
         firstSeenTs: 0,
         updatedAtTs: 0,
       };
-      bySku.set(sku, created);
+      bySkuMarketplace.set(key, created);
       return created;
     };
 
     for (const p of prices) {
-      const item = ensure(p.sku);
+      const item = ensure(p.sku, p.marketplace);
+      const name = pickNameFromRecord(p as unknown as Record<string, unknown>);
+      if (name) item.name = name;
       item.marketplaces.add(p.marketplace);
       if (p.connectionId) item.connectionIds.add(p.connectionId);
       if (Number.isFinite(p.price)) item.prices.push(p.price);
@@ -119,7 +161,10 @@ export async function GET() {
     }
 
     for (const s of stocks) {
-      const item = ensure(s.sku);
+      if (!s.marketplace) continue;
+      const item = ensure(s.sku, s.marketplace);
+      const name = pickNameFromRecord(s as unknown as Record<string, unknown>);
+      if (name) item.name = name;
       if (s.marketplace) item.marketplaces.add(s.marketplace);
       if (s.connectionId) item.connectionIds.add(s.connectionId);
       item.stockKnown = true;
@@ -133,7 +178,10 @@ export async function GET() {
     const now = Date.now();
     const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
     for (const o of orders) {
-      const item = ensure(o.sku);
+      if (!o.marketplace) continue;
+      const item = ensure(o.sku, o.marketplace);
+      const name = pickNameFromRecord(o as unknown as Record<string, unknown>);
+      if (name) item.name = name;
       if (o.marketplace) item.marketplaces.add(o.marketplace);
       if (o.connectionId) item.connectionIds.add(o.connectionId);
       const ts = new Date(o.date).getTime();
@@ -144,7 +192,7 @@ export async function GET() {
       }
     }
 
-    const products: ProductRow[] = Array.from(bySku.entries()).map(([sku, item], idx) => {
+    const products: ProductRow[] = Array.from(bySkuMarketplace.values()).map((item, idx) => {
       const pricesSorted = item.prices.slice().sort((a, b) => a - b);
       const pricesCount = pricesSorted.length;
       const avgPrice = pricesCount > 0 ? item.prices.reduce((a, b) => a + b, 0) / pricesCount : 0;
@@ -158,13 +206,15 @@ export async function GET() {
         stockKnown: item.stockKnown,
         soldLast30d: item.soldLast30d,
       });
-      const stockHealth = getStockHealth(item.onHand);
+      const stockHealth = getStockHealth(item.onHand, item.soldLast30d);
       const updatedAt = item.updatedAtTs > 0 ? new Date(item.updatedAtTs).toISOString() : new Date(0).toISOString();
       const firstSeenAt = item.firstSeenTs > 0 ? new Date(item.firstSeenTs).toISOString() : updatedAt;
 
       return {
         id: `PRD-${idx + 1}`,
-        sku,
+        name: item.name || item.sku,
+        sku: item.sku,
+        marketplace: item.marketplace,
         marketplaces: Array.from(item.marketplaces.values()).sort(),
         connectionIds: Array.from(item.connectionIds.values()).sort(),
         avgPrice,

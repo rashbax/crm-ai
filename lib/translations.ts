@@ -8,7 +8,7 @@ import type { Translations } from '@/types';
 
 export const translations: Translations = {
 	ru: {
-		topbar_subtitle: 'Личный кабинет продавца • в стиле Ozon',
+		topbar_subtitle: 'Личный кабинет продавца',
 		topbar_help: 'Помощь',
 		
 		// Profile menu - НОВОЕ
@@ -36,6 +36,8 @@ export const translations: Translations = {
 		nav_prices: 'Цены и акции',
 		nav_finance: 'Финансы',
 		nav_analytics: 'Аналитика',
+		nav_tasks: 'Задачи 2.0',
+		nav_responsibilities: 'Ответственность',
 		nav_crm: 'CRM',
 		nav_integrations: 'Интеграции',
 		nav_promo: 'Продвижение',
@@ -167,7 +169,7 @@ export const translations: Translations = {
 		integrations_empty_cta: 'Добавить интеграцию',
 	},
 	uz: {
-		topbar_subtitle: "Sotuvchining shaxsiy kabineti • Ozon uslubida",
+		topbar_subtitle: 'Sotuvchining shaxsiy kabineti',
 		topbar_help: 'Yordam',
 		
 		// Profile menu - YANGI
@@ -195,6 +197,8 @@ export const translations: Translations = {
 		nav_prices: 'Narxlar va aksiyalar',
 		nav_finance: 'Moliya',
 		nav_analytics: 'Tahlil',
+		nav_tasks: 'Vazifalar 2.0',
+		nav_responsibilities: 'Javobgarlik',
 		nav_crm: 'CRM',
 		nav_integrations: 'Integratsiyalar',
 		nav_promo: 'Reklama',

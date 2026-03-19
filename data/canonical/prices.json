@@ -1,242 +1,514 @@
 [
   {
+    "sku": "БРУКЛИН БЕЛЫЙ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
     "sku": "Дев_кот белый",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Девочки и кот белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "китти голубой",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "КОВБОЙ БЕЛЫЙ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "кофта и юбка черный",
+    "marketplace": "wb",
+    "price": 1241.54,
+    "discountPct": 54,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "кю бежевый",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "кю черный",
     "marketplace": "ozon",
-    "price": 2650,
-    "discountPct": 7,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "price": 3999,
+    "discountPct": 34,
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "кю черный",
+    "marketplace": "wb",
+    "price": 1519.6,
+    "discountPct": 60,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив 1953_кор",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1953_кор",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив 1953",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1953",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив 1997",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив 1997",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив бел",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив бел",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив в полоску",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив в полоску",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив в полоску2",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив в полоску2",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив звезда_зел",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив звезда_зел",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив звезда",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 34,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив звезда",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив медведь_бел",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив медведь_бел",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив медведь_черн",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив медведь_черн",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив сердце",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив сердце",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив черн",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив черн",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив HAPPY",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 34,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив HAPPY",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив NAIT",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив NAIT",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "лонгслив SLIDE",
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "лонгслив SLIDE",
+    "marketplace": "wb",
+    "price": 1139.7,
+    "discountPct": 70,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "майка черный",
     "marketplace": "ozon",
     "price": 1950,
     "discountPct": 34,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "МАЙКА ЧЕРНЫЙ",
+    "marketplace": "wb",
+    "price": 728.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "ОРКЕСТР БЕЛЫЙ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Паук белый",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Паук белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "ПЛАНЕТА ЧЕРНЫЙ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Сердце без текста",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Сердце без текста",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Сердце текст",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Сердце текст",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Спящие коты белый",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Спящие коты белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТОМ ЖЕРРИ ЗЕЛЕН",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ЗЕЛЕН",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТОМ ЖЕРРИ ОРАНЖ",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ОРАНЖ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТОМ ЖЕРРИ ФИОЛ",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТОМ ЖЕРРИ ФИОЛ",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТОМ ЖЕРРИ ЧЕРНЫЙ",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "том жерри черный",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТомИДжериРисунок.Б",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТомИДжериРисунок.Б",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТомИДжериРисунок.Ч",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ТомИДжериРисунок.Ч",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ТОП БЕЛЫЙ С КНОПКАМИ",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -244,7 +516,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -252,31 +524,55 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "утки коричневый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "УТКИ ЧЕРНЫЙ",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "утки черный",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "футболка белый с принтом роза",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "футболка белый с принтом роза",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "футболка чёрный с принтом планета",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -284,31 +580,63 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА BLACK CAT",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ФУТБОЛКА CATs",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА CATs",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "ФУТБОЛКА DONALD белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ФУТБОЛКА DONALD_B",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКА DONALD_B",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ФУТБОЛКА DONALD_W",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -316,7 +644,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -324,39 +652,119 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКИ Kitty_Black",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ФУТБОЛКИ Kitty_Pink",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "ФУТБОЛКИ Kitty_Pink",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "хелло кэтти белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Brooklyn",
     "marketplace": "ozon",
-    "price": 2650,
-    "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "price": 2700,
+    "discountPct": 34,
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CAT_Red",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "CAT_summer",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "CAT_summer.BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "CAT_summer.BL.2",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "CAT_unique",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "CAT.Milk",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Cat.milk.BL",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Cat.milk.BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT.Red",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -364,7 +772,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -372,15 +780,23 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "CAT.unique.BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CATMilk",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -388,7 +804,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -396,7 +812,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -404,7 +820,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -412,7 +828,7 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -420,39 +836,71 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Girl_BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Girl_W",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Girl_W",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Heart_BL",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Heart_BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Hellokitty2",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Hellokitty2",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "HelloKitty3",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -460,47 +908,87 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "HellowKitty.BL",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Hotdog",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Hotdog",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Liza.M",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Liza.M",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Lufi",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Lufi",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "Noct белый",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Noct белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "RockNRoll",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -508,15 +996,31 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "Space белый",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
+  },
+  {
+    "sku": "STRAWBERRY",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "StrawberryBear",
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -524,7 +1028,15 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-02-19T10:49:16.254Z",
+    "updatedAt": "2026-03-16T16:33:34.000Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
+  },
+  {
+    "sku": "T&J.B",
+    "marketplace": "wb",
+    "price": 1025.73,
+    "discountPct": 73,
+    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   }
 ]

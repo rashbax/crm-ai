@@ -6,6 +6,7 @@
 import path from "path";
 import { readJsonFile } from "./storage";
 import type { Connection, ConnectionsStore, EnabledConnection } from "./types";
+import { getEffectiveEnabledData } from "./capabilities";
 
 const CONNECTIONS_FILE = path.join(process.cwd(), "data", "secure", "connections.json");
 
@@ -22,6 +23,12 @@ export async function getEnabledConnections(): Promise<EnabledConnection[]> {
       id: conn.id,
       marketplaceId: conn.marketplaceId,
       name: conn.name,
+      enabledData: getEffectiveEnabledData(conn),
+      capabilities: conn.capabilities
+        ? Object.fromEntries(
+            Object.entries(conn.capabilities).map(([key, capability]) => [key, { enabled: capability?.enabled ?? false }])
+          )
+        : undefined,
     }));
 }
 
