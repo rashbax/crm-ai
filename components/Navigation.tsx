@@ -11,6 +11,8 @@ const navItems = [
   { href: "/dashboard", key: "nav_main" },
   { href: "/tasks", key: "nav_tasks" },
   { href: "/responsibilities", key: "nav_responsibilities" },
+  { href: "/incidents", key: "nav_incidents" },
+  { href: "/approvals", key: "nav_approvals" },
   { href: "/orders", key: "nav_orders" },
   { href: "/products", key: "nav_products" },
   { href: "/automation", key: "nav_automation" },
@@ -19,7 +21,6 @@ const navItems = [
   { href: "/analytics", key: "nav_analytics" },
   { href: "/integrations", key: "nav_integrations" },
   { href: "/crm", key: "nav_crm" },
-  { href: "/promo", key: "nav_promo" },
 ];
 
 export default function Navigation() {

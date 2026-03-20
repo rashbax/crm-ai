@@ -210,7 +210,10 @@ export function makeAutomationDecision(
   const adCampaign = currentAds?.find((campaign) => campaign.sku === stock.sku);
   
   // Build recommended actions from triggered rules
-  const recommendedActions = triggeredResults.map((result) => {
+  type ActionSource = "rule" | "stock_cover" | "efficiency";
+  type RecommendedAction = { action: AdAction; source: ActionSource; reason: string; impact: string; priority: number; };
+
+  const recommendedActions: RecommendedAction[] = triggeredResults.map((result) => {
     let impact = "";
     let reason = result.reason;
 
@@ -230,7 +233,7 @@ export function makeAutomationDecision(
 
     return {
       action: result.recommendedAction,
-      source: "rule",
+      source: "rule" as ActionSource,
       reason,
       impact,
       priority: result.priority,
@@ -248,7 +251,7 @@ export function makeAutomationDecision(
     if (daysCover < 4) {
       recommendedActions.push({
         action: "pause",
-        source: "stock_cover",
+        source: "stock_cover" as const,
         reason: `Days of cover is ${daysCover}. Stock is near stockout while ads are still active.`,
         impact: "Stops accelerated stockout risk and prevents pre-OOS ad waste.",
         priority: 0,
@@ -256,7 +259,7 @@ export function makeAutomationDecision(
     } else if (daysCover < 10) {
       recommendedActions.push({
         action: "reduce",
-        source: "stock_cover",
+        source: "stock_cover" as const,
         reason: `Days of cover is ${daysCover}. Reduce demand acceleration for low inventory.`,
         impact: "Cuts ad pressure while retaining limited traffic.",
         priority: 1,
@@ -264,7 +267,7 @@ export function makeAutomationDecision(
     } else if (daysCover < 21) {
       recommendedActions.push({
         action: "reduce",
-        source: "stock_cover",
+        source: "stock_cover" as const,
         reason: `Days of cover is ${daysCover}. Inventory is tightening.`,
         impact: "Reduces spend pace to extend SKU availability.",
         priority: 2,
@@ -280,7 +283,7 @@ export function makeAutomationDecision(
       if (conversions === 0 && clicks >= 120 && spend >= adCampaign.dailyBudget * 0.5) {
         recommendedActions.push({
           action: "reduce",
-          source: "efficiency",
+          source: "efficiency" as const,
           reason: `High spend with no conversions (${clicks} clicks, ${conversions} conv).`,
           impact: "Prevents inefficient spend until campaign relevance improves.",
           priority: 1,
@@ -288,7 +291,7 @@ export function makeAutomationDecision(
       } else if (hasRevenue && acos > targetAcos * 1.3) {
         recommendedActions.push({
           action: "reduce",
-          source: "efficiency",
+          source: "efficiency" as const,
           reason: `ACOS ${Math.round(acos * 100)}% exceeds target ${Math.round(targetAcos * 100)}%.`,
           impact: "Improves promotion efficiency and protects margin.",
           priority: 1,
@@ -296,7 +299,7 @@ export function makeAutomationDecision(
       } else if (!hasRevenue && cvr < 0.01 && spend >= adCampaign.dailyBudget * 0.4) {
         recommendedActions.push({
           action: "reduce",
-          source: "efficiency",
+          source: "efficiency" as const,
           reason: `Low CVR ${(cvr * 100).toFixed(2)}% with meaningful spend.`,
           impact: "Reduces likely overpayment for low-quality traffic.",
           priority: 2,

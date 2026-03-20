@@ -20,7 +20,13 @@ type Status =
   | "waiting"
   | "need_approval"
   | "done"
-  | "overdue";
+  | "overdue"
+  | "open"
+  | "escalated"
+  | "resolved"
+  | "pending"
+  | "approved"
+  | "rejected";
 
 export interface StatusPillProps {
   status: Status;
@@ -50,6 +56,12 @@ export function StatusPill({ status, children, title }: StatusPillProps) {
     need_approval: "bg-warning-light text-warning border-warning",
     done: "bg-success-light text-success border-success",
     overdue: "bg-danger-light text-danger border-danger",
+    open: "bg-info-light text-info border-info",
+    escalated: "bg-danger-light text-danger border-danger",
+    resolved: "bg-success-light text-success border-success",
+    pending: "bg-warning-light text-warning border-warning",
+    approved: "bg-success-light text-success border-success",
+    rejected: "bg-danger-light text-danger border-danger",
   };
 
   return (

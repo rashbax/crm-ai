@@ -342,41 +342,41 @@
     }
   },
   "243cca29-0e28-4627-b5fb-1a35b5c57202:ozon|518b1e52-c409-4fdf-b7bc-a6ee3f07fb79:wb|2026-02-20|2026-03-19": {
-    "updatedAt": 1773924960404,
-    "currentBalance": 1723386.14,
+    "updatedAt": 1773934077585,
+    "currentBalance": 1745328.28,
     "breakdown": {
-      "sales": 6502564.44,
-      "refunds": 244811.9,
-      "ozonReward": 157868.41,
+      "sales": 6524544.44,
+      "refunds": 245138.34,
+      "ozonReward": 157917.66,
       "deliveryServices": 8712.17,
-      "agentServices": 32796.02,
+      "agentServices": 32910,
       "fboServices": 0,
       "adsPromotion": 32383.2,
-      "otherServicesFines": 413393.91,
+      "otherServicesFines": 413619.21,
       "compensations": 19569.28,
-      "commissions": 157868.41,
+      "commissions": 157917.66,
       "withdrawals": 0,
       "adjustments": 2511.82,
-      "totalAccrued": 5634679.93
+      "totalAccrued": 5655944.96
     }
   },
   "ozon-breakdown|2026-02-20|2026-03-19": {
-    "updatedAt": 1773924960411,
-    "currentBalance": 1723386.14,
+    "updatedAt": 1773930361189,
+    "currentBalance": 1733017.78,
     "breakdown": {
-      "sales": 6502564.44,
-      "refunds": 244811.9,
-      "ozonReward": 157868.41,
+      "sales": 6524544.44,
+      "refunds": 245138.34,
+      "ozonReward": 157917.66,
       "deliveryServices": 8712.17,
-      "agentServices": 32796.02,
+      "agentServices": 32910,
       "fboServices": 0,
       "adsPromotion": 32383.2,
-      "otherServicesFines": 413393.91,
+      "otherServicesFines": 413619.21,
       "compensations": 19569.28,
-      "commissions": 157868.41,
+      "commissions": 157917.66,
       "withdrawals": 0,
       "adjustments": 2511.82,
-      "totalAccrued": 5634679.93
+      "totalAccrued": 5655944.96
     }
   }
 }

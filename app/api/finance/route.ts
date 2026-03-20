@@ -91,7 +91,7 @@ const financeSnapshotRefreshJobs = new Map<string, Promise<void>>();
 function putFinanceCache(key: string, payload: unknown): void {
   const now = Date.now();
   if (financeResponseCache.size > 200) {
-    for (const [k, v] of financeResponseCache.entries()) {
+    for (const [k, v] of Array.from(financeResponseCache.entries())) {
       if (v.expiresAt <= now) {
         financeResponseCache.delete(k);
       }
@@ -112,7 +112,7 @@ function putFinanceCache(key: string, payload: unknown): void {
 function putFinanceBaseCache(key: string, payload: FinanceBasePayload): void {
   const now = Date.now();
   if (financeBaseCache.size > 200) {
-    for (const [k, v] of financeBaseCache.entries()) {
+    for (const [k, v] of Array.from(financeBaseCache.entries())) {
       if (v.expiresAt <= now) {
         financeBaseCache.delete(k);
       }

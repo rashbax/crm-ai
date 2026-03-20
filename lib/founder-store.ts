@@ -7,6 +7,8 @@ import type {
   FounderTask,
   GeneralAuditLog,
   AuditEntityType,
+  Incident,
+  Approval,
 } from "@/types/founder";
 
 const SECURE_DIR = join(process.cwd(), "data", "secure");
@@ -98,6 +100,54 @@ export function saveFounderTask(task: FounderTask): void {
 export function deleteFounderTask(id: string): void {
   const all = readJson<FounderTask>("founder-tasks.json").filter((t) => t.id !== id);
   writeJson("founder-tasks.json", all);
+}
+
+// ============================================
+// INCIDENTS (Sprint 2)
+// ============================================
+
+export function getIncidents(): Incident[] {
+  return readJson<Incident>("incidents.json");
+}
+
+export function saveIncident(incident: Incident): void {
+  const all = getIncidents();
+  const idx = all.findIndex((i) => i.id === incident.id);
+  if (idx >= 0) {
+    all[idx] = incident;
+  } else {
+    all.push(incident);
+  }
+  writeJson("incidents.json", all);
+}
+
+export function deleteIncident(id: string): void {
+  const all = getIncidents().filter((i) => i.id !== id);
+  writeJson("incidents.json", all);
+}
+
+// ============================================
+// APPROVALS (Sprint 2)
+// ============================================
+
+export function getApprovals(): Approval[] {
+  return readJson<Approval>("approvals.json");
+}
+
+export function saveApproval(approval: Approval): void {
+  const all = getApprovals();
+  const idx = all.findIndex((a) => a.id === approval.id);
+  if (idx >= 0) {
+    all[idx] = approval;
+  } else {
+    all.push(approval);
+  }
+  writeJson("approvals.json", all);
+}
+
+export function deleteApproval(id: string): void {
+  const all = getApprovals().filter((a) => a.id !== id);
+  writeJson("approvals.json", all);
 }
 
 // ============================================

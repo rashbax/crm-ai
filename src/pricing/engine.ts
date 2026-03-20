@@ -356,7 +356,7 @@ export function buildPricingDashboard(
   orders: any[],
   stocks: any[],
   ads: any[],
-  mode: "live" | "demo" = "demo"
+  mode: string = "demo"
 ): PricingDashboardResponse {
   const warnings: string[] = [];
   const rulesMap = getPricingRulesMap();
@@ -366,7 +366,7 @@ export function buildPricingDashboard(
   }
 
   // Get unique SKUs
-  const skus = [...new Set(prices.map((p) => p.sku))];
+  const skus = Array.from(new Set(prices.map((p) => p.sku)));
 
   // Build rows
   const rows: PricingRow[] = [];

@@ -1,6 +1,7 @@
 // ============================================
 // FOUNDER CONTROL SYSTEM TYPES (T3)
 // Sprint 1: Responsibility Matrix + Task Engine 2.0 + Audit Log
+// Sprint 2: Incidents + Approvals + Enhanced Audit Log
 // ============================================
 
 // ============================================
@@ -120,6 +121,67 @@ export interface GeneralAuditLog {
 }
 
 // ============================================
+// INCIDENT REGISTRY (T3 Sprint 2)
+// ============================================
+
+export type IncidentType =
+  | "stock_mismatch"
+  | "barcode_problem"
+  | "return_spike"
+  | "listing_blocked"
+  | "pricing_risk"
+  | "ad_overspend"
+  | "supply_issue"
+  | "document_issue"
+  | "other";
+
+export type IncidentSeverity = "low" | "medium" | "high" | "critical";
+
+export type IncidentStatus = "open" | "in_progress" | "resolved" | "escalated" | "closed";
+
+export interface Incident {
+  id: string;
+  incidentType: IncidentType;
+  marketplace: MarketplaceId | "all";
+  skuId?: string;
+  title: string;
+  severity: IncidentSeverity;
+  status: IncidentStatus;
+  ownerId: string;
+  rootCause?: string;
+  actionPlan?: string;
+  createdAt: string;
+  dueDate: string;
+  resolvedAt?: string;
+  escalatedAt?: string;
+  updatedAt: string;
+}
+
+// ============================================
+// APPROVAL WORKFLOW (T3 Sprint 2)
+// ============================================
+
+export type ApprovalEntityType = "price" | "promo" | "ads_budget" | "stock_scale" | "responsibility_change" | "other";
+
+export type ApprovalType = "price_below_min" | "promo_loss_risk" | "budget_over_limit" | "critical_stock_scale" | "owner_change" | "general";
+
+export type ApprovalStatus = "pending" | "approved" | "rejected";
+
+export interface Approval {
+  id: string;
+  entityType: ApprovalEntityType;
+  entityId: string;
+  approvalType: ApprovalType;
+  reason: string;
+  requestedBy: string;
+  approverId: string; // founder
+  status: ApprovalStatus;
+  requestedAt: string;
+  decidedAt?: string;
+  decisionComment?: string;
+}
+
+// ============================================
 // STOCK POSITION (T3 enriched)
 // ============================================
 
@@ -194,4 +256,30 @@ export interface TaskEngineResponse {
 export interface AuditLogResponse {
   logs: GeneralAuditLog[];
   total: number;
+}
+
+export interface IncidentRegistryResponse {
+  incidents: Incident[];
+  stats: {
+    total: number;
+    open: number;
+    inProgress: number;
+    resolved: number;
+    escalated: number;
+    closed: number;
+    critical: number;
+    high: number;
+  };
+  users: SystemUser[];
+}
+
+export interface ApprovalQueueResponse {
+  approvals: Approval[];
+  stats: {
+    total: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+  };
+  users: SystemUser[];
 }

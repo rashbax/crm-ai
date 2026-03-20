@@ -29,7 +29,21 @@ interface FounderWidgets {
   stockoutRiskSkus: number;
   lossRiskItems: number;
   adStockConflicts: number;
-  teamScorecard: { userId: string; userName: string; activeTasks: number; completedOnTime: number; overdueTasks: number; completionRate: number }[];
+  teamScorecard: {
+    userId: string; userName: string; activeTasks: number; completedOnTime: number;
+    overdueTasks: number; completionRate: number; blockedTasks: number; waitingTasks: number;
+    incidentCount: number; avgResolutionHours: number | null; approvalDelay: number | null;
+    founderInterventions: number; lastUpdateAge: number | null;
+  }[];
+  recentBlockers: { id: string; title: string; status: string; assignee: string; reason: string; dueDate: string; overdueDays: number }[];
+  recentCriticalIncidents: { id: string; title: string; severity: string; status: string; owner: string; dueDate: string }[];
+  pendingApprovalsList: { id: string; entityType: string; reason: string; requestedBy: string; requestedAt: string }[];
+  kpi: {
+    onTimeCompletionRate: number; overdueTaskCount: number;
+    incidentResolutionTimeHours: number | null; approvalDelayHours: number | null;
+    founderInterventionCount: number; stockoutCases: number;
+    totalTasks: number; doneTasks: number; openIncidents: number; totalApprovals: number;
+  };
 }
 
 interface SalesData {
@@ -471,93 +485,178 @@ export default function DashboardPage() {
         <Button variant="ghost">{lang === "ru" ? "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" : "Analitika"}</Button>
       </div>
 
-      {/* Founder Control Center */}
+      {/* ============================================ */}
+      {/* FOUNDER DASHBOARD 2.0 (Sprint 3)           */}
+      {/* ============================================ */}
       {founderWidgets && (
         <div className="mb-6">
           <h2 className="text-lg font-bold text-text-main mb-3">
-            {lang === "ru" ? "Founder Control Center" : "Founder Boshqaruv Markazi"}
+            {lang === "ru" ? "Founder Command Center" : "Founder Boshqaruv Markazi"}
           </h2>
+
+          {/* ROW 1: Signal Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {[
-              {
-                label: lang === "ru" ? "Просрочено" : "Muddati o'tgan",
-                value: founderWidgets.overdueTasks,
-                color: founderWidgets.overdueTasks > 0 ? "text-danger" : "text-success",
-                bg: founderWidgets.overdueTasks > 0 ? "border-l-4 border-danger" : "",
-                href: "/tasks",
-              },
-              {
-                label: lang === "ru" ? "Ждут решения" : "Qaror kutmoqda",
-                value: founderWidgets.pendingApprovals,
-                color: founderWidgets.pendingApprovals > 0 ? "text-warning" : "text-success",
-                bg: founderWidgets.pendingApprovals > 0 ? "border-l-4 border-warning" : "",
-                href: "/tasks",
-              },
-              {
-                label: lang === "ru" ? "Без владельца" : "Ownersiz SKU",
-                value: founderWidgets.noOwnerSkus,
-                color: founderWidgets.noOwnerSkus > 0 ? "text-danger" : "text-success",
-                bg: founderWidgets.noOwnerSkus > 0 ? "border-l-4 border-danger" : "",
-                href: "/responsibilities",
-              },
-              {
-                label: lang === "ru" ? "Stockout риск" : "Stockout xavfi",
-                value: founderWidgets.stockoutRiskSkus,
-                color: founderWidgets.stockoutRiskSkus > 0 ? "text-warning" : "text-success",
-                bg: founderWidgets.stockoutRiskSkus > 0 ? "border-l-4 border-warning" : "",
-                href: "/products",
-              },
-              {
-                label: lang === "ru" ? "Инциденты" : "Hodisalar",
-                value: founderWidgets.criticalIncidents,
-                color: founderWidgets.criticalIncidents > 0 ? "text-danger" : "text-success",
-                bg: founderWidgets.criticalIncidents > 0 ? "border-l-4 border-danger" : "",
-              },
-              {
-                label: lang === "ru" ? "Zarar risk" : "Zarar xavfi",
-                value: founderWidgets.lossRiskItems,
-                color: founderWidgets.lossRiskItems > 0 ? "text-warning" : "text-success",
-                bg: "",
-              },
-              {
-                label: lang === "ru" ? "Ad-Stock" : "Reklama-Zaxira",
-                value: founderWidgets.adStockConflicts,
-                color: founderWidgets.adStockConflicts > 0 ? "text-warning" : "text-success",
-                bg: "",
-              },
-            ].map((w, i) => (
-              <Card key={i} className={`${w.bg}`}>
-                <a href={w.href || "#"} className="block p-3 text-center hover:bg-background/50">
-                  <p className="text-xs text-text-muted">{w.label}</p>
-                  <p className={`text-2xl font-bold ${w.color}`}>{w.value}</p>
-                </a>
-              </Card>
-            ))}
+              { label: lang === "ru" ? "Критич. инциденты" : "Kritik hodisalar", value: founderWidgets.criticalIncidents, danger: true, href: "/incidents" },
+              { label: lang === "ru" ? "Просрочено" : "Muddati o'tgan", value: founderWidgets.overdueTasks, danger: true, href: "/tasks" },
+              { label: lang === "ru" ? "Ждут решения" : "Qaror kutmoqda", value: founderWidgets.pendingApprovals, warning: true, href: "/approvals" },
+              { label: lang === "ru" ? "Без владельца" : "Ownersiz SKU", value: founderWidgets.noOwnerSkus, danger: true, href: "/responsibilities" },
+              { label: lang === "ru" ? "Stockout риск" : "Stockout xavfi", value: founderWidgets.stockoutRiskSkus, warning: true, href: "/products" },
+              { label: lang === "ru" ? "Zarar risk" : "Zarar xavfi", value: founderWidgets.lossRiskItems, warning: true, href: "/incidents" },
+              { label: lang === "ru" ? "Ad-Stock" : "Reklama-Zaxira", value: founderWidgets.adStockConflicts, warning: true, href: "/incidents" },
+            ].map((w, i) => {
+              const hasIssue = w.value > 0;
+              const borderColor = hasIssue ? (w.danger ? "border-l-4 border-danger" : "border-l-4 border-warning") : "";
+              const textColor = hasIssue ? (w.danger ? "text-danger" : "text-warning") : "text-success";
+              return (
+                <Card key={i} className={borderColor}>
+                  <a href={w.href} className="block p-3 text-center hover:bg-background/50 transition-colors">
+                    <p className="text-xs text-text-muted">{w.label}</p>
+                    <p className={`text-2xl font-bold ${textColor}`}>{w.value}</p>
+                  </a>
+                </Card>
+              );
+            })}
           </div>
 
-          {/* Team Scorecard mini */}
-          {founderWidgets.teamScorecard.length > 0 && (
-            <div className="mt-3 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {founderWidgets.teamScorecard.map((m) => (
-                <Card key={m.userId}>
-                  <div className="p-3">
-                    <p className="text-sm font-semibold text-text-main truncate">{m.userName}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-text-muted">
-                        {lang === "ru" ? "Активные" : "Faol"}: {m.activeTasks}
-                      </span>
-                      {m.overdueTasks > 0 && (
-                        <span className="text-xs text-danger font-semibold">
-                          {lang === "ru" ? "Просроч." : "Kechikkan"}: {m.overdueTasks}
-                        </span>
-                      )}
-                      <span className={`text-xs font-semibold ${m.completionRate >= 80 ? "text-success" : m.completionRate >= 50 ? "text-warning" : "text-danger"}`}>
-                        {m.completionRate}%
-                      </span>
-                    </div>
+          {/* ROW 2: Recent Blockers + Critical Incidents + Pending Approvals */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-4">
+            {/* Recent Blockers */}
+            <Card>
+              <div className="p-4">
+                <h3 className="text-sm font-bold text-text-main mb-3">
+                  {lang === "ru" ? "Заблокированные задачи" : "Bloklangan vazifalar"}
+                </h3>
+                {(founderWidgets.recentBlockers || []).length > 0 ? (
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto">
+                    {founderWidgets.recentBlockers.map((b) => (
+                      <div key={b.id} className={`p-2 rounded text-xs border-l-2 ${b.status === "blocked" ? "border-danger bg-danger/5" : "border-warning bg-warning/5"}`}>
+                        <p className="font-medium text-text-main truncate">{b.title}</p>
+                        <p className="text-text-muted">{b.assignee} • {b.reason || "—"}</p>
+                        {b.overdueDays > 0 && <p className="text-danger font-semibold">+{b.overdueDays}d</p>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-text-muted">{lang === "ru" ? "Нет блокеров" : "Blokerlar yo'q"}</p>
+                )}
+              </div>
+            </Card>
+
+            {/* Critical Incidents */}
+            <Card>
+              <div className="p-4">
+                <h3 className="text-sm font-bold text-text-main mb-3">
+                  {lang === "ru" ? "Критические инциденты" : "Kritik hodisalar"}
+                </h3>
+                {(founderWidgets.recentCriticalIncidents || []).length > 0 ? (
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto">
+                    {founderWidgets.recentCriticalIncidents.map((inc) => (
+                      <div key={inc.id} className={`p-2 rounded text-xs border-l-2 ${inc.severity === "critical" ? "border-danger bg-danger/5" : "border-warning bg-warning/5"}`}>
+                        <p className="font-medium text-text-main truncate">{inc.title}</p>
+                        <p className="text-text-muted">{inc.owner} • {inc.severity} • {inc.status}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-success">{lang === "ru" ? "Нет критических инцидентов" : "Kritik hodisalar yo'q"}</p>
+                )}
+              </div>
+            </Card>
+
+            {/* Pending Approvals */}
+            <Card>
+              <div className="p-4">
+                <h3 className="text-sm font-bold text-text-main mb-3">
+                  {lang === "ru" ? "Ожидают решения Founder" : "Founder qarorini kutmoqda"}
+                </h3>
+                {(founderWidgets.pendingApprovalsList || []).length > 0 ? (
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto">
+                    {founderWidgets.pendingApprovalsList.map((a) => (
+                      <a key={a.id} href="/approvals" className="block p-2 rounded text-xs border-l-2 border-warning bg-warning/5 hover:bg-warning/10 transition-colors">
+                        <p className="font-medium text-text-main truncate">{a.reason}</p>
+                        <p className="text-text-muted">{a.requestedBy} • {a.entityType}</p>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-success">{lang === "ru" ? "Нет ожидающих решений" : "Kutayotgan qarorlar yo'q"}</p>
+                )}
+              </div>
+            </Card>
+          </div>
+
+          {/* ROW 3: KPI Panel */}
+          {founderWidgets.kpi && (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
+              {[
+                { label: lang === "ru" ? "Вовремя %" : "O'z vaqtida %", value: `${founderWidgets.kpi.onTimeCompletionRate}%`, good: founderWidgets.kpi.onTimeCompletionRate >= 80 },
+                { label: lang === "ru" ? "Просрочка" : "Kechikkan", value: String(founderWidgets.kpi.overdueTaskCount), good: founderWidgets.kpi.overdueTaskCount === 0 },
+                { label: lang === "ru" ? "Решение инцид. (ч)" : "Hodisa hal (soat)", value: founderWidgets.kpi.incidentResolutionTimeHours !== null ? `${founderWidgets.kpi.incidentResolutionTimeHours}h` : "—", good: founderWidgets.kpi.incidentResolutionTimeHours !== null && founderWidgets.kpi.incidentResolutionTimeHours <= 12 },
+                { label: lang === "ru" ? "Задержка одобр. (ч)" : "Tasdiqlash kechikish (soat)", value: founderWidgets.kpi.approvalDelayHours !== null ? `${founderWidgets.kpi.approvalDelayHours}h` : "—", good: founderWidgets.kpi.approvalDelayHours !== null && founderWidgets.kpi.approvalDelayHours <= 4 },
+                { label: lang === "ru" ? "Founder вмешательства" : "Founder aralashuvlari", value: String(founderWidgets.kpi.founderInterventionCount), good: founderWidgets.kpi.founderInterventionCount <= 2 },
+                { label: lang === "ru" ? "Stockout случаев" : "Stockout holatlari", value: String(founderWidgets.kpi.stockoutCases), good: founderWidgets.kpi.stockoutCases === 0 },
+              ].map((kpi, i) => (
+                <Card key={i}>
+                  <div className="p-3 text-center">
+                    <p className="text-xs text-text-muted">{kpi.label}</p>
+                    <p className={`text-lg font-bold ${kpi.good ? "text-success" : "text-danger"}`}>{kpi.value}</p>
                   </div>
                 </Card>
               ))}
+            </div>
+          )}
+
+          {/* ROW 4: Team Scorecard (Enhanced) */}
+          {founderWidgets.teamScorecard.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-sm font-bold text-text-main mb-2">
+                {lang === "ru" ? "Team Scorecard" : "Jamoa ko'rsatkichlari"}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {founderWidgets.teamScorecard.map((m) => (
+                  <Card key={m.userId}>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-bold text-text-main">{m.userName}</p>
+                        <span className={`text-sm font-bold ${m.completionRate >= 80 ? "text-success" : m.completionRate >= 50 ? "text-warning" : "text-danger"}`}>
+                          {m.completionRate}%
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Активные" : "Faol"}</p>
+                          <p className="font-semibold">{m.activeTasks}</p>
+                        </div>
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Просроч." : "Kechikkan"}</p>
+                          <p className={`font-semibold ${m.overdueTasks > 0 ? "text-danger" : ""}`}>{m.overdueTasks}</p>
+                        </div>
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Блок/Жду" : "Blok/Kutish"}</p>
+                          <p className={`font-semibold ${m.blockedTasks > 0 ? "text-danger" : ""}`}>{m.blockedTasks}/{m.waitingTasks}</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs mt-2">
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Инциденты" : "Hodisalar"}</p>
+                          <p className={`font-semibold ${m.incidentCount > 0 ? "text-warning" : ""}`}>{m.incidentCount}</p>
+                        </div>
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Решение (ч)" : "Hal (soat)"}</p>
+                          <p className="font-semibold">{m.avgResolutionHours !== null ? `${m.avgResolutionHours}h` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-text-muted">{lang === "ru" ? "Обновл." : "Yangilash"}</p>
+                          <p className={`font-semibold ${m.lastUpdateAge !== null && m.lastUpdateAge > 48 ? "text-danger" : m.lastUpdateAge !== null && m.lastUpdateAge > 24 ? "text-warning" : ""}`}>
+                            {m.lastUpdateAge !== null ? `${Math.round(m.lastUpdateAge)}h` : "—"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
         </div>

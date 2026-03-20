@@ -28,7 +28,7 @@ export function runAnalytics(
   const results: AnalyticsResult[] = [];
 
   // Get unique SKUs from stocks (these are the products we're tracking)
-  const skus = [...new Set(stocks.map((s) => s.sku))];
+  const skus = Array.from(new Set(stocks.map((s) => s.sku)));
 
   for (const sku of skus) {
     try {

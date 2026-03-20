@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: "primary" | "ghost" | "danger" | "success";
+  variant?: "primary" | "ghost" | "danger" | "success" | "warning";
   size?: "sm" | "md" | "lg";
 }
 
@@ -20,6 +20,7 @@ export function Button({
     ghost: "bg-transparent text-text-main hover:bg-background border border-border",
     danger: "bg-danger text-white hover:bg-red-600",
     success: "bg-success text-white hover:bg-green-600",
+    warning: "bg-warning text-white hover:bg-yellow-600",
   };
   
   const sizes = {

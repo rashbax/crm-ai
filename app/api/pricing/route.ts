@@ -60,10 +60,10 @@ export async function GET()  {
         warnings: ["No integrations connected"],
         rules: getPricingRulesMap(),
         emptyState: {
-          title: INTEGRATIONS_COPY.emptyState.title,
-          body: INTEGRATIONS_COPY.emptyState.body,
-          ctaLabel: INTEGRATIONS_COPY.emptyState.ctaLabel,
-          ctaHref: INTEGRATIONS_COPY.emptyState.ctaHref,
+          title: INTEGRATIONS_COPY.ru.emptyState.title,
+          body: INTEGRATIONS_COPY.ru.emptyState.body,
+          ctaLabel: INTEGRATIONS_COPY.ru.emptyState.ctaLabel,
+          ctaHref: INTEGRATIONS_COPY.ru.emptyState.ctaHref,
         },
         summary: null,
         fees: [],
@@ -93,7 +93,7 @@ export async function GET()  {
         warnings: ["No live pricing data found. Run integration sync first."],
         rules: getPricingRulesMap(),
         emptyState: {
-          title: INTEGRATIONS_COPY.emptyState.title,
+          title: INTEGRATIONS_COPY.ru.emptyState.title,
           body: "Подключение есть, но цены еще не синхронизированы. Запустите синхронизацию.",
           ctaLabel: "Перейти в интеграции",
           ctaHref: "/integrations",

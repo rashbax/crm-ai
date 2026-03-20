@@ -211,7 +211,7 @@ export interface PricingRules {
  * Complete pricing dashboard response
  */
 export interface PricingDashboardResponse {
-  mode: "live";
+  mode: string;
   warnings: string[];
   fees: FeesConfig[];
   rules: Record<Marketplace, PricingRules>;

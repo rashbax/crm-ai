@@ -4,7 +4,7 @@
 // ✅ Added profile menu translations
 // ✅ Added show/hide password translations
 
-import type { Translations } from '@/types';
+import type { Translations, Language } from '@/types';
 
 export const translations: Translations = {
 	ru: {
@@ -32,15 +32,16 @@ export const translations: Translations = {
 		nav_main: 'Главная',
 		nav_orders: 'Заказы',
 		nav_products: 'Товары',
-		nav_automation: 'Автоматизация',
+		nav_automation: 'Продвижение',
 		nav_prices: 'Цены и акции',
 		nav_finance: 'Финансы',
 		nav_analytics: 'Аналитика',
 		nav_tasks: 'Задачи 2.0',
 		nav_responsibilities: 'Ответственность',
+		nav_incidents: 'Инциденты',
+		nav_approvals: 'Одобрения',
 		nav_crm: 'CRM',
 		nav_integrations: 'Интеграции',
-		nav_promo: 'Продвижение',
 		nav_bank: 'Банк',
 		crm_new_task_title: 'Новая задача',
 		
@@ -193,15 +194,16 @@ export const translations: Translations = {
 		nav_main: 'Asosiy',
 		nav_orders: 'Buyurtmalar',
 		nav_products: 'Mahsulotlar',
-		nav_automation: 'Avtomatlashtirish',
+		nav_automation: 'Reklama',
 		nav_prices: 'Narxlar va aksiyalar',
 		nav_finance: 'Moliya',
 		nav_analytics: 'Tahlil',
 		nav_tasks: 'Vazifalar 2.0',
 		nav_responsibilities: 'Javobgarlik',
+		nav_incidents: 'Hodisalar',
+		nav_approvals: 'Tasdiqlar',
 		nav_crm: 'CRM',
 		nav_integrations: 'Integratsiyalar',
-		nav_promo: 'Reklama',
 		nav_bank: 'Bank',
 		crm_new_task_title: 'Yangi vazifa',
 		
