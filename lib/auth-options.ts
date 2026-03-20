@@ -14,17 +14,26 @@ interface User {
 	role: string;
 }
 
+// Default admin user fallback (used when users.json doesn't exist, e.g. on Vercel)
+const DEFAULT_ADMIN: User = {
+	id: '0997eb8f-d5e1-4f00-b33d-15b0e0e7963b',
+	username: 'admin',
+	passwordHash: '$2b$10$UvOYt0PdXhQhTTwvN.brCu3NT3AIWO3CNjfaFG8TVhRnhw8ZwsVaK',
+	email: 'admin@example.com',
+	role: 'admin',
+};
+
 function loadUsers(): User[] {
 	try {
 		if (!fs.existsSync(USERS_FILE)) {
-			return [];
+			return [DEFAULT_ADMIN];
 		}
 		const content = fs.readFileSync(USERS_FILE, 'utf-8');
 		const data = JSON.parse(content);
-		return data.users || [];
+		return data.users || [DEFAULT_ADMIN];
 	} catch (error) {
 		console.error('Error loading users:', error);
-		return [];
+		return [DEFAULT_ADMIN];
 	}
 }
 
