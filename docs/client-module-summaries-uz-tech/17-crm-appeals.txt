@@ -1,0 +1,56 @@
+Sahifa: CRM Appeals
+Route: `/crm`
+
+Maqsad
+Customer murojaatlari, sharhlar, shikoyatlar va buyurtma bo'yicha requestlarni markazlashgan holda yuritadi.
+
+API va storage
+- `GET /api/founder/appeals`
+- `POST /api/founder/appeals`
+- `POST /api/founder/appeals/sync`
+- Storage: `data/secure/appeals.json`
+
+Entity modeli
+- `appealType`: `savol | sharh | shikoyat | buyurtma`
+- `status`: `yangi | jarayonda | kutyapti | javob_berilgan | yopilgan`
+- `priority`: `critical | high | medium | low`
+- `sentiment`: `positive | neutral | negative`
+- `ownerId`
+- optional `orderId`, `skuId`
+- `tags`
+- `slaDeadline`, `slaBreached`
+- `replies[]`
+- optional `escalatedTo`, `escalatedAt`
+
+SLA qoidalari
+- `shikoyat` -> 4 soat
+- `buyurtma` -> 12 soat
+- `savol` -> 24 soat
+- `sharh` negative bo'lsa -> 8 soat
+- `sharh` negative bo'lmasa -> 24 soat
+- `slaBreached` faqat `yopilgan` yoki `javob_berilgan` bo'lmagan appeal lar uchun tekshiriladi
+
+Status transition qoidalari
+- `yangi -> jarayonda | kutyapti`
+- `jarayonda -> javob_berilgan | kutyapti`
+- `kutyapti -> jarayonda`
+- `javob_berilgan -> yopilgan | yangi`
+- `yopilgan -> yangi`
+
+Action lar
+- Create
+- Sync
+- Reply: reply yuborilganda status avtomatik `javob_berilgan` bo'ladi
+- Update status
+- Escalate
+- Delete
+
+UI xususiyatlari
+- Stat cardlar: yangi, jarayonda, SLA buzilgan, negative, total
+- Search, type, status va priority filterlari
+- Pagination
+- Reply history modal
+
+Biznes qiymati
+- Customer communication ni marketplace kabinetlarida tarqoq holatda qoldirmaydi.
+- SLA va negative feedback ni founder-level signalga aylantiradi.

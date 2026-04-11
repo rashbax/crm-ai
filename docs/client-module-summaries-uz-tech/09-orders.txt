@@ -1,0 +1,50 @@
+Sahifa: Orders
+Route: `/orders`
+
+Maqsad
+Marketplace order oqimini monitoring qilish va buyurtma trendlaridagi anomal o'zgarishlarni avtomatik aniqlash moduli.
+
+API va data source
+- `GET /api/orders?marketplace=...`
+- `GET /api/products?marketplace=...`
+- Source: `data/canonical/orders.json`
+- Orders enabled connectionlar bo'yicha filter qilinadi.
+
+Status normalizatsiyasi
+- UI statuslar: `processing | shipped | in_transit | delivered | returned | cancelled`
+- Source status mapping backendda bajariladi.
+- Agar source status topilmasa fallback age-based derive ishlaydi:
+- `<= 72 soat` -> `processing`
+- `<= 7 kun` -> `shipped`
+- `<= 14 kun` -> `in_transit`
+- undan katta -> `delivered`
+
+Trend signal formulalari
+- Hisob-kitob oynasi: oxirgi 14 kun, ya'ni `last7` va `prior7`
+- `surge`: `last7 >= 3` va `last7 > prior7 * 1.5`
+- `drop`: `prior7 >= 3` va `last7 < prior7 * 0.5`
+- `rising_returns`: current periodda kamida 2 ta return va oldingi davrdan ko'p
+- `rising_cancellations`: current periodda kamida 2 ta cancel va oldingi davrdan ko'p
+
+Problematic logika
+- `returned` yoki `cancelled` orderlar problematic.
+- `processing` holatidagi order 5 kundan ortiq tursa delayed signal oladi.
+
+UI filterlar
+- Search: order ID yoki SKU
+- Status filter
+- Date range
+- Problematic only toggle
+- Active trend signal toggle
+- Pagination: 20 ta qator
+
+Product health integratsiyasi
+- Har order qatori uchun `GET /api/products` dan SKU health map olinadi.
+- Shu sabab order jadvalida stock health va open incident konteksti ko'rsatiladi.
+
+Marketplace bo'yicha noziklik
+- UI status optionlari joriy marketplace ga qarab qisqaradi.
+- WB case ichida odatda soddaroq status subset ishlatiladi.
+
+Biznes qiymati
+- Order list oddiy log bo'lib qolmaydi, balki trend va risk-monitoring paneliga aylanadi.

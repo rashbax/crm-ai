@@ -1,0 +1,26 @@
+Page: Finance Overview
+Route: /finance
+
+Purpose
+This page is the finance summary center for the currently selected marketplace context. It gives leadership a fast answer to: how much came in, how much went out, what balance is available, and what financial risks need attention.
+
+Main features
+- Snapshot freshness indicator that tells whether the data is fresh, updating, or missing.
+- KPI cards for current balance, period income, period expenses, and net income.
+- Comparison against the previous period for income and net profit.
+- Date range controls with apply action.
+
+Financial intelligence
+- Signal cards for profit drop, high refund rate, commission pressure, withdrawal delay, and adjustment spikes.
+- Clicking a finance signal opens the detailed marketplace finance screen already filtered to the relevant transaction type.
+- "Why this result" panel explains the most likely drivers of the current financial outcome, such as refunds, commissions, delivery costs, ad spend, or profit deterioration versus the previous period.
+
+Performance detail
+- Top SKUs by net contribution.
+- Problem SKUs with weak or negative net contribution.
+- Full accrual breakdown covering sales, refunds, marketplace reward, delivery services, agent services, FBO services, ads and promotion, fines and other services, compensations, withdrawals, adjustments, and total accrued.
+
+Business value
+- Gives a founder-ready financial snapshot without opening raw statements first.
+- Helps users move from reading numbers to understanding the reasons behind them.
+- Connects summary finance with deeper Ozon or Wildberries transaction analysis in one click.

@@ -37,7 +37,7 @@ export default function LoginPage() {
 			if (result?.error) {
 				setError(getTranslation(lang, 'login_error'));
 			} else if (result?.ok) {
-				router.push('/dashboard');
+				router.push('/founder-panel');
 				router.refresh();
 			}
 		} catch {

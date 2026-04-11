@@ -8,6 +8,16 @@ export type Currency = "UZS" | "RUB";
 export type DraftStatus = "DRAFT" | "APPROVED" | "APPLIED" | "CANCELLED";
 export type RiskLevel = "NONE" | "LOW" | "MED" | "HIGH" | "CRITICAL";
 
+export interface PromoItem {
+  actionId: number;
+  title: string;
+  dateStart?: string;
+  dateEnd?: string;
+  actionType?: string;   // e.g. "DISCOUNT_ON_STOCK"
+  actionPrice?: number;  // price during promo
+  discountPct?: number;  // calculated discount %
+}
+
 export interface PriceIndexPair {
   ownPrice: number;
   marketPrice: number;
@@ -47,6 +57,9 @@ export interface StockState {
 export interface AdsDaily {
   date: string; // YYYY-MM-DD
   sku: string;
+  resolvedSku?: string;
+  sourceSku?: string;
+  title?: string; // Product name from marketplace
   spend: number;
   clicks?: number;
   ordersFromAds?: number;
@@ -54,6 +67,8 @@ export interface AdsDaily {
   impressions?: number;
   marketplace?: string;
   connectionId?: string;
+  campaignId?: string; // Ozon Performance campaign ID
+  campaignState?: string; // CAMPAIGN_STATE_RUNNING, CAMPAIGN_STATE_STOPPED, etc.
 }
 
 /**
@@ -65,12 +80,34 @@ export interface PriceState {
   price: number;
   discountPct?: number; // 0..100
   promoPrice?: number;
+  inPromo?: boolean; // true if participating in an active Ozon promotion
+  promos?: PromoItem[]; // full list of active promos this SKU participates in
+  costPrice?: number; // себестоимость from marketplace API
   status?: string;
   visibility?: string;
   onSale?: boolean;
   priceIndexPairs?: PriceIndexPair[];
+  ozonColorIndex?: string; // Real Ozon price index: "GREEN" | "YELLOW" | "RED" | "WITHOUT_INDEX"
   updatedAt: string; // ISO
   connectionId?: string; // Optional connection ID for multi-shop support
+}
+
+/**
+ * Customer review / feedback / question from marketplace
+ */
+export interface ReviewItem {
+  id: string;
+  sku: string;
+  marketplace?: string;
+  connectionId?: string;
+  type: "review" | "question" | "feedback";
+  author: string;
+  text: string;
+  rating?: number; // 1-5 for reviews
+  createdAt: string; // ISO
+  status?: string; // answered, unanswered, etc.
+  answer?: string;
+  answeredAt?: string;
 }
 
 /**
@@ -102,7 +139,8 @@ export interface PriceDraftItem {
   marketplace: Marketplace;
   newPrice?: number;
   newDiscountPct?: number;
-  reason?: string;
+  reason: string;
+  changedBy?: string;
 }
 
 /**
@@ -139,17 +177,25 @@ export interface MarketplacePricing {
     discountPct?: number;
     promoPrice?: number;
   };
+  costPrice?: number;
   listing?: {
     status?: string;
     visibility?: string;
     onSale?: boolean;
   };
   priceIndexPairs?: PriceIndexPair[];
+  ozonColorIndex?: string; // Real Ozon index: GREEN/YELLOW/RED/WITHOUT_INDEX
+  promos?: PromoItem[];   // Active promos this SKU participates in
   recommended: {
     price: number;
     discountPct: number;
   };
   guardrails: PriceGuardrails;
+  owner?: string;
+  promoStatus?: "active" | "none";
+  approvalStatus?: "pending" | "approved" | "rejected" | "none";
+  approvalId?: string;
+  lastChanged?: string;
 }
 
 /**
@@ -217,6 +263,7 @@ export interface PricingDashboardResponse {
   rules: Record<Marketplace, PricingRules>;
   rows: PricingRow[];
   summary: PricingSummary | null;
+  signals?: PricingSignals;
   emptyState?: PricingEmptyState;
 }
 
@@ -248,4 +295,34 @@ export interface ApplyDraftResponse {
   message?: string;
   plannedWrites?: PlannedWrite[];
   blockedItems?: PriceDraftItem[];
+}
+
+/**
+ * Price change history entry
+ */
+export interface PriceChangeEntry {
+  id: string;
+  sku: string;
+  marketplace: Marketplace;
+  oldPrice: number;
+  newPrice: number;
+  oldDiscount?: number;
+  newDiscount?: number;
+  reason: string;
+  changedBy: string;
+  changedAt: string;
+  approvalId?: string;
+  approvalStatus?: "pending" | "approved" | "rejected";
+}
+
+/**
+ * Pricing signals for dashboard
+ */
+export interface PricingSignals {
+  lossRiskCount: number;
+  promoStuckCount: number;
+  pendingApprovals: number;
+  unappliedDrafts: number;
+  lossRiskSkus: string[];
+  promoStuckSkus: string[];
 }

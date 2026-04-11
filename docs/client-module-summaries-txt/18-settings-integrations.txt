@@ -1,0 +1,37 @@
+Page: Settings - Integrations
+Route: /settings
+
+Purpose
+This page is the integration control center. It is where the team connects marketplaces, manages data-flow permissions, tests credentials, checks sync health, and safely disconnects or removes accounts.
+
+Page structure
+- Settings shell with a left sidebar and breadcrumb.
+- Current implementation focuses on the Integrations tab.
+- The main content is a dedicated integration management console.
+
+Key features
+- Shows current operating mode and system warnings.
+- Displays a catalog of available marketplace integrations that are not yet connected.
+- Shows connected accounts with status, last sync, and health information.
+- Loads flow-level health for orders, stocks, ads, and prices, including freshness, last sync time, and dependent modules that rely on each flow.
+
+Connection management
+- Add integration flow through a multi-step wizard:
+- Step 1: enter credentials.
+- Step 2: choose which data flows to enable.
+- Step 3: test the connection and save.
+- Separate capability management for additional APIs such as ads or premium features.
+- Manual sync action for the connection.
+- Ads-only sync action where relevant.
+- Disconnect and reconnect controls.
+- Two-step remove flow with optional data deletion and typed confirmation for destructive removal.
+
+UX behavior
+- Uses toast notifications for success, warning, and error feedback.
+- Presents empty state guidance if no integrations are connected yet.
+- Exposes connection-specific API capability setup instead of assuming one credential set covers every feature.
+
+Business value
+- Makes the data backbone of the CRM visible and controllable.
+- Reduces risk when connecting or removing live marketplace accounts.
+- Helps explain to the client which modules depend on which data flows.

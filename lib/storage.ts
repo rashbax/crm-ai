@@ -8,6 +8,7 @@ const LOGGED_USER_KEY = "loggedUser";
 const USERNAME_KEY = "crmUsername";
 const PASSWORD_KEY = "crmPassword";
 const TASKS_KEY = "rj_tasks_v1";
+const MARKETPLACE_KEY = "rj_marketplace";
 
 export const storage = {
   // Language
@@ -94,5 +95,16 @@ export const storage = {
   deleteTask(id: string): void {
     const tasks = this.getTasks().filter((t) => t.id !== id);
     this.saveTasks(tasks);
+  },
+
+  // Marketplace selector
+  getMarketplace(): string {
+    if (typeof window === "undefined") return "all";
+    return localStorage.getItem(MARKETPLACE_KEY) || "all";
+  },
+
+  setMarketplace(id: string): void {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(MARKETPLACE_KEY, id);
   },
 };

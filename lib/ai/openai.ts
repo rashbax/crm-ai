@@ -25,8 +25,7 @@ export async function generateAiText(options: GenerateTextOptions): Promise<stri
         { role: "system", content: options.system },
         { role: "user", content: options.prompt },
       ],
-      reasoning: { effort: "low" },
-      text: { verbosity: "low" },
+      reasoning: { effort: "medium" },
     }),
   });
 

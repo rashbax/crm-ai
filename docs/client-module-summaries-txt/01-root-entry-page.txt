@@ -1,0 +1,13 @@
+Page: Root Entry
+Route: /
+
+Purpose
+This is the system entry route. It is intentionally minimal and exists to send users to the correct starting point.
+
+How it works
+- The page immediately redirects to /login.
+- It prevents users from landing on a blank or ambiguous home screen.
+
+Business value
+- Keeps the first access path predictable.
+- Makes the application behave like a secure business system rather than a public website.

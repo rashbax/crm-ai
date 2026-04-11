@@ -1,0 +1,31 @@
+Page: Responsibilities
+Route: /responsibilities
+
+Purpose
+This module is the SKU ownership matrix. It defines exactly who is responsible for every product and every role around that product.
+
+Responsibility model
+- One SKU assignment can include a marketplace owner, ads owner, content owner, supply owner, reviewer, and backup owner.
+- Each assignment also stores a start date, assignment status, authority limit, and optional notes.
+
+Main features
+- Summary cards for total assigned SKUs, SKUs without owners, SKUs without backups, and products that are still unassigned.
+- Signal block for overloaded managers whose workload is too large.
+- Quick assignment shortcuts for SKUs that exist in Products but do not yet have owners.
+- Manager workload cards showing SKU count, open incidents, and overdue tasks by person.
+- Search, role-gap filtering, and quick filters for no-owner, no-backup, and inactive assignments.
+
+Table behavior
+- Shows SKU, marketplace, assignment status, start date, all role holders, reviewer, backup, and actions.
+- Highlights missing owners or missing backup coverage visually.
+- Opens detail, edit, history, and delete actions from each row.
+
+Detail and editing
+- Detail modal shows all role assignments plus authority limits and notes.
+- Create/edit modal supports structured assignment setup, including temporary or inactive statuses.
+- History modal shows full audit tracking for assignment changes.
+
+Business value
+- Removes ambiguity over who owns what.
+- Supports continuity through backup assignment, not just a single owner.
+- Helps leadership identify staffing gaps, overloaded managers, and SKUs that are operationally exposed.

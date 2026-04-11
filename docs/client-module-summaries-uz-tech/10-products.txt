@@ -1,0 +1,56 @@
+Sahifa: Products
+Route: `/products`
+
+Maqsad
+SKU registry va operational health markazi. Bu modul har bir SKU uchun narx, stock, ownership, task, incident va risk kontekstini bitta modelga birlashtiradi.
+
+API va data source
+- `GET /api/products?marketplace=...`
+- Source: `data/canonical/prices.json`, `stocks.json`, `orders.json`
+- Qo'shimcha source: founder task, incident, responsibility va audit store
+- Ozon articul mapping uchun `data/cache/ozon-product-identity-*.json` fayllari o'qiladi
+
+Status hisoblash qoidasi
+- `onSale === false` -> `blocked`
+- `onSale === true` -> `active`
+- `stockKnown && onHand <= 0 && inbound <= 0` -> `blocked`
+- `soldLast30d > 0` -> `active`
+- `pricesCount > 0` -> `draft`
+- aks holda stock mavjud bo'lsa `active`, bo'lmasa `draft`
+
+Stock health qoidasi
+- Lead time: 7 kun
+- `projectedStockAtReplenishment < 0` -> `critical`
+- `onHand <= 0` -> `critical`
+- `onHand < 200` -> `critical`
+- `onHand < 500` -> `low`
+- `onHand < 1000` -> `normal`
+- aks holda `good`
+
+Risk level formulasi
+- High/critical incident bo'lsa -> `CRITICAL`
+- `stockHealth=critical` va `soldLast30d > 0` -> `CRITICAL`
+- `stockHealth=critical` yoki open incident > 0 -> `HIGH`
+- `stockHealth=low` va `soldLast30d > 0` -> `HIGH`
+- `stockHealth=low` yoki open task > 3 -> `MED`
+- open task > 0 -> `LOW`
+- aks holda `NONE`
+
+Row ichidagi asosiy fieldlar
+- `avgPrice`, `minPrice`, `maxPrice`
+- `onHand`, `inbound`, `soldLast30d`
+- `status`, `stockHealth`, `riskLevel`
+- `ownerName`, `ownerId`
+- `openTasksCount`, `openIncidentsCount`
+- `priceHistory` last 5
+- `recentChanges` last 8
+
+UI funksiyalar
+- Summary cards
+- Quick signal filterlar: low-stock seller, no owner, has incident, many tasks, price risk
+- Search va ko'p qatlamli filterlar
+- Detail modal: tasklar, incidentlar, price history, audit history
+
+Biznes qiymati
+- SKU holati bo'yicha "single source of truth" beradi.
+- Riskni narx, stock va ownership bilan birga ko'rsatadi.

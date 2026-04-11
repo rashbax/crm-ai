@@ -1,0 +1,59 @@
+Sahifa: Responsibilities
+Route: `/responsibilities`
+
+Maqsad
+SKU ownership matrix. Har bir SKU uchun kim marketplace owner, kim ads, kim content, kim supply, kim reviewer va kim backup ekanini formal ko'rinishda yuritadi.
+
+API va storage
+- `GET /api/founder/responsibilities`
+- `POST /api/founder/responsibilities`
+- `GET /api/founder/audit?entityType=responsibility&entityId=...`
+- Storage: `data/secure/responsibilities.json`
+
+Entity fieldlari
+- `skuId`
+- `marketplace`
+- `marketplaceOwnerId`
+- `adsOwnerId`
+- `contentOwnerId`
+- `supplyOwnerId`
+- `reviewerId`
+- `backupOwnerId`
+- `startDate`
+- `assignmentStatus`
+- `authorityLimit`
+- `notes`
+
+Assignment statuslar
+- `active`
+- `temporary`
+- `backup_active`
+- `inactive`
+
+GET endpoint hisoblaydigan signal lar
+- `noOwnerCount`: 4 ta primary role ham bo'sh bo'lgan assignmentlar
+- `noBackupCount`: active assignment ichida backup owner yo'q
+- `overloadedUsers`: bir userga 5 tadan ko'p SKU tushgan holat
+- `managerWorkload`: har user bo'yicha SKU soni, open incidents va overdue tasklar
+
+Default authority mapping
+- marketplace owner: kundalik operatsiya va odatiy tasklar
+- ads owner: kelishilgan limit ichida kampaniya va byudjet
+- content owner: kontent yangilash va listing tuzatish
+- supply owner: stock xavfi bo'yicha standart tasklar
+- reviewer: yopilgan ish va muhim o'zgarishni tekshirish
+- backup owner: asosiy egasi yo'qligida barcha vakolatlar
+
+UI funksiyalar
+- Summary cards
+- Overloaded manager signal bloki
+- Unassigned SKU shortcutlari
+- Role-gap filter: tanlangan role slot bo'sh bo'lgan qatorlarni ko'rsatadi
+- Quick filter: no owner, no backup, inactive
+- Detail modal
+- Edit/create modal
+- History modal
+
+Biznes qiymati
+- SKU bo'yicha javobgarlik noaniqligini yo'qotadi.
+- Backup ownership sabab ta'til yoki yo'qlik paytida jarayon to'xtab qolmaydi.

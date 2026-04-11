@@ -1,0 +1,55 @@
+Sahifa: Incidents
+Route: `/incidents`
+
+Maqsad
+Operatsion muammolarni ro'yxatga olish, egasini belgilash, root cause va action plan bilan yuritish hamda SLA asosida kuzatish moduli.
+
+API va storage
+- `GET /api/founder/incidents`
+- `POST /api/founder/incidents`
+- Storage: `data/secure/incidents.json`
+- Audit: `data/secure/audit-log.json`
+
+Entity modeli
+- `incidentType`: `stock_mismatch | barcode_problem | return_spike | listing_blocked | pricing_risk | ad_overspend | supply_issue | document_issue | other`
+- `severity`: `low | medium | high | critical`
+- `status`: `open | in_progress | waiting | resolved | closed | reopened`
+- `ownerId`, `createdBy`, optional `reviewerId`, optional `closerId`
+- `rootCause` va `actionPlan`
+- `isEscalated`
+- `reopenCount`, `reopenReasons`
+- `linkedTaskIds`
+- optional `estimatedLoss`
+
+Validatsiya
+- Create paytida `title`, `ownerId`, `dueDate`, `severity`, `incidentType`, `rootCause`, `actionPlan` majburiy.
+- `resolved` ga o'tishda `rootCause` va `actionPlan` bo'sh bo'lishi mumkin emas.
+- `critical` incident ownersiz resolve qilinmaydi.
+
+Transition qoidalari
+- `open -> in_progress | waiting`
+- `in_progress -> waiting | resolved`
+- `waiting -> in_progress | resolved`
+- `resolved -> closed`
+- `reopened -> in_progress | waiting`
+- `closed` uchun normal transition yo'q, lekin reopen action orqali qayta ochish mumkin.
+
+Hisoblangan signal lar
+- `isSilent`: active incident 12+ soat update bo'lmagan.
+- `isEscalated`: status emas, alohida flag.
+- UI SLA ko'rsatkichlari: critical 1 soat, high 4 soat, medium 12 soat, low 24 soat.
+
+Maxsus actionlar
+- Escalate / de-escalate
+- Reopen: faqat `resolved` yoki `closed` holatdan
+- Delete
+
+UI xususiyatlari
+- No-owner banner
+- Silent incident banner
+- Severity filter
+- Detail modal ichida root cause, action plan, reopen history, linked tasklar va estimated loss ko'rsatiladi
+
+Biznes qiymati
+- Muammoni faqat "status" emas, sabab va yechim rejasi bilan yuritadi.
+- Founder escalation va repeated reopen holatlarini ko'rinadigan qiladi.

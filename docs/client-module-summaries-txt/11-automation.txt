@@ -1,0 +1,36 @@
+Page: Automation
+Route: /automation
+
+Purpose
+This module governs ad-spend decisions against stock reality. It helps the team avoid the classic marketplace problem of paying for traffic when inventory is too low or performance is deteriorating.
+
+Operational model
+- The page combines stock data and ad campaign data into one decision table.
+- It supports three operating modes: Manual, Dry Run, and Auto.
+- A global enable/disable control determines whether the automation layer is active.
+
+Main features
+- KPI cards for monitored campaigns, campaigns that should be paused now, campaigns that should be reduced now, estimated wasted spend, stock conflicts, budget spikes, performance drops, stale ad assignments, and pending approvals.
+- Marketplace tabs when the global marketplace filter is set to All.
+- Business-rules section that explains the automation framework.
+
+Decision table
+- One row per campaign or SKU.
+- Shows owner, stock on hand, estimated days of stock left, daily sales, health state, spend, conversions, spend trend, system recommendation, actual manager override, explanation, and estimated 7-day savings.
+- AI "Why" action can generate an explanation for the recommendation on demand.
+
+Manual override workflow
+- Managers can override the system recommendation.
+- The override requires a reason and is stored as an explicit actual decision, not as a silent change.
+
+Important rule logic
+- Very low stock leads to Pause.
+- Low stock leads to Reduce.
+- Mid-level stock leads to No Scale.
+- Healthy stock leads to Keep.
+- Wasteful ad spend without conversions can downgrade the recommendation even if stock is not critical.
+
+Business value
+- Prevents ad waste.
+- Aligns marketing spend with inventory reality.
+- Gives management a traceable control layer between automated recommendation and final human decision.

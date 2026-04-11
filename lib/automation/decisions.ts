@@ -43,11 +43,11 @@ function normalizeAction(kind: DecisionKind): AdAction {
 }
 
 export function buildAutomationDecisionRows(stocks: StockItem[], ads: AdCampaign[]): AutomationDecisionRow[] {
-  const adBySku = new Map(ads.map((ad) => [ad.sku, ad]));
+  const adBySku = new Map(ads.map((ad) => [`${ad.platform}::${ad.resolvedSku || ad.sku}`, ad]));
 
   return stocks
     .map((stock) => {
-      const ad = adBySku.get(stock.sku);
+      const ad = adBySku.get(`${stock.marketplace}::${stock.sku}`);
       const baseDecision = baseDecisionByQty(stock.qty);
       const status = statusByQty(stock.qty);
       const daysLeft = stock.dailySales > 0 ? Math.floor(stock.qty / stock.dailySales) : Infinity;
@@ -92,7 +92,7 @@ export function buildAutomationDecisionRows(stocks: StockItem[], ads: AdCampaign
 
       return {
         sku: stock.sku,
-        productName: stock.name,
+        productName: ad?.name || stock.name,
         qty: stock.qty,
         dailySales: stock.dailySales,
         daysLeft,
@@ -115,4 +115,3 @@ export function buildAutomationDecisionRows(stocks: StockItem[], ads: AdCampaign
       return a.qty - b.qty;
     });
 }
-

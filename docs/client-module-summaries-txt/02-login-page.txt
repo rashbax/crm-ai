@@ -1,0 +1,20 @@
+Page: Login
+Route: /login
+
+Purpose
+This page is the secure entry point into the CRM. It handles user authentication before the operational modules are shown.
+
+How it works
+- Uses credentials-based sign-in through the app's authentication layer.
+- Detects language from saved preference or browser locale, then renders the form in Russian or Uzbek.
+- On successful login, the user is redirected to the Founder Panel.
+
+Key features
+- Username and password fields with standard validation.
+- Password visibility toggle for easier and safer input.
+- Inline error state for failed authentication attempts.
+- Loading state on submit so the user sees that sign-in is being processed.
+
+Business value
+- Creates a controlled access gate for sensitive commercial, pricing, financial, and incident data.
+- Reduces friction for multilingual teams by localizing the first screen automatically.

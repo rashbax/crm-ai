@@ -1,0 +1,11 @@
+Page: Integrations Redirect
+Route: /integrations
+
+Purpose
+This is a convenience and backward-compatibility route.
+
+How it works
+- Immediately redirects the user to /settings, where the real integrations management experience now lives.
+
+Business value
+- Keeps older links and user expectations working while the product uses a cleaner settings-based information architecture.

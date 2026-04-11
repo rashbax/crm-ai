@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/integrations/sync-ads",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+Sahifa: Automation
+Route: `/automation`
+
+Maqsad
+Reklama xarajatini stock va demand signaliga bog'laydigan boshqaruv moduli. Maqsad - stock yetarli bo'lmaganda yoki kampaniya waste bo'lganda avtomatik tavsiya berish.
+
+API va data source
+- `GET /api/automation?marketplace=...`
+- `POST /api/automation/decision`
+- `POST /api/ai/explain`
+- Snapshot `loadAutomationSnapshot()` orqali olinadi
+- Override lar founder store orqali saqlanadi
+
+Muhim texnik noziklik
+- `mode` (`manual | dry_run | auto`) hozircha page state ichida saqlanadi, backendga persist qilinmaydi.
+- `enabled` toggle ham hozircha local UI state, server-side config emas.
+
+Asosiy entitylar
+- `AdCampaign`
+- `StockItem`
+- `SystemRecommendation`: `pause | reduce | no_scale | keep`
+- `healthStatus`: `active | monitoring | wasteful | risky`
+
+UI ichidagi asosiy funksiya
+- Campaignlar health va recommendation bo'yicha sort qilinadi.
+- KPI cardlar:
+- monitored
+- pause now
+- reduce now
+- waste spend
+- stock conflicts
+- budget spikes
+- performance drops
+- stale ad assignments
+- pending approvals
+
+Override logikasi
+- User actual decision beradi va reason yozadi.
+- `POST /api/automation/decision` override ni saqlaydi.
+- Agar actual decision system tavsiyasidan 2 yoki undan ko'p rank permissive bo'lsa, founder approval ham yaratiladi.
+- Misol: system `pause`, user `keep` so'rasa approval kerak bo'ladi.
+
+AI explain
+- `POST /api/ai/explain` SKU bo'yicha explain qaytaradi.
+- Explain lazy-load tarzda ochiladi.
+
+Jadvaldagi fieldlar
+- SKU
+- Product name
+- Owner
+- Stock on hand
+- Days of stock left
+- Daily sales
+- Health
+- Spend today / 7d / 14d
+- Conversions
+- Spend trend
+- System recommendation
+- Actual override
+- Reason
+- Estimated saved 7d
+
+Biznes qiymati
+- Ads spend va stock bir-biridan uzilib ketmasligini ta'minlaydi.
+- Over-permissive override larni founder nazorati ostiga oladi.

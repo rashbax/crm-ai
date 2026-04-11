@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Layout from "@/components/Layout";
 import { formatIsoDayForLocale, getBusinessIsoDay } from "@/lib/date";
 import { storage } from "@/lib/storage";
 import { getTranslation } from "@/lib/translations";
-import { useEnabledConnections } from "@/src/integrations/useEnabledConnections";
 import type { Language } from "@/types";
 import {
   Badge,
@@ -57,6 +57,28 @@ interface FinanceTypeCounts {
   adjustment: number;
 }
 
+interface FinanceSignal {
+  type: string;
+  severity: "warning" | "danger";
+  messageRu: string;
+  messageUz: string;
+}
+
+interface SkuProfitItem {
+  sku: string;
+  revenue: number;
+  refundAmount: number;
+  net: number;
+  orderCount: number;
+}
+
+interface PrevSummary {
+  netIncome: number;
+  totalIncome: number;
+  refunds: number;
+  commissions: number;
+}
+
 interface FinanceResponse {
   period?: FinancePeriod;
   breakdown?: FinanceBreakdown;
@@ -66,6 +88,10 @@ interface FinanceResponse {
     status: "fresh" | "stale" | "missing";
     updatedAt?: string;
   };
+  signals?: FinanceSignal[];
+  prevSummary?: PrevSummary;
+  topSkus?: SkuProfitItem[];
+  bottomSkus?: SkuProfitItem[];
 }
 
 const formatCurrency = (amount: number) =>
@@ -80,8 +106,15 @@ function formatPeriodRange(from: string, to: string, lang: Language): string {
   return `${formatIsoDayForLocale(from, locale)} - ${formatIsoDayForLocale(to, locale)}`;
 }
 
+const SIGNAL_TYPE_FILTER: Record<string, string> = {
+  refund_rate_high: "refund",
+  commission_pressure: "commission",
+  withdrawal_delay: "withdrawal",
+  adjustments_spike: "adjustment",
+};
+
 export default function FinancePage() {
-  const { enabledConnections } = useEnabledConnections();
+  const router = useRouter();
   const financeAbortRef = useRef<AbortController | null>(null);
   const requestSeqRef = useRef(0);
   const [lang, setLang] = useState<Language>("ru");
@@ -122,8 +155,13 @@ export default function FinancePage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [snapshotStatus, setSnapshotStatus] = useState<"fresh" | "stale" | "missing" | null>(null);
+  const [snapshotUpdatedAt, setSnapshotUpdatedAt] = useState<string | null>(null);
   const [snapshotPollTick, setSnapshotPollTick] = useState(0);
   const [snapshotPollAttempts, setSnapshotPollAttempts] = useState(0);
+  const [signals, setSignals] = useState<FinanceSignal[]>([]);
+  const [prevSummary, setPrevSummary] = useState<PrevSummary | null>(null);
+  const [topSkus, setTopSkus] = useState<SkuProfitItem[]>([]);
+  const [bottomSkus, setBottomSkus] = useState<SkuProfitItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -153,6 +191,7 @@ export default function FinancePage() {
         const query = new URLSearchParams({
           startDate: appliedStartDate,
           endDate: appliedEndDate,
+          marketplace: storage.getMarketplace(),
         });
         const response = await fetch(`/api/finance?${query.toString()}`, {
           cache: "no-store",
@@ -165,9 +204,14 @@ export default function FinancePage() {
         if (requestId !== requestSeqRef.current) return;
         const status = data.snapshot?.status ?? null;
         setSnapshotStatus(status);
+        setSnapshotUpdatedAt(data.snapshot?.updatedAt ?? null);
         if (status === "fresh") {
           setSnapshotPollAttempts(0);
         }
+        setSignals(data.signals ?? []);
+        setPrevSummary(data.prevSummary ?? null);
+        setTopSkus(data.topSkus ?? []);
+        setBottomSkus(data.bottomSkus ?? []);
         setPeriod(data.period || null);
         setBreakdown(
           data.breakdown || {
@@ -271,6 +315,22 @@ export default function FinancePage() {
         <div>
           <h1 className="page-title">{getTranslation(lang, "finance_title")}</h1>
           <p className="page-subtitle">{getTranslation(lang, "finance_subtitle")}</p>
+          {snapshotStatus && (
+            <div className="flex items-center gap-2 mt-1">
+              <span className={`w-2 h-2 rounded-full inline-block ${
+                snapshotStatus === "fresh" ? "bg-success" :
+                snapshotStatus === "stale" ? "bg-warning" : "bg-danger"
+              }`} />
+              <span className="text-xs text-text-muted">
+                {snapshotStatus === "fresh"
+                  ? (lang === "ru" ? "Данные актуальны" : "Ma'lumotlar yangi")
+                  : snapshotStatus === "stale"
+                  ? (lang === "ru" ? "Данные обновляются" : "Ma'lumotlar yangilanmoqda")
+                  : (lang === "ru" ? "Данные недоступны" : "Ma'lumotlar mavjud emas")}
+                {snapshotUpdatedAt && ` · ${lang === "ru" ? "обновлено" : "yangilangan"} ${new Date(snapshotUpdatedAt).toLocaleTimeString(lang === "ru" ? "ru-RU" : "uz-UZ", { hour: "2-digit", minute: "2-digit" })}`}
+              </span>
+            </div>
+          )}
         </div>
         <Button variant="primary">{lang === "ru" ? "Вывести средства" : "Pul yechish"}</Button>
       </div>
@@ -296,6 +356,14 @@ export default function FinancePage() {
             <MetricMain className="text-success">+{formatCurrency(summary.totalIncome)} ₽</MetricMain>
             <p className="text-xs text-text-muted mt-1">
               {typeCounts.sale} {lang === "ru" ? "продаж" : "sotuv"}
+              {prevSummary && prevSummary.totalIncome > 0 && (() => {
+                const pct = Math.round(((summary.totalIncome - prevSummary.totalIncome) / prevSummary.totalIncome) * 100);
+                return (
+                  <span className={`ml-2 font-medium ${pct >= 0 ? "text-success" : "text-danger"}`}>
+                    {pct > 0 ? "+" : ""}{pct}%
+                  </span>
+                );
+              })()}
             </p>
           </CardBody>
         </Card>
@@ -317,12 +385,148 @@ export default function FinancePage() {
               {summary.netIncome >= 0 ? "+" : ""}
               {formatCurrency(summary.netIncome)} ₽
             </MetricMain>
+            {prevSummary && prevSummary.netIncome !== 0 && (() => {
+              const delta = summary.netIncome - prevSummary.netIncome;
+              const pct = prevSummary.netIncome !== 0
+                ? Math.round((delta / Math.abs(prevSummary.netIncome)) * 100)
+                : 0;
+              return (
+                <p className={`text-xs mt-1 font-medium ${pct >= 0 ? "text-success" : "text-danger"}`}>
+                  {pct > 0 ? "+" : ""}{pct}% {lang === "ru" ? "vs прошлый период" : "vs oldingi davr"}
+                </p>
+              );
+            })()}
           </CardBody>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <Card className="lg:col-span-2">
+      {signals.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          {signals.map((signal) => {
+            const titles: Record<string, { ru: string; uz: string }> = {
+              net_income_drop: { ru: "Прибыль снижается", uz: "Daromad kamaymoqda" },
+              refund_rate_high: { ru: "Высокий уровень возвратов", uz: "Yuqori qaytarish ulushi" },
+              commission_pressure: { ru: "Комиссионное давление", uz: "Komissiya bosimi" },
+              withdrawal_delay: { ru: "Нет выводов средств", uz: "Pul yechilmagan" },
+              adjustments_spike: { ru: "Скачок корректировок", uz: "Tuzatishlar oshdi" },
+            };
+            const title = titles[signal.type] ?? { ru: signal.type, uz: signal.type };
+            const currentMp = storage.getMarketplace();
+            const subPage = currentMp === "wb" ? "/finance/wb" : "/finance/ozon";
+            const filterParam = SIGNAL_TYPE_FILTER[signal.type];
+            const href = filterParam ? `${subPage}?typeFilter=${filterParam}` : subPage;
+            return (
+              <div
+                key={signal.type}
+                onClick={() => router.push(href)}
+                className={`rounded-xl border p-4 cursor-pointer hover:opacity-80 transition-opacity ${
+                  signal.severity === "danger"
+                    ? "border-danger bg-danger-light"
+                    : "border-warning bg-warning-light"
+                }`}
+              >
+                <p className={`text-sm font-semibold mb-1 ${signal.severity === "danger" ? "text-danger" : "text-warning"}`}>
+                  {lang === "ru" ? title.ru : title.uz}
+                </p>
+                <p className="text-xs text-text-muted">
+                  {lang === "ru" ? signal.messageRu : signal.messageUz}
+                </p>
+                <p className="text-xs mt-2 font-medium text-text-muted">
+                  {lang === "ru" ? "Смотреть транзакции →" : "Tranzaksiyalarni ko'rish →"}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {breakdown.sales > 0 && (() => {
+        const reasons: string[] = [];
+        const refundRate = breakdown.refunds / breakdown.sales;
+        const commRate = breakdown.commissions / breakdown.sales;
+        const delivRate = breakdown.deliveryServices / breakdown.sales;
+        const adsRate = breakdown.adsPromotion / breakdown.sales;
+        if (refundRate > 0.05)
+          reasons.push(lang === "ru"
+            ? `Возвраты: ${Math.round(refundRate * 100)}% от выручки (−${formatCurrency(breakdown.refunds)} ₽)`
+            : `Qaytarishlar: ${Math.round(refundRate * 100)}% tushumdan (−${formatCurrency(breakdown.refunds)} ₽)`);
+        if (commRate > 0.10)
+          reasons.push(lang === "ru"
+            ? `Комиссии: ${Math.round(commRate * 100)}% от выручки (−${formatCurrency(breakdown.commissions)} ₽)`
+            : `Komissiyalar: ${Math.round(commRate * 100)}% tushumdan (−${formatCurrency(breakdown.commissions)} ₽)`);
+        if (delivRate > 0.03)
+          reasons.push(lang === "ru"
+            ? `Доставка: ${Math.round(delivRate * 100)}% от выручки (−${formatCurrency(breakdown.deliveryServices)} ₽)`
+            : `Yetkazib berish: ${Math.round(delivRate * 100)}% tushumdan (−${formatCurrency(breakdown.deliveryServices)} ₽)`);
+        if (adsRate > 0.03)
+          reasons.push(lang === "ru"
+            ? `Реклама: ${Math.round(adsRate * 100)}% от выручки (−${formatCurrency(breakdown.adsPromotion)} ₽)`
+            : `Reklama: ${Math.round(adsRate * 100)}% tushumdan (−${formatCurrency(breakdown.adsPromotion)} ₽)`);
+        if (prevSummary && prevSummary.netIncome > 0 && summary.netIncome < prevSummary.netIncome * 0.95) {
+          const drop = Math.round(((prevSummary.netIncome - summary.netIncome) / prevSummary.netIncome) * 100);
+          reasons.push(lang === "ru"
+            ? `Прибыль снизилась на ${drop}% по сравнению с прошлым периодом`
+            : `Daromad oldingi davrga nisbatan ${drop}% ga kamaydi`);
+        }
+        if (reasons.length === 0) return null;
+        return (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>{lang === "ru" ? "Почему такой результат" : "Nima uchun bunday natija"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <ul className="space-y-2">
+                {reasons.slice(0, 5).map((r, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-text-main">
+                    <span className="text-text-muted mt-0.5 shrink-0">→</span>
+                    <span>{r}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardBody>
+          </Card>
+        );
+      })()}
+
+      {(topSkus.length > 0 || bottomSkus.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{lang === "ru" ? "Топ SKU по прибыли" : "Top SKU foydasi"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-2">
+                {topSkus.map((item) => (
+                  <div key={item.sku} className="flex items-center justify-between text-sm">
+                    <span className="font-mono text-xs text-text-muted truncate max-w-[60%]">{item.sku}</span>
+                    <span className="font-semibold text-success tabular-nums">+{formatCurrency(item.net)} ₽</span>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-danger">{lang === "ru" ? "Проблемные SKU" : "Muammoli SKU"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-2">
+                {bottomSkus.map((item) => (
+                  <div key={item.sku} className="flex items-center justify-between text-sm">
+                    <span className="font-mono text-xs text-text-muted truncate max-w-[60%]">{item.sku}</span>
+                    <span className={`font-semibold tabular-nums ${item.net < 0 ? "text-danger" : "text-text-main"}`}>
+                      {item.net > 0 ? "+" : ""}{formatCurrency(item.net)} ₽
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      )}
+
+      <div className="mb-6">
+        <Card>
           <CardHeader>
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
@@ -466,47 +670,6 @@ export default function FinancePage() {
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{lang === "ru" ? "Площадки" : "Platformalar"}</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <p className="text-xs text-text-muted mb-3">
-              {lang === "ru"
-                ? "Переход к детальной финансовой странице каждой подключенной площадки"
-                : "Har bir ulangan platformaning batafsil moliya sahifasiga o'tish"}
-            </p>
-            <div className="space-y-2">
-              {enabledConnections.map((connection) => {
-                const labelMap: Record<string, string> = {
-                  ozon: "Ozon",
-                  wb: "Wildberries",
-                  ym: "Yandex Market",
-                  uzum: "Uzum",
-                };
-                const title = labelMap[connection.marketplaceId] || connection.marketplaceId;
-                const hasDetailPage = connection.marketplaceId === "ozon" || connection.marketplaceId === "wb";
-                return (
-                  <a
-                    key={connection.id}
-                    href={`/finance/${connection.marketplaceId}`}
-                    target={hasDetailPage ? "_blank" : undefined}
-                    rel={hasDetailPage ? "noopener noreferrer" : undefined}
-                    className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm hover:bg-background transition-colors"
-                  >
-                    <span>{title}</span>
-                    <span className="text-text-muted">→</span>
-                  </a>
-                );
-              })}
-              {enabledConnections.length === 0 && (
-                <p className="text-xs text-text-muted">
-                  {lang === "ru" ? "Нет подключенных площадок" : "Ulangan platformalar yo'q"}
-                </p>
-              )}
-            </div>
-          </CardBody>
-        </Card>
       </div>
 
     </Layout>

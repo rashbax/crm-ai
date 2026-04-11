@@ -1,0 +1,12 @@
+Page: Dashboard Redirect
+Route: /dashboard
+
+Purpose
+This page is a compatibility route for users or bookmarks that still point to the older dashboard path.
+
+How it works
+- Immediately redirects to /founder-panel.
+
+Business value
+- Preserves old links and user habits without maintaining a second dashboard implementation.
+- Ensures everyone lands on the current executive dashboard.

@@ -7,19 +7,62 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { storage } from '@/lib/storage';
 import { getTranslation } from '@/lib/translations';
 import type { Language } from '@/types';
 
+interface MarketplaceOption {
+	id: string;
+	name: string;
+}
+
+const MARKETPLACE_LABELS: Record<string, string> = {
+	ozon: 'Ozon',
+	wb: 'Wildberries',
+	uzum: 'Uzum',
+	ym: 'Yandex Market',
+};
+
 export default function Topbar() {
+	const router = useRouter();
 	const { data: session } = useSession();
 	const [lang, setLang] = useState<Language>('ru');
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
+	const [showMarketplaceMenu, setShowMarketplaceMenu] = useState(false);
+	const [selectedMarketplace, setSelectedMarketplace] = useState('all');
+	const [marketplaces, setMarketplaces] = useState<MarketplaceOption[]>([]);
 
 	useEffect(() => {
 		const currentLang = storage.getLang();
 		setLang(currentLang);
+		setSelectedMarketplace(storage.getMarketplace());
+
+		fetch('/api/integrations/enabled', { credentials: 'include' })
+			.then((r) => r.json())
+			.then((data) => {
+				const conns = data.enabledConnections || data.connections || [];
+				const uniqueIds = Array.from(new Set(conns.map((c: { marketplaceId: string }) => c.marketplaceId))) as string[];
+				const mps = uniqueIds.map((id) => ({
+					id,
+					name: MARKETPLACE_LABELS[id] || id,
+				}));
+				setMarketplaces(mps);
+
+				// Auto-select: if only 1 marketplace, set it; if multiple and none selected, set first
+				const saved = storage.getMarketplace();
+				if (mps.length === 1) {
+					if (saved !== mps[0].id) {
+						storage.setMarketplace(mps[0].id);
+						setSelectedMarketplace(mps[0].id);
+					}
+				} else if (mps.length > 1 && (saved === 'all' || !mps.find((m) => m.id === saved))) {
+					storage.setMarketplace(mps[0].id);
+					setSelectedMarketplace(mps[0].id);
+				}
+			})
+			.catch(() => {});
 	}, []);
 
 	useEffect(() => {
@@ -28,20 +71,30 @@ export default function Topbar() {
 			if (!target.closest('.profile-dropdown')) {
 				setShowProfileMenu(false);
 			}
+			if (!target.closest('.marketplace-dropdown')) {
+				setShowMarketplaceMenu(false);
+			}
 		};
 
-		if (showProfileMenu) {
+		if (showProfileMenu || showMarketplaceMenu) {
 			document.addEventListener('click', handleClickOutside);
 		}
 
 		return () => {
 			document.removeEventListener('click', handleClickOutside);
 		};
-	}, [showProfileMenu]);
+	}, [showProfileMenu, showMarketplaceMenu]);
 
 	const handleLangChange = (newLang: Language) => {
 		storage.setLang(newLang);
 		setLang(newLang);
+		window.location.reload();
+	};
+
+	const handleMarketplaceChange = (id: string) => {
+		storage.setMarketplace(id);
+		setSelectedMarketplace(id);
+		setShowMarketplaceMenu(false);
 		window.location.reload();
 	};
 
@@ -81,9 +134,111 @@ export default function Topbar() {
 					</button>
 				</div>
 
-				<button className="btn-ghost">
-					{getTranslation(lang, 'topbar_help')}
-				</button>
+				{/* Marketplace Selector */}
+				<div className="marketplace-dropdown" style={{ position: 'relative' }}>
+					{marketplaces.length === 0 ? (
+						/* No integrations — show link to settings */
+						<button
+							className="btn-ghost"
+							onClick={() => router.push('/settings')}
+							style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+						>
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.7 }}>
+								<circle cx="12" cy="12" r="10" />
+								<line x1="12" y1="8" x2="12" y2="16" />
+								<line x1="8" y1="12" x2="16" y2="12" />
+							</svg>
+							{getTranslation(lang, 'marketplace_add')}
+						</button>
+					) : marketplaces.length === 1 ? (
+						/* Single marketplace — just show name, no dropdown */
+						<span
+							className="btn-ghost"
+							style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'default' }}
+						>
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.7 }}>
+								<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+								<polyline points="9 22 9 12 15 12 15 22" />
+							</svg>
+							{marketplaces[0].name}
+						</span>
+					) : (
+						/* Multiple marketplaces — dropdown selector */
+						<>
+							<button
+								className="btn-ghost"
+								onClick={() => setShowMarketplaceMenu(!showMarketplaceMenu)}
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: '8px',
+									padding: '6px 12px',
+									borderRadius: '8px',
+									fontSize: '14px',
+									fontWeight: 500,
+									color: '#374151',
+								}}
+							>
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
+									<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+									<polyline points="9 22 9 12 15 12 15 22" />
+								</svg>
+								{MARKETPLACE_LABELS[selectedMarketplace] || selectedMarketplace}
+								<svg
+									width="10" height="10" viewBox="0 0 10 10" fill="none"
+									style={{
+										opacity: 0.4,
+										transition: 'transform 0.2s',
+										transform: showMarketplaceMenu ? 'rotate(180deg)' : 'rotate(0deg)',
+										marginLeft: '2px',
+									}}
+								>
+									<path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+								</svg>
+							</button>
+
+							{showMarketplaceMenu && (
+								<div
+									style={{
+										position: 'absolute',
+										top: '100%',
+										right: 0,
+										marginTop: '4px',
+										minWidth: '200px',
+										backgroundColor: 'white',
+										border: '1px solid #e5e7eb',
+										borderRadius: '8px',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+										zIndex: 1000,
+										padding: '4px 0',
+									}}
+								>
+									{marketplaces.map((mp) => (
+										<button
+											key={mp.id}
+											onClick={() => handleMarketplaceChange(mp.id)}
+											style={{
+												width: '100%',
+												padding: '10px 16px',
+												textAlign: 'left',
+												fontSize: '14px',
+												fontWeight: selectedMarketplace === mp.id ? 600 : 400,
+												color: selectedMarketplace === mp.id ? '#005BFF' : '#374151',
+												backgroundColor: selectedMarketplace === mp.id ? '#F0F6FF' : 'transparent',
+												border: 'none',
+												cursor: 'pointer',
+											}}
+											onMouseEnter={(e) => { if (selectedMarketplace !== mp.id) e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
+											onMouseLeave={(e) => { if (selectedMarketplace !== mp.id) e.currentTarget.style.backgroundColor = 'transparent'; }}
+										>
+											{mp.name}
+										</button>
+									))}
+								</div>
+							)}
+						</>
+					)}
+				</div>
 
 				{/* Profile Dropdown */}
 				<div
@@ -212,7 +367,7 @@ export default function Topbar() {
 								</button>
 
 								<button
-									onClick={() => setShowProfileMenu(false)}
+									onClick={() => { setShowProfileMenu(false); router.push('/settings'); }}
 									style={{
 										width: '100%',
 										padding: '12px 16px',

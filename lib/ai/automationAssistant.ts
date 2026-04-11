@@ -159,12 +159,12 @@ function templateAsk(question: string, rows: AutomationDecisionRow[], lang: Lang
   if (q.includes("xavf") || q.includes("risk") || q.includes("опас")) {
     if (risky.length === 0) return lang === "uz" ? "Hozircha kritik xavfdagi SKU yo'q." : "Сейчас нет SKU в критичной зоне.";
     if (lang === "uz") {
-      return `Eng xavfli SKUlar (faqat aktiv sotuvdagilar):\n${risky
-        .map((r) => `- ${r.sku}: qoldiq ${r.qty}, qaror ${r.decision.toUpperCase()}`)
+      return `Eng xavfli tovarlar (faqat aktiv sotuvdagilar):\n${risky
+        .map((r) => `- ${r.sku}: qoldiq ${r.qty} dona, tavsiya — ${decisionHumanText(r, lang)}`)
         .join("\n")}`;
     }
-    return `Самые рискованные SKU (только из активной продажи):\n${risky
-      .map((r) => `- ${r.sku}: остаток ${r.qty}, решение ${r.decision.toUpperCase()}`)
+    return `Самые рискованные товары (только из активной продажи):\n${risky
+      .map((r) => `- ${r.sku}: остаток ${r.qty} шт., рекомендация — ${decisionHumanText(r, lang)}`)
       .join("\n")}`;
   }
 
@@ -208,41 +208,102 @@ async function aiOrTemplateText(system: string, prompt: string): Promise<string 
   }
 }
 
+function formatDaysLeft(daysLeft: number, lang: Lang): string {
+  if (!Number.isFinite(daysLeft) || daysLeft > 365) return lang === "uz" ? "cheksiz" : "неограничен";
+  if (daysLeft <= 0) return lang === "uz" ? "закончился" : "закончился";
+  return `${Math.round(daysLeft)} ${lang === "uz" ? "kun" : "дн."}`;
+}
+
 export async function getAutomationAiSummary(langInput?: string) {
   const lang = normalizeLang(langInput);
   const snapshot = await loadAutomationSnapshot();
   const rows = buildAutomationDecisionRows(snapshot.stockItems, snapshot.adCampaigns);
 
-  const facts = {
-    totals: {
-      skus: rows.length,
-      pause: rows.filter((r) => r.decision === "pause").length,
-      reduce: rows.filter((r) => r.decision === "reduce").length,
-      noScale: rows.filter((r) => r.decision === "no_scale").length,
-      keep: rows.filter((r) => r.decision === "keep").length,
-    },
-    top: rows.slice(0, 20).map((r) => ({
-      sku: r.sku,
-      qty: r.qty,
-      daysLeft: r.daysLeft,
-      spendToday: r.spendToday,
-      convToday: r.conversionsToday,
-      decision: r.decision,
-    })),
-  };
+  const pause = rows.filter((r) => r.decision === "pause");
+  const reduce = rows.filter((r) => r.decision === "reduce");
+  const noScale = rows.filter((r) => r.decision === "no_scale");
+  const keep = rows.filter((r) => r.decision === "keep");
+  const criticalStock = rows.filter((r) => Number.isFinite(r.daysLeft) && r.daysLeft <= 7);
+  const wasteRows = rows.filter((r) => r.wasteFlag);
 
-  const system =
-    lang === "uz"
-      ? "Siz marketplace assistentisiz. 5-7 punktli qisqa xulosa yozing. Oddiy inson tilida yozing. Formulalar, tenglamalar, kod, qisqartma-jargon ishlatmang. Faqat berilgan faktlar asosida yozing."
-      : "Вы ассистент marketplace. Напишите 5-7 коротких пунктов простым человеческим языком. Без формул, без уравнений, без кода и без технического жаргона. Только по фактам из данных.";
+  // Priority items: pause decisions with active spend OR near-stockout — top 5 only
+  const priorityItems = [
+    ...pause.filter((r) => r.spendToday > 0 || r.conversionsToday > 0),
+    ...pause.filter((r) => r.spendToday === 0 && r.conversionsToday === 0).slice(0, 3),
+  ]
+    .slice(0, 5)
+    .map((r) => {
+      if (lang === "uz") {
+        return {
+          artikul: r.sku,
+          qoldiq_dona: r.qty,
+          qoldiq_davom: formatDaysLeft(r.daysLeft, lang),
+          ...(r.spendToday > 0 ? { bugun_xarajat: `${Math.round(r.spendToday)} so'm` } : {}),
+          ...(r.conversionsToday > 0 ? { bugun_buyurtma: r.conversionsToday } : {}),
+          tavsiya: "reklamani to'xtatish",
+        };
+      }
+      return {
+        артикул: r.sku,
+        остаток_штук: r.qty,
+        запас_на: formatDaysLeft(r.daysLeft, lang),
+        ...(r.spendToday > 0 ? { расход_сегодня: `${Math.round(r.spendToday)} руб.` } : {}),
+        ...(r.conversionsToday > 0 ? { заказы_сегодня: r.conversionsToday } : {}),
+        рекомендация: "остановить рекламу",
+      };
+    });
 
-  const prompt = `Data JSON:\n${JSON.stringify(facts)}\n\nReturn only bullet points.`;
+  let system: string;
+  let prompt: string;
+
+  if (lang === "uz") {
+    const facts = {
+      umumiy_tovarlar: rows.length,
+      reklamani_toxtatish_kerak: pause.length,
+      budjeti_kamaytirish_kerak: reduce.length,
+      masshtabsiz_qoldirish: noScale.length,
+      ozgarishsiz: keep.length,
+      ...(criticalStock.length > 0 ? { tez_tugaydi_7_kun: criticalStock.length } : {}),
+      ...(wasteRows.length > 0 ? { budjet_sarflanmoqda_natijasiz: wasteRows.length } : {}),
+      ...(priorityItems.length > 0 ? { birinchi_navbatdagi_tovarlar: priorityItems } : {}),
+    };
+    system = `Siz marketplace savdo assistentisiz. Quyidagi biznes ma'lumotlari asosida 5–7 ta qisqa xulosa yozing.
+Qoidalar:
+- Faqat o'zbek tilida, biznes uslubida yozing
+- Texnik atamalar, inglizcha so'zlar va maydon nomlarini ASLO ishlatmang
+- Nol ko'rsatkichlarni eslatmang
+- Har bir xulosa — aniq raqam va harakat
+- Ma'lumotlar tuzilmasini tavsiflamas, faqat biznes xulosasini yozing
+- Oxirgi xulosa — rahbar uchun tavsiya`;
+    prompt = `Biznes ma'lumotlari:\n${JSON.stringify(facts, null, 2)}\n\nFaqat biznes xulosalarini yozing.`;
+  } else {
+    const facts = {
+      всего_товаров: rows.length,
+      рекомендовано_остановить_рекламу: pause.length,
+      рекомендовано_снизить_бюджет: reduce.length,
+      оставить_без_масштабирования: noScale.length,
+      без_изменений: keep.length,
+      ...(criticalStock.length > 0 ? { заканчиваются_в_течение_7_дней: criticalStock.length } : {}),
+      ...(wasteRows.length > 0 ? { слив_бюджета_без_конверсий: wasteRows.length } : {}),
+      ...(priorityItems.length > 0 ? { приоритетные_товары: priorityItems } : {}),
+    };
+    system = `Вы бизнес-ассистент продавца на маркетплейсе. По приведённым данным напишите деловое резюме из 5–7 пунктов.
+Требования:
+- Деловой русский, понятный руководителю без технических знаний
+- ЗАПРЕЩЕНО упоминать названия полей, JSON-ключи, английские слова
+- ЗАПРЕЩЕНО описывать структуру данных — только бизнес-выводы
+- Нулевые показатели не включайте
+- Каждый пункт — конкретное число или факт
+- Последний пункт — практическая рекомендация руководителю`;
+    prompt = `Бизнес-данные:\n${JSON.stringify(facts, null, 2)}\n\nНапишите только бизнес-резюме, без описания данных.`;
+  }
+
   const aiText = await aiOrTemplateText(system, prompt);
 
   if (aiText) {
     const lines = aiText
       .split("\n")
-      .map((line) => line.replace(/^[\-\*\d\.\)\s]+/, "").trim())
+      .map((line) => line.replace(/^\s*[-*•]\s+|\s*\d+[.)]\s+/, "").trim())
       .filter(Boolean)
       .slice(0, 7);
 
@@ -256,7 +317,9 @@ export async function getAutomationAiExplanation(sku: string, langInput?: string
   const lang = normalizeLang(langInput);
   const snapshot = await loadAutomationSnapshot();
   const rows = buildAutomationDecisionRows(snapshot.stockItems, snapshot.adCampaigns);
-  const row = rows.find((r) => r.sku === sku);
+  const directRow = rows.find((r) => r.sku === sku);
+  const matchedAd = snapshot.adCampaigns.find((campaign) => campaign.sku === sku || campaign.resolvedSku === sku);
+  const row = directRow || (matchedAd?.resolvedSku ? rows.find((r) => r.sku === matchedAd.resolvedSku) : undefined);
 
   if (!row) {
     return {
@@ -281,12 +344,10 @@ export async function getAutomationAiExplanation(sku: string, langInput?: string
 
 export async function getAutomationAiAnswer(question: string, langInput?: string) {
   const lang = normalizeLang(langInput);
-  const snapshot = await loadAutomationSnapshot();
-  const rows = buildAutomationDecisionRows(snapshot.stockItems, snapshot.adCampaigns);
-  const activeRows = rows.filter(isSellingRelevantRow);
   const salesFacts = await loadSalesFacts();
 
-  if (isTodaySoldQuestion(question)) {
+  // Quick template for simple "today sold" questions when AI is not configured
+  if (isTodaySoldQuestion(question) && !isAiConfigured()) {
     if (lang === "uz") {
       const top = salesFacts.topTodaySkus.length
         ? `\n- Top SKUlar: ${salesFacts.topTodaySkus.map((x) => `${x.sku} (${x.qty})`).join(", ")}`
@@ -296,45 +357,25 @@ export async function getAutomationAiAnswer(question: string, langInput?: string
         answer: `Bugungi sotuv:\n- Jami sotilgan: ${salesFacts.todaySoldUnits} dona\n- Buyurtmalar soni: ${salesFacts.todayOrdersCount}${top}`,
       };
     }
-
     const top = salesFacts.topTodaySkus.length
       ? `\n- Топ SKU: ${salesFacts.topTodaySkus.map((x) => `${x.sku} (${x.qty})`).join(", ")}`
       : "";
-
     return {
       source: "template" as const,
       answer: `Продажи за сегодня:\n- Продано: ${salesFacts.todaySoldUnits} шт\n- Количество заказов: ${salesFacts.todayOrdersCount}${top}`,
     };
   }
 
-  const compactRows = rows.slice(0, 80).map((r) => ({
-    sku: r.sku,
-    qty: r.qty,
-    daysLeft: r.daysLeft,
-    spendToday: r.spendToday,
-    convToday: r.conversionsToday,
-    decision: r.decision,
-    waste: r.wasteFlag,
-  }));
+  // Load full CRM context for AI
+  const { loadFullCrmContext } = await import("@/lib/ai/dataContext");
+  const ctx = await loadFullCrmContext();
 
   const system =
     lang === "uz"
-      ? "Siz data Q&A assistentisiz. Faqat berilgan data asosida javob bering. Oddiy inson tilida yozing. Formulalar va texnik ifodalarni ishlatmang. Agar bir nechta SKU bo'lsa, javobni '-' bilan punktlar ko'rinishida bering. Faqat aktiv sotuvga aloqador SKUlarni xavf sifatida ko'rsating."
-      : "Вы Q&A ассистент по данным. Отвечайте только на основе предоставленных данных. Пишите простым человеческим языком, без формул и техничных выражений. Если перечисляете несколько SKU, оформляйте ответ коротким списком с '-'. В рисках учитывайте только SKU с активным сигналом продаж.";
+      ? `Siz CRM marketplace assistentisiz. Sizda barcha ma'lumotlar bor: sotuvlar, mahsulotlar, narxlar, qoldiqlar, reklama, vazifalar, hodisalar, tasdiqlar. Faqat berilgan data asosida javob bering. Oddiy inson tilida yozing. Formulalar ishlatmang. Agar ro'yxat bo'lsa '-' bilan yozing. Raqamlarni aniq keltiring. Javob ${lang === "uz" ? "o'zbek" : "rus"} tilida bo'lsin.`
+      : `Вы CRM ассистент маркетплейса. У вас есть все данные: продажи, товары, цены, остатки, реклама, задачи, инциденты, одобрения. Отвечайте только на основе данных. Пишите простым языком, без формул. Списки оформляйте через '-'. Приводите конкретные цифры. Отвечайте на русском.`;
 
-  const prompt = `Question: ${question}\n\nAutomation data JSON:\n${JSON.stringify(
-    compactRows
-  )}\n\nActive-selling rows JSON:\n${JSON.stringify(
-    activeRows.slice(0, 80).map((r) => ({
-      sku: r.sku,
-      qty: r.qty,
-      daysLeft: r.daysLeft,
-      spendToday: r.spendToday,
-      convToday: r.conversionsToday,
-      decision: r.decision,
-      waste: r.wasteFlag,
-    }))
-  )}\n\nSales facts JSON:\n${JSON.stringify(salesFacts)}`;
+  const prompt = `Вопрос: ${question}\n\nПолные данные CRM:\n${JSON.stringify(ctx)}`;
 
   const aiText = await aiOrTemplateText(system, prompt);
 
@@ -342,5 +383,8 @@ export async function getAutomationAiAnswer(question: string, langInput?: string
     return { source: "ai" as const, answer: aiText };
   }
 
+  // Fallback to template if AI fails
+  const snapshot = await loadAutomationSnapshot();
+  const rows = buildAutomationDecisionRows(snapshot.stockItems, snapshot.adCampaigns);
   return { source: "template" as const, answer: templateAsk(question, rows, lang, salesFacts) };
 }

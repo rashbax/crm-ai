@@ -3,9 +3,9 @@ import { getBusinessIsoDay } from "@/lib/date";
 import { NextResponse } from "next/server";
 import path from "path";
 import { readJsonFile } from "@/src/integrations/storage";
-import { getEnabledConnections, filterByEnabledConnections } from "@/src/integrations/enabled";
+import { getEnabledConnectionsForMarketplace, filterByEnabledConnections } from "@/src/integrations/enabled";
 
-type OrderStatus = "new" | "processing" | "shipped" | "cancelled";
+type OrderStatus = "processing" | "shipped" | "in_transit" | "delivered" | "returned" | "cancelled";
 
 interface CanonicalOrder {
   date: string;
@@ -29,28 +29,54 @@ function mapSourceStatusToUi(status?: string): OrderStatus | null {
   if (!status) return null;
   const s = status.toLowerCase();
 
+  // Returned — must check before cancelled
+  if (
+    s.includes("return") ||
+    s.includes("возврат") ||
+    s.includes("refund") ||
+    s === "returned"
+  ) {
+    return "returned";
+  }
+
   if (
     s.includes("cancel") ||
     s.includes("canceled") ||
     s.includes("cancelled") ||
-    s.includes("отмен") ||
-    s.includes("return") ||
-    s.includes("возврат")
+    s.includes("отмен")
   ) {
     return "cancelled";
   }
 
+  // Delivered — received by customer
+  // "sold" = WB Sales API record, meaning the transaction is finalised (item delivered, WB settles)
   if (
-    s.includes("deliver") ||
     s.includes("delivered") ||
+    s.includes("received") ||
+    s.includes("получен") ||
+    s.includes("достав") ||
+    s === "delivered" ||
+    s === "sold"
+  ) {
+    return "delivered";
+  }
+
+  // In transit — last-mile delivery (Доставляются)
+  if (
+    s === "delivering" ||
+    s === "in_transit" ||
+    s.includes("в пути")
+  ) {
+    return "in_transit";
+  }
+
+  // Shipped — dispatched from warehouse
+  if (
     s.includes("shipped") ||
     s.includes("awaiting_deliver") ||
     s.includes("sold") ||
     s.includes("complete") ||
-    s.includes("received") ||
-    s.includes("в пути") ||
-    s.includes("достав") ||
-    s.includes("получен")
+    s === "shipped"
   ) {
     return "shipped";
   }
@@ -69,10 +95,6 @@ function mapSourceStatusToUi(status?: string): OrderStatus | null {
     return "processing";
   }
 
-  if (s.includes("new") || s.includes("created")) {
-    return "new";
-  }
-
   return null;
 }
 
@@ -85,9 +107,10 @@ function deriveStatus(dateStr: string, sourceStatus?: string): OrderStatus {
   if (Number.isNaN(date.getTime())) return "processing";
 
   const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-  if (diffHours <= 24) return "new";
   if (diffHours <= 72) return "processing";
-  return "shipped";
+  if (diffHours <= 168) return "shipped";    // ≤7 days
+  if (diffHours <= 336) return "in_transit"; // ≤14 days
+  return "delivered";
 }
 
 function parseOrderDate(input: string): number {
@@ -97,12 +120,13 @@ function parseOrderDate(input: string): number {
   return Number.isFinite(ts) ? ts : 0;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const { error } = await requireAuth();
   if (error) return error;
 
   try {
-    const enabledConnections = await getEnabledConnections();
+    const mp = new URL(request.url).searchParams.get("marketplace") || "all";
+    const enabledConnections = await getEnabledConnectionsForMarketplace(mp);
     if (enabledConnections.length === 0) {
       return NextResponse.json({ orders: [] });
     }
@@ -119,7 +143,8 @@ export async function GET() {
         : `${getBusinessIsoDay(order.date)}T00:00:00.000Z`;
       const qty = Number.isFinite(order.qty) ? order.qty : 0;
       const revenue = typeof order.revenue === "number" ? order.revenue : (order.price || 0) * qty;
-      const unitPrice = qty > 0 ? revenue / qty : (order.price || 0);
+      // Prefer stored unit price; fall back to revenue/qty; never return 0 if price field exists
+      const unitPrice = order.price || (qty > 0 && revenue > 0 ? revenue / qty : 0);
 
       return {
         id: `#${100000 - index}`,

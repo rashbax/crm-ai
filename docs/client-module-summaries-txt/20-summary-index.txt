@@ -1,0 +1,30 @@
+Client Summary Index
+
+This folder contains separate plain-text summaries for the project's main pages and system-level entry routes.
+
+File map
+- 00-global-shell-and-navigation.txt - shared authenticated shell, top bar, language, marketplace scope, and main navigation
+- 01-root-entry-page.txt - root route behavior
+- 02-login-page.txt - login flow
+- 03-founder-panel.txt - executive control dashboard
+- 04-dashboard-redirect-page.txt - legacy dashboard alias
+- 05-tasks.txt - task management
+- 06-responsibilities.txt - SKU ownership matrix
+- 07-incidents.txt - incident registry
+- 08-approvals.txt - founder approval queue
+- 09-orders.txt - order monitoring
+- 10-products.txt - SKU registry
+- 11-automation.txt - ad and stock automation
+- 12-prices.txt - pricing workspace
+- 13-finance-overview.txt - finance summary
+- 14-finance-ozon.txt - Ozon finance detail
+- 15-finance-wb.txt - Wildberries finance detail
+- 16-analytics.txt - analytics and forecasting
+- 17-crm-appeals.txt - customer appeals and reviews
+- 18-settings-integrations.txt - integrations control center
+- 19-integrations-redirect-page.txt - integrations alias route
+
+Recommended reading order for a client
+- Start with 00-global-shell-and-navigation.txt
+- Then read 03-founder-panel.txt for the executive view
+- After that, review the operational modules from 05 through 18

@@ -1,0 +1,29 @@
+Page: Tasks
+Route: /tasks
+
+Purpose
+This module is the operational execution engine of the project. It is used to assign work, track deadlines, capture blockers, collect completion proof, and keep a full audit trail of task changes.
+
+Core task model
+- Each task can carry a type, priority, business impact level, recurrence pattern, assignee, optional reviewer, deadline, marketplace, and optional SKU link.
+- The module distinguishes between real workflow status and risk signals. For example, "overdue" is treated as a signal, not as a standalone status.
+
+Main features
+- Status counters for New, In Progress, Waiting, Blocked, Needs Founder Approval, and Done.
+- Quick-signal chips for overdue tasks, stale tasks, tasks waiting for founder approval, and blocked tasks.
+- Search plus filters by priority, impact level, and assignee.
+- Table view that shows priority, impact, recurrence, task details, assignee, status, deadline, and available next actions.
+- Inline visibility of waiting reasons, blocked reasons, and completion proof.
+
+Workflow controls
+- New task modal for structured task creation.
+- Status transition modal that enforces extra input when needed:
+- Waiting or Blocked requires a reason.
+- Done requires proof or result text.
+- History modal that reads audit records and shows who changed what and when.
+- Delete action for unfinished tasks.
+
+Business value
+- Turns work into a measurable operational queue instead of informal chat requests.
+- Makes accountability explicit through owners, deadlines, and proof.
+- Gives leadership a clean way to spot overdue, stale, and blocked execution.

@@ -1,0 +1,29 @@
+Sahifa: Finance Wildberries
+Route: `/finance/wb`
+
+Maqsad
+Wildberries bo'yicha transaction-level economics sahifasi.
+
+Texnik modeli
+- `GET /api/finance` endpointidan foydalanadi
+- Query ichida `marketplaceFilter=Wildberries`
+- Search 250 ms debounce bilan ishlaydi
+- Page size 15
+
+Asosiy imkoniyatlar
+- Date range filter
+- Transaction type filter
+- Signal kartalar
+- Top SKU profit va problem SKU list
+- Ledger-style transaction table
+
+Type lar
+- `sale`
+- `refund`
+- `commission`
+- `withdrawal`
+- `adjustment`
+
+Biznes qiymati
+- WB kanali bo'yicha alohida profitability review o'tkazish imkonini beradi.
+- Summary finance sahifasidan signal orqali shu sahifaga drilldown qilinadi.

@@ -9,6 +9,7 @@ import type {
   AuditEntityType,
   Incident,
   Approval,
+  Appeal,
 } from "@/types/founder";
 
 const SECURE_DIR = join(process.cwd(), "data", "secure");
@@ -63,25 +64,61 @@ export function deleteResponsibility(id: string): void {
 }
 
 // ============================================
+// AD DECISION OVERRIDES
+// ============================================
+
+import type { AdDecisionOverride } from "@/types/automation";
+
+export function getAdDecisionOverrides(): AdDecisionOverride[] {
+  return readJson<AdDecisionOverride>("ad-decisions.json");
+}
+
+export function saveAdDecisionOverride(override: AdDecisionOverride): void {
+  const all = getAdDecisionOverrides();
+  const idx = all.findIndex((d) => d.campaignKey === override.campaignKey);
+  if (idx >= 0) {
+    all[idx] = override;
+  } else {
+    all.push(override);
+  }
+  writeJson("ad-decisions.json", all);
+}
+
+// ============================================
 // FOUNDER TASKS
 // ============================================
 
 export function getFounderTasks(): FounderTask[] {
   const tasks = readJson<FounderTask>("founder-tasks.json");
   const now = new Date();
-  // Auto-calculate overdueDays
+  // Compute signals: isOverdue, isStale — never mutate stored status
   return tasks.map((t) => {
-    const s = t.status as string;
-    if (s === "done") return t;
+    if (t.status === "done") {
+      return { ...t, overdueDays: 0, isOverdue: false, isStale: false };
+    }
     const due = new Date(t.dueDate);
-    const diff = Math.floor((now.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
-    const noAutoOverride = ["done", "blocked", "waiting", "need_approval"];
+    const overdueDays = Math.max(
+      0,
+      Math.floor((now.getTime() - due.getTime()) / (1000 * 60 * 60 * 24))
+    );
+    const isOverdue = overdueDays > 0;
+    // Stale: not updated in 3+ days (non-done, non-blocked tasks)
+    const lastActivity = new Date(t.updatedAt || t.createdAt);
+    const daysSinceActivity = Math.floor(
+      (now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    // "done" already handled by early return above — only blocked/waiting are quiet by design
+    const isStale =
+      daysSinceActivity >= 3 &&
+      t.status !== "blocked" &&
+      t.status !== "waiting";
     return {
       ...t,
-      overdueDays: diff > 0 ? diff : 0,
-      status: diff > 0 && !noAutoOverride.includes(s)
-        ? "overdue" as const
-        : t.status,
+      impactLevel: t.impactLevel ?? "simple",
+      recurrence: t.recurrence ?? "none",
+      overdueDays,
+      isOverdue,
+      isStale,
     };
   });
 }
@@ -107,7 +144,31 @@ export function deleteFounderTask(id: string): void {
 // ============================================
 
 export function getIncidents(): Incident[] {
-  return readJson<Incident>("incidents.json");
+  const raw = readJson<any>("incidents.json");
+  const now = new Date();
+  const SILENT_HOURS = 12;
+  return raw.map((i: any) => {
+    // GAP 1: migrate legacy "escalated" status → in_progress + isEscalated: true
+    const isEscalated: boolean = i.isEscalated || i.status === "escalated";
+    const status = i.status === "escalated" ? "in_progress" : i.status;
+    // GAP 5: compute isSilent — not resolved/closed and no update in 12h
+    const isActive = status !== "resolved" && status !== "closed";
+    const lastActivity = new Date(i.updatedAt || i.createdAt);
+    const hoursSinceActivity = (now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60);
+    const isSilent = isActive && hoursSinceActivity >= SILENT_HOURS;
+    return {
+      ...i,
+      status,
+      isEscalated,
+      isSilent,
+      createdBy: i.createdBy || "system",
+      rootCause: i.rootCause || "",
+      actionPlan: i.actionPlan || "",
+      reopenCount: i.reopenCount ?? 0,
+      reopenReasons: i.reopenReasons ?? [],
+      linkedTaskIds: i.linkedTaskIds ?? [],
+    } as Incident;
+  });
 }
 
 export function saveIncident(incident: Incident): void {
@@ -131,7 +192,24 @@ export function deleteIncident(id: string): void {
 // ============================================
 
 export function getApprovals(): Approval[] {
-  return readJson<Approval>("approvals.json");
+  const raw = readJson<any>("approvals.json");
+  const now = new Date();
+  const STALE_HOURS = 24; // pending not touched in 24h → reminder signal
+  return raw.map((a: any) => {
+    // GAP 5: isExpired — pending past expiresAt
+    const isExpired = a.status === "pending" && !!a.expiresAt && new Date(a.expiresAt) < now;
+    // GAP 7: isStale — pending with no activity for 24h
+    const lastActivity = new Date(a.decidedAt || a.requestedAt);
+    const hoursSince = (now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60);
+    const isStale = a.status === "pending" && hoursSince >= STALE_HOURS;
+    return {
+      ...a,
+      priority: a.priority ?? "medium",
+      isExpired,
+      isStale,
+      skuList: a.skuList ?? [],
+    } as Approval;
+  });
 }
 
 export function saveApproval(approval: Approval): void {
@@ -148,6 +226,38 @@ export function saveApproval(approval: Approval): void {
 export function deleteApproval(id: string): void {
   const all = getApprovals().filter((a) => a.id !== id);
   writeJson("approvals.json", all);
+}
+
+// ============================================
+// APPEALS / MUROJAATLAR (T3-13)
+// ============================================
+
+export function getAppeals(): Appeal[] {
+  const appeals = readJson<Appeal>("appeals.json");
+  const now = new Date();
+  return appeals.map((a) => ({
+    ...a,
+    slaBreached:
+      a.status !== "yopilgan" &&
+      a.status !== "javob_berilgan" &&
+      now > new Date(a.slaDeadline),
+  }));
+}
+
+export function saveAppeal(appeal: Appeal): void {
+  const all = readJson<Appeal>("appeals.json");
+  const idx = all.findIndex((a) => a.id === appeal.id);
+  if (idx >= 0) {
+    all[idx] = appeal;
+  } else {
+    all.push(appeal);
+  }
+  writeJson("appeals.json", all);
+}
+
+export function deleteAppeal(id: string): void {
+  const all = readJson<Appeal>("appeals.json").filter((a) => a.id !== id);
+  writeJson("appeals.json", all);
 }
 
 // ============================================

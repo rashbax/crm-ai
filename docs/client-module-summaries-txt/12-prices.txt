@@ -1,0 +1,35 @@
+Page: Prices
+Route: /prices
+
+Purpose
+This module is the pricing workspace. It combines market price management, approval control, promotion visibility, and draft-based batch execution.
+
+How pricing is managed
+- Pricing is displayed per SKU and per marketplace row.
+- The table compares current live values, draft values, margin context, ownership, promo status, approval state, stock risk, recommendations, price index, and last changed date.
+
+Main features
+- Signal cards for loss-risk pricing, promo items that are stuck, pending approvals, and unapplied drafts.
+- Filters for SKU search, on-sale/not-on-sale state, blocked items, low margin, and high-risk stock.
+- Draft queue entry count visible in the page header.
+
+Price editing workflow
+- Clicking a row opens the price editor.
+- The editor supports new price and discount proposals plus a mandatory business reason.
+- Risk warnings appear when discounts cross approval thresholds.
+- Proposed changes are added to a draft queue instead of going live immediately.
+
+Approvals and governance
+- Approval status is visible per marketplace row.
+- Large discount changes can be marked as approval-required.
+- Pricing history records old and new values, reasons, operator, and approval outcome.
+
+Additional detail layers
+- Promotions modal shows active promo programs and discount depth.
+- History modal shows prior price changes.
+- Draft modal allows batch review, apply, remove, or clear-all actions.
+
+Business value
+- Makes pricing a governed process instead of a hidden manual edit.
+- Preserves commercial traceability for founders and managers.
+- Supports batch operations while still protecting the business from reckless discounts.

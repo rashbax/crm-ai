@@ -2,7 +2,7 @@ import { requireAuth } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
 import path from "path";
 import { readJsonFile, writeJsonFile, withLock, getConnections } from "@/src/integrations/storage";
-import { filterByEnabledConnections, getEnabledConnections } from "@/src/integrations/enabled";
+import { filterByEnabledConnections, getEnabledConnectionsForMarketplace } from "@/src/integrations/enabled";
 import { decryptCredentials } from "@/lib/encryption";
 import { addDaysToIsoDay, getBusinessIsoDay, toBusinessDayBoundaryIso } from "@/lib/date";
 import type { Connection } from "@/src/integrations/types";
@@ -55,6 +55,7 @@ interface TransactionTypeCounts {
 
 interface FinanceBasePayload {
   transactions: Transaction[];
+  allTransactions: Transaction[];
   chartData: ChartDataPoint[];
   period: { from: string; to: string };
   breakdown: FinanceBreakdown;
@@ -77,6 +78,28 @@ interface FinanceSnapshotRecord {
 interface FinanceSnapshotInfo {
   status: "fresh" | "stale" | "missing";
   updatedAt?: string;
+}
+
+interface FinanceSignal {
+  type: string;
+  severity: "warning" | "danger";
+  messageRu: string;
+  messageUz: string;
+}
+
+interface SkuProfitItem {
+  sku: string;
+  revenue: number;
+  refundAmount: number;
+  net: number;
+  orderCount: number;
+}
+
+interface PrevSummary {
+  netIncome: number;
+  totalIncome: number;
+  refunds: number;
+  commissions: number;
 }
 
 const FINANCE_CACHE_TTL_MS = 60_000;
@@ -247,21 +270,28 @@ async function fetchOzonDetailedBreakdownByRange(
     totalAccrued: 0,
   };
 
+  // Build list of 28-day chunk ranges upfront
+  const chunks: Array<{ chunkStart: string; chunkEnd: string }> = [];
   let cursorKey = getBusinessIsoDay(from);
   const toKey = getBusinessIsoDay(to);
   while (cursorKey <= toKey) {
     const chunkEndKey = addDaysToIsoDay(cursorKey, 27) <= toKey ? addDaysToIsoDay(cursorKey, 27) : toKey;
+    chunks.push({ chunkStart: cursorKey, chunkEnd: chunkEndKey });
+    cursorKey = addDaysToIsoDay(chunkEndKey, 1);
+  }
+
+  // Process chunks in batches of 2 to avoid rate limiting
+  async function fetchChunk(chunkStart: string, chunkEnd: string): Promise<void> {
     let page = 1;
     let pageCount = 1;
-
     do {
-      const body = await ozonPost(creds, "/v3/finance/transaction/list", {
+      const body = await ozonPost(creds!, "/v3/finance/transaction/list", {
         page,
         page_size: 1000,
         filter: {
           date: {
-            from: toBusinessDayBoundaryIso(cursorKey, false),
-            to: toBusinessDayBoundaryIso(chunkEndKey, true),
+            from: toBusinessDayBoundaryIso(chunkStart, false),
+            to: toBusinessDayBoundaryIso(chunkEnd, true),
           },
         },
       });
@@ -310,8 +340,12 @@ async function fetchOzonDetailedBreakdownByRange(
       pageCount = Number(result.page_count || 1);
       page += 1;
     } while (page <= pageCount);
+  }
 
-    cursorKey = addDaysToIsoDay(chunkEndKey, 1);
+  // Run in batches of 2 — parallel but rate-limit safe
+  for (let i = 0; i < chunks.length; i += 2) {
+    const batch = chunks.slice(i, i + 2);
+    await Promise.allSettled(batch.map((c) => fetchChunk(c.chunkStart, c.chunkEnd)));
   }
 
   breakdown.commissions = breakdown.ozonReward;
@@ -587,7 +621,7 @@ async function fetchWbDetailedBreakdownByRange(
       data = await wbGet<any>(
         creds.token,
         WB_STATISTICS_API,
-        "/api/v1/supplier/reportDetailByPeriod",
+        "/api/v5/supplier/reportDetailByPeriod",
         { dateFrom, dateTo, limit: "100000", rrdid: String(rrdid) }
       );
     } catch (err) {
@@ -617,9 +651,11 @@ async function fetchWbDetailedBreakdownByRange(
       const acceptance = Math.abs(Number(row?.acceptance || 0));
 
       if (docType.includes("возврат") || docType.includes("return")) {
-        breakdown.refunds += Math.abs(Number.isFinite(forPay) ? forPay : retailAmount);
+        // Use gross retail_amount for returns (consistent with Option A gross revenue)
+        breakdown.refunds += Number.isFinite(retailAmount) && retailAmount > 0 ? retailAmount : Math.abs(Number.isFinite(forPay) ? forPay : 0);
       } else if (docType.includes("продажа") || docType.includes("sale")) {
-        breakdown.sales += Number.isFinite(forPay) && forPay > 0 ? forPay : (Number.isFinite(retailAmount) ? retailAmount : 0);
+        // Use gross retail_amount so commissions are not double-counted in totalAccrued
+        breakdown.sales += Number.isFinite(retailAmount) && retailAmount > 0 ? retailAmount : (Number.isFinite(forPay) && forPay > 0 ? forPay : 0);
       } else if (docType.includes("штраф") || docType.includes("penalty")) {
         breakdown.otherServicesFines += penalty;
       } else if (docType.includes("компенс") || docType.includes("compens")) {
@@ -876,12 +912,81 @@ function scheduleFinanceSnapshotRefresh(snapshotKey: string, from: Date, to: Dat
   financeSnapshotRefreshJobs.set(snapshotKey, job);
 }
 
+function computeSignals(breakdown: FinanceBreakdown, prev: PrevSummary): FinanceSignal[] {
+  const signals: FinanceSignal[] = [];
+  const { sales, refunds, commissions, withdrawals, adjustments, totalAccrued } = breakdown;
+
+  // 1. Net income drop vs prev period
+  if (prev.netIncome > 1000 && totalAccrued < prev.netIncome * 0.85) {
+    const drop = Math.round(((prev.netIncome - totalAccrued) / prev.netIncome) * 100);
+    signals.push({
+      type: "net_income_drop",
+      severity: "danger",
+      messageRu: `Чистая прибыль упала на ${drop}% по сравнению с прошлым периодом`,
+      messageUz: `Sof daromad oldingi davrga nisbatan ${drop}% ga kamaydi`,
+    });
+  }
+
+  // 2. Refund rate high
+  if (sales > 0) {
+    const rate = refunds / sales;
+    if (rate > 0.20) {
+      signals.push({
+        type: "refund_rate_high",
+        severity: "danger",
+        messageRu: `Доля возвратов ${Math.round(rate * 100)}% — критически высокая`,
+        messageUz: `Qaytarish ulushi ${Math.round(rate * 100)}% — kritik darajada yuqori`,
+      });
+    } else if (rate > 0.10) {
+      signals.push({
+        type: "refund_rate_high",
+        severity: "warning",
+        messageRu: `Доля возвратов ${Math.round(rate * 100)}% — выше нормы`,
+        messageUz: `Qaytarish ulushi ${Math.round(rate * 100)}% — me'yordan yuqori`,
+      });
+    }
+  }
+
+  // 3. Commission pressure
+  if (sales > 0 && commissions > 0 && commissions / sales > 0.25) {
+    signals.push({
+      type: "commission_pressure",
+      severity: "warning",
+      messageRu: `Комиссии составляют ${Math.round((commissions / sales) * 100)}% от выручки`,
+      messageUz: `Komissiyalar tushumning ${Math.round((commissions / sales) * 100)}% ni tashkil etadi`,
+    });
+  }
+
+  // 4. Withdrawal delay
+  if (withdrawals === 0 && sales > 100_000) {
+    signals.push({
+      type: "withdrawal_delay",
+      severity: "warning",
+      messageRu: "Выводы средств за период не зафиксированы",
+      messageUz: "Davr ichida pul yechib olinmagan",
+    });
+  }
+
+  // 5. Negative adjustments spike
+  if (sales > 0 && adjustments < 0 && Math.abs(adjustments) / sales > 0.05) {
+    signals.push({
+      type: "adjustments_spike",
+      severity: "warning",
+      messageRu: `Корректировки составляют −${Math.round((Math.abs(adjustments) / sales) * 100)}% от выручки`,
+      messageUz: `Tuzatishlar tushumning −${Math.round((Math.abs(adjustments) / sales) * 100)}% ni tashkil etadi`,
+    });
+  }
+
+  return signals;
+}
+
 export async function GET(request: Request) {
   const { error } = await requireAuth();
   if (error) return error;
 
   try {
-    const enabled = await getEnabledConnections();
+    const mp = new URL(request.url).searchParams.get("marketplace") || "all";
+    const enabled = await getEnabledConnectionsForMarketplace(mp);
     if (enabled.length === 0) {
       return NextResponse.json({
         transactions: [],
@@ -1056,9 +1161,14 @@ export async function GET(request: Request) {
       basePayload = baseCached.payload;
     } else {
       const rawOrders = await readJsonFile<OrderEvent[]>(ORDERS_FILE, []);
-      const orders = filterByEnabledConnections(rawOrders, enabled)
-        .slice()
-        .sort((a, b) => new Date(isoSafe(a.date)).getTime() - new Date(isoSafe(b.date)).getTime());
+      const filteredOrders = filterByEnabledConnections(rawOrders, enabled);
+      // Pre-compute timestamps once — avoids O(n log n) Date constructions inside comparator
+      const tsMap = new Map<number, number>(
+        filteredOrders.map((o, i) => [i, new Date(isoSafe(o.date)).getTime()])
+      );
+      const indexedOrders = filteredOrders.map((o, i) => ({ o, i }));
+      indexedOrders.sort((a, b) => tsMap.get(a.i)! - tsMap.get(b.i)!);
+      const orders = indexedOrders.map(({ o }) => o);
 
       const txNoBalance: Omit<Transaction, "balance">[] = [];
       let trxId = 1;
@@ -1210,6 +1320,7 @@ export async function GET(request: Request) {
 
       basePayload = {
         transactions: rangeTransactions,
+        allTransactions: transactions,
         chartData,
         period: {
           from: fromKey,
@@ -1340,6 +1451,74 @@ export async function GET(request: Request) {
       }
     }
 
+    // --- Prev period (same duration, shifted back) ---
+    const periodDays = Math.max(
+      1,
+      Math.round(
+        (new Date(`${toKey}T00:00:00.000Z`).getTime() - new Date(`${fromKey}T00:00:00.000Z`).getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    );
+    const prevToDate = new Date(new Date(`${fromKey}T00:00:00.000Z`).getTime() - 24 * 60 * 60 * 1000);
+    const prevFromDate = new Date(prevToDate.getTime() - (periodDays - 1) * 24 * 60 * 60 * 1000);
+    const prevFromKey = getBusinessIsoDay(prevFromDate);
+    const prevToKey = getBusinessIsoDay(prevToDate);
+
+    const prevFiltered = basePayload.allTransactions.filter((t) => {
+      const dk = getBusinessIsoDay(t.date);
+      const mpOk = marketplaceFilter === "all" || t.marketplace === marketplaceFilter;
+      return dk >= prevFromKey && dk <= prevToKey && mpOk;
+    });
+    const prevIncome = prevFiltered
+      .filter((t) => t.type === "sale")
+      .reduce((s, t) => s + t.amount, 0);
+    const prevRefunds = Math.abs(
+      prevFiltered.filter((t) => t.type === "refund").reduce((s, t) => s + t.amount, 0)
+    );
+    const prevCommissions = Math.abs(
+      prevFiltered.filter((t) => t.type === "commission").reduce((s, t) => s + t.amount, 0)
+    );
+    const prevSummaryData: PrevSummary = {
+      netIncome: round2(prevIncome - prevRefunds - prevCommissions),
+      totalIncome: round2(prevIncome),
+      refunds: round2(prevRefunds),
+      commissions: round2(prevCommissions),
+    };
+
+    // --- SKU profit (marketplace-filtered, all types) ---
+    const mpOnly =
+      marketplaceFilter === "all"
+        ? basePayload.transactions
+        : basePayload.transactions.filter((t) => t.marketplace === marketplaceFilter);
+
+    const skuMap = new Map<string, { revenue: number; refundAmount: number; orderCount: number }>();
+    for (const t of mpOnly) {
+      const rawId = t.orderId || "";
+      const sku = rawId.length > 11 ? rawId.slice(0, rawId.length - 11) : rawId || t.id;
+      const entry = skuMap.get(sku) || { revenue: 0, refundAmount: 0, orderCount: 0 };
+      if (t.type === "refund") {
+        entry.refundAmount += Math.abs(t.amount);
+      } else if (t.type === "sale") {
+        entry.revenue += t.amount;
+        entry.orderCount += 1;
+      }
+      skuMap.set(sku, entry);
+    }
+    const allSkuItems: SkuProfitItem[] = Array.from(skuMap.entries())
+      .map(([sku, d]) => ({
+        sku,
+        revenue: round2(d.revenue),
+        refundAmount: round2(d.refundAmount),
+        net: round2(d.revenue - d.refundAmount),
+        orderCount: d.orderCount,
+      }))
+      .sort((a, b) => b.net - a.net);
+    const topSkus = allSkuItems.slice(0, 5);
+    const bottomSkus = [...allSkuItems].sort((a, b) => a.net - b.net).slice(0, 5);
+
+    // --- Signals ---
+    const signals = computeSignals(responseBreakdown, prevSummaryData);
+
     const filteredTransactions = rangeTransactions.filter((transaction) => {
       const matchesSearch =
         !search ||
@@ -1372,6 +1551,10 @@ export async function GET(request: Request) {
       typeCounts: responseTypeCounts,
       summary: responseSummary,
       snapshot: snapshotInfo,
+      signals,
+      prevSummary: prevSummaryData,
+      topSkus,
+      bottomSkus,
     };
     putFinanceCache(responseCacheKey, payload);
     return NextResponse.json(payload);

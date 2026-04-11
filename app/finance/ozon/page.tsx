@@ -25,6 +25,21 @@ import {
 type TransactionType = "sale" | "refund" | "commission" | "withdrawal" | "adjustment";
 type Marketplace = "Ozon" | "Wildberries";
 
+interface FinanceSignal {
+  type: string;
+  severity: "warning" | "danger";
+  messageRu: string;
+  messageUz: string;
+}
+
+interface SkuProfitItem {
+  sku: string;
+  revenue: number;
+  refundAmount: number;
+  net: number;
+  orderCount: number;
+}
+
 interface Transaction {
   id: string;
   date: string;
@@ -87,6 +102,9 @@ interface FinanceResponse {
   pagination?: FinancePagination;
   typeCounts?: FinanceTypeCounts;
   summary: FinanceSummary;
+  signals?: FinanceSignal[];
+  topSkus?: SkuProfitItem[];
+  bottomSkus?: SkuProfitItem[];
 }
 
 const formatCurrency = (amount: number) =>
@@ -117,6 +135,7 @@ function formatPeriodRange(from: string, to: string, lang: Language): string {
 export default function OzonFinancePage() {
   const financeAbortRef = useRef<AbortController | null>(null);
   const requestSeqRef = useRef(0);
+  const tableRef = useRef<HTMLDivElement>(null);
   const [lang, setLang] = useState<Language>("ru");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
@@ -165,6 +184,9 @@ export default function OzonFinancePage() {
     totalItems: 0,
     totalPages: 1,
   });
+  const [signals, setSignals] = useState<FinanceSignal[]>([]);
+  const [topSkus, setTopSkus] = useState<SkuProfitItem[]>([]);
+  const [bottomSkus, setBottomSkus] = useState<SkuProfitItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -178,6 +200,17 @@ export default function OzonFinancePage() {
     setEndDate(initialEnd);
     setAppliedStartDate(initialStart);
     setAppliedEndDate(initialEnd);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const tf = params.get("typeFilter");
+    const valid: TransactionType[] = ["sale", "refund", "commission", "withdrawal", "adjustment"];
+    if (tf && (valid as string[]).includes(tf)) {
+      setTypeFilter(tf as TransactionType);
+      setTimeout(() => tableRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
+    }
   }, []);
 
   useEffect(() => {
@@ -208,6 +241,7 @@ export default function OzonFinancePage() {
           search: debouncedSearch,
           typeFilter,
           marketplaceFilter: "Ozon",
+          marketplace: storage.getMarketplace(),
         });
         const response = await fetch(`/api/finance?${query.toString()}`, {
           cache: "no-store",
@@ -220,6 +254,9 @@ export default function OzonFinancePage() {
         if (requestId !== requestSeqRef.current) return;
         const nextTransactions = Array.isArray(data.transactions) ? data.transactions : [];
         setTransactions(nextTransactions);
+        setSignals(data.signals ?? []);
+        setTopSkus(data.topSkus ?? []);
+        setBottomSkus(data.bottomSkus ?? []);
         setPeriod(data.period || null);
         setBreakdown(
           data.breakdown || {
@@ -306,6 +343,21 @@ export default function OzonFinancePage() {
     return names[type];
   };
 
+  const SIGNAL_TYPE_FILTER: Record<string, TransactionType | "all"> = {
+    refund_rate_high: "refund",
+    commission_pressure: "commission",
+    withdrawal_delay: "withdrawal",
+    adjustments_spike: "adjustment",
+    net_income_drop: "all",
+  };
+
+  const handleSignalClick = (signal: FinanceSignal) => {
+    const filter = SIGNAL_TYPE_FILTER[signal.type] ?? "all";
+    setTypeFilter(filter);
+    setCurrentPage(1);
+    setTimeout(() => tableRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  };
+
   const handleResetFilters = () => {
     setSearch("");
     setTypeFilter("all");
@@ -380,6 +432,42 @@ export default function OzonFinancePage() {
           {lang === "ru" ? "К финансам" : "Moliya bo'limiga"}
         </a>
       </div>
+
+      {signals.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          {signals.map((signal) => {
+            const titles: Record<string, { ru: string; uz: string }> = {
+              net_income_drop: { ru: "Прибыль снижается", uz: "Daromad kamaymoqda" },
+              refund_rate_high: { ru: "Высокий уровень возвратов", uz: "Yuqori qaytarish ulushi" },
+              commission_pressure: { ru: "Комиссионное давление", uz: "Komissiya bosimi" },
+              withdrawal_delay: { ru: "Нет выводов средств", uz: "Pul yechilmagan" },
+              adjustments_spike: { ru: "Скачок корректировок", uz: "Tuzatishlar oshdi" },
+            };
+            const title = titles[signal.type] ?? { ru: signal.type, uz: signal.type };
+            return (
+              <div
+                key={signal.type}
+                onClick={() => handleSignalClick(signal)}
+                className={`rounded-xl border p-4 cursor-pointer hover:opacity-80 transition-opacity ${
+                  signal.severity === "danger"
+                    ? "border-danger bg-danger-light"
+                    : "border-warning bg-warning-light"
+                }`}
+              >
+                <p className={`text-sm font-semibold mb-1 ${signal.severity === "danger" ? "text-danger" : "text-warning"}`}>
+                  {lang === "ru" ? title.ru : title.uz}
+                </p>
+                <p className="text-xs text-text-muted">
+                  {lang === "ru" ? signal.messageRu : signal.messageUz}
+                </p>
+                <p className="text-xs mt-2 font-medium text-text-muted">
+                  {lang === "ru" ? "Смотреть транзакции →" : "Tranzaksiyalarni ko'rish →"}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <Card className="mb-6">
         <CardBody>
@@ -554,7 +642,52 @@ export default function OzonFinancePage() {
         </div>
       </Card>
 
-      <div className="mb-4 flex items-center justify-between">
+      {(topSkus.length > 0 || bottomSkus.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{lang === "ru" ? "Топ SKU по прибыли" : "Top SKU foydasi"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-2">
+                {topSkus.map((item) => (
+                  <div key={item.sku} className="flex items-center justify-between text-sm">
+                    <span className="font-mono text-xs text-text-muted truncate max-w-[60%]">{item.sku}</span>
+                    <div className="text-right">
+                      <span className="font-semibold text-success tabular-nums">+{new Intl.NumberFormat("ru-RU").format(item.net)} ₽</span>
+                      <span className="block text-xs text-text-muted">{item.orderCount} {lang === "ru" ? "заказов" : "buyurtma"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-danger">{lang === "ru" ? "Проблемные SKU" : "Muammoli SKU"}</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-2">
+                {bottomSkus.map((item) => (
+                  <div key={item.sku} className="flex items-center justify-between text-sm">
+                    <span className="font-mono text-xs text-text-muted truncate max-w-[60%]">{item.sku}</span>
+                    <div className="text-right">
+                      <span className={`font-semibold tabular-nums ${item.net < 0 ? "text-danger" : "text-text-main"}`}>
+                        {item.net > 0 ? "+" : ""}{new Intl.NumberFormat("ru-RU").format(item.net)} ₽
+                      </span>
+                      {item.refundAmount > 0 && (
+                        <span className="block text-xs text-danger">−{new Intl.NumberFormat("ru-RU").format(item.refundAmount)} {lang === "ru" ? "возвраты" : "qaytarish"}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      )}
+
+      <div ref={tableRef} className="mb-4 flex items-center justify-between">
         <p className="text-sm text-text-muted">
           {lang === "ru"
             ? `Показано ${currentTransactions.length} из ${pagination.totalItems} транзакций`
@@ -570,7 +703,7 @@ export default function OzonFinancePage() {
               <TableHead>ID</TableHead>
               <TableHead>{lang === "ru" ? "Дата" : "Sana"}</TableHead>
               <TableHead>{lang === "ru" ? "Тип" : "Turi"}</TableHead>
-              <TableHead>{lang === "ru" ? "Описание" : "Tavsif"}</TableHead>
+              <TableHead>{lang === "ru" ? "Описание / SKU" : "Tavsif / SKU"}</TableHead>
               <TableHead>{lang === "ru" ? "Сумма" : "Summa"}</TableHead>
               <TableHead>{lang === "ru" ? "Баланс" : "Balans"}</TableHead>
             </TableRow>

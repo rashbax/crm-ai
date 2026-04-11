@@ -1,0 +1,12 @@
+Sahifa: Root Entry
+Route: `/`
+
+Maqsad
+Ilovaga kirish uchun default start point.
+
+Texnik ishlash
+- `app/page.tsx` hech qanday UI chizmaydi.
+- Sahifa darhol `redirect("/login")` bajaradi.
+
+Biznes qiymati
+- Foydalanuvchi root URL ga kirganda noaniq bo'sh sahifa emas, doim login oqimiga tushadi.

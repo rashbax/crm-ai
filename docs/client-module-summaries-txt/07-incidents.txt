@@ -1,0 +1,33 @@
+Page: Incidents
+Route: /incidents
+
+Purpose
+This module is the formal register for operational problems and business risks. It is designed so serious issues are recorded, owned, tracked against SLA, and either resolved or escalated properly.
+
+Incident model
+- Incidents are typed and prioritized by severity.
+- Creation requires a title, owner, due date, root cause, and action plan.
+- Optional fields include reviewer, estimated financial loss, marketplace, and SKU.
+
+Main features
+- Status counters for Open, In Progress, Waiting, Reopened, Resolved, and Closed.
+- Additional signal counters for critical incidents, silent incidents, and escalated incidents.
+- Warning banners for incidents without owners and incidents with no recent updates.
+- Search and severity filtering.
+
+Operational workflow
+- Structured incident creation with mandatory problem analysis.
+- Status transitions through the life cycle.
+- Escalate/de-escalate control for founder attention.
+- Reopen flow with a mandatory reason when a supposedly solved issue returns.
+- Delete action for active incidents that were created by mistake.
+
+Table and detail behavior
+- Table shows severity, reopen count, title, type, owner, reviewer, status, and SLA state.
+- Visual badges show escalation, silence, and repeated reopening.
+- Detail modal shows full metadata, root cause, action plan, financial impact, reopen history, and linked task IDs.
+
+Business value
+- Prevents important operational failures from being lost in chat or spreadsheets.
+- Adds root-cause discipline instead of superficial status updates.
+- Gives management a measurable incident process with ownership and response timing.

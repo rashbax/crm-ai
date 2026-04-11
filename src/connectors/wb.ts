@@ -9,7 +9,7 @@ import type {
   DateRange,
   WBCredentials,
 } from "./types";
-import type { OrderEvent, StockState, AdsDaily, PriceState } from "@/src/pricing/types";
+import type { OrderEvent, StockState, AdsDaily, PriceState, ReviewItem } from "@/src/pricing/types";
 
 const REAL_API = process.env.REAL_API === "1";
 const DRY_RUN = process.env.DRY_RUN === "1";
@@ -234,9 +234,15 @@ export const wbConnector: MarketplaceConnector = {
           const qty = Math.max(1, Math.floor(parseNumber(order?.quantity || 1)));
           const price = parseNumber(order?.totalPrice || order?.priceWithDisc || 0);
           const isCancel = String(order?.isCancel || "").toLowerCase() === "true" || order?.isCancel === true;
+          // isCancel is the authoritative WB status signal; wbStatusName is supplementary
+          // Only use wbStatusName when it clearly indicates delivery — never override a cancel flag
+          const wbStatusName = String(order?.wbStatusName || "").trim().toLowerCase();
+          const isDelivered = wbStatusName.includes("достав") || wbStatusName.includes("получен");
+          const sourceStatus = isCancel ? "cancelled" : isDelivered ? "sold" : "ordered";
 
+          // Key includes cancel flag so cancelled orders are never merged with active ones
           const dayKey = date.slice(0, 10);
-          const key = `${dayKey}|${sku}`;
+          const key = `${dayKey}|${sku}|${isCancel ? "c" : "o"}`;
           const existing = aggregated.get(key);
           if (existing) {
             existing.qty += qty;
@@ -251,7 +257,7 @@ export const wbConnector: MarketplaceConnector = {
               qty,
               revenue: price > 0 ? price * qty : undefined,
               price: price > 0 ? price : undefined,
-              sourceStatus: isCancel ? "cancelled" : "ordered",
+              sourceStatus,
             });
           }
         }
@@ -282,7 +288,9 @@ export const wbConnector: MarketplaceConnector = {
           const key = `${dayKey}|${sku}`;
 
           const existing = aggregated.get(key);
-          const revenue = parseNumber(sale?.finishedPrice || sale?.forPay || sale?.priceWithDisc || 0);
+          // finishedPrice = buyer-paid (correct base for -15% profit estimate)
+          // forPay = already net of WB fees — using it + subtracting 15% would double-deduct
+          const revenue = parseNumber(sale?.finishedPrice || sale?.priceWithDisc || sale?.forPay || 0);
 
           if (existing) {
             // Update revenue with more accurate sales data
@@ -380,7 +388,9 @@ export const wbConnector: MarketplaceConnector = {
 
           const stocks = Array.isArray(resp?.stocks) ? resp.stocks : [];
           for (const s of stocks) {
-            const sku = String(s?.sku || s?.barcode || "").trim();
+            // s.sku from /api/v3/stocks is a barcode — skip it, barcode ≠ supplierArticle
+            // Only use supplierArticle or vendorCode if present, otherwise skip this record
+            const sku = String(s?.supplierArticle || s?.vendorCode || s?.sa_name || "").trim();
             if (!sku) continue;
 
             const amount = parseNumber(s?.amount || 0);
@@ -407,8 +417,126 @@ export const wbConnector: MarketplaceConnector = {
 
   async fetchAds(creds: WBCredentials, range?: DateRange): Promise<AdsDaily[]> {
     if (!REAL_API) return [];
-    // WB ads API requires separate integration; return empty for now
-    return [];
+    assertToken(creds);
+
+    const WB_ADVERT_API = "https://advert-api.wildberries.ru";
+    const now = new Date();
+    const endDate = range?.endDate ?? dateToISO(now);
+    const startDate = range?.startDate ?? dateToISO(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000));
+
+    // Step 1: fetch all campaign IDs + their status
+    let campaignIds: number[] = [];
+    // WB campaign status: 9 = running/active, 11 = paused, others = stopped/finished
+    const campaignStateById = new Map<number, string>();
+    try {
+      const advertsResp = await wbGet<any>(creds.token, WB_ADVERT_API, "/adv/v1/adverts");
+      const adverts = Array.isArray(advertsResp) ? advertsResp : [];
+      for (const a of adverts) {
+        if (!a.advertId) continue;
+        campaignIds.push(a.advertId);
+        campaignStateById.set(a.advertId, a.status === 9 ? "RUNNING" : "STOPPED");
+      }
+    } catch (err) {
+      console.warn("[WB Ads] Failed to fetch campaign list:", err instanceof Error ? err.message : err);
+      return [];
+    }
+
+    if (campaignIds.length === 0) return [];
+
+    // Step 2: build nmId → supplierArticle map via content API
+    // Without this, ads sku (nmId) never matches orders sku (supplierArticle)
+    const nmIdToArticle = new Map<string, string>();
+    try {
+      let cursorParams: any = { limit: 1000 };
+      for (let page = 0; page < 20; page++) {
+        const cardsResp = await wbPost<any>(
+          creds.token,
+          WB_CONTENT_API,
+          "/content/v2/get/cards/list",
+          { settings: { cursor: cursorParams, filter: { withPhoto: -1 } } }
+        );
+        const cards = Array.isArray(cardsResp?.data?.cards) ? cardsResp.data.cards : [];
+        for (const card of cards) {
+          const nmId = String(card.nmID ?? "");
+          const vendorCode = String(card.vendorCode ?? "").trim();
+          if (nmId && vendorCode) nmIdToArticle.set(nmId, vendorCode);
+        }
+        const cur = cardsResp?.data?.cursor;
+        if (!cur || cards.length === 0 || (cur.total != null && nmIdToArticle.size >= cur.total)) break;
+        cursorParams = { nmID: cur.nmID, updatedAt: cur.updatedAt, limit: 1000 };
+      }
+    } catch (err) {
+      console.warn("[WB Ads] Failed to fetch nmId→article mapping:", err instanceof Error ? err.message : err);
+    }
+
+    // Build 31-day date chunks (API limit per request)
+    const dateChunks: Array<{ begin: string; end: string }> = [];
+    let chunkStart = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    while (chunkStart <= endDateObj) {
+      const chunkEnd = new Date(chunkStart);
+      chunkEnd.setDate(chunkEnd.getDate() + 30);
+      if (chunkEnd > endDateObj) chunkEnd.setTime(endDateObj.getTime());
+      dateChunks.push({ begin: dateToISO(chunkStart), end: dateToISO(chunkEnd) });
+      chunkStart = new Date(chunkEnd.getTime() + 24 * 60 * 60 * 1000);
+    }
+
+    const result: AdsDaily[] = [];
+    const PARALLEL = 5; // concurrent nmstat calls — safe within WB rate limits
+
+    // Step 3: per-product breakdown via POST /adv/v2/nmstat (one call per campaign per chunk)
+    for (const chunk of dateChunks) {
+      for (let i = 0; i < campaignIds.length; i += PARALLEL) {
+        const batch = campaignIds.slice(i, i + PARALLEL);
+        await Promise.allSettled(
+          batch.map(async (campaignId) => {
+            try {
+              const nmStats = await wbPost<any>(
+                creds.token,
+                WB_ADVERT_API,
+                "/adv/v2/nmstat",
+                { id: campaignId, interval: { begin: chunk.begin, end: chunk.end } }
+              );
+              const items = Array.isArray(nmStats) ? nmStats : [];
+              for (const item of items) {
+                const nmId = String(item.nmId ?? "");
+                if (!nmId) continue;
+                // Resolve to supplierArticle so it joins with orders/stocks data
+                const resolvedArticle = nmIdToArticle.get(nmId) || nmId;
+                const title: string | undefined = item.name || item.brandName || undefined;
+                const days: any[] = Array.isArray(item.days) ? item.days : [];
+                for (const day of days) {
+                  const date = typeof day.date === "string" ? day.date.slice(0, 10) : "";
+                  if (!date) continue;
+                  const spend = parseNumber(day.sum ?? 0);
+                  const clicks = parseNumber(day.clicks ?? 0);
+                  const impressions = parseNumber(day.views ?? 0);
+                  const ordersFromAds = parseNumber(day.orders ?? 0);
+                  if (spend === 0 && clicks === 0 && impressions === 0) continue;
+                  result.push({
+                    date,
+                    sku: resolvedArticle,
+                    sourceSku: resolvedArticle !== nmId ? nmId : undefined,
+                    title,
+                    spend,
+                    ...(clicks > 0 ? { clicks } : {}),
+                    ...(impressions > 0 ? { impressions } : {}),
+                    ...(ordersFromAds > 0 ? { ordersFromAds } : {}),
+                    marketplace: "wb",
+                    campaignId: String(campaignId),
+                    campaignState: campaignStateById.get(campaignId) ?? "STOPPED",
+                  });
+                }
+              }
+            } catch (err) {
+              console.warn(`[WB Ads] nmstat failed for campaign ${campaignId}:`, err instanceof Error ? err.message : err);
+            }
+          })
+        );
+      }
+    }
+
+    return result;
   },
 
   async fetchPrices(creds: WBCredentials): Promise<PriceState[]> {
@@ -455,33 +583,28 @@ export const wbConnector: MarketplaceConnector = {
         const sizes = Array.isArray(item?.sizes) ? item.sizes : [];
 
         if (sizes.length > 0) {
-          // Use the first size's price as the main price
-          for (const size of sizes) {
-            const sizesku = size?.techSize && size.techSize !== "0"
-              ? `${sku}-${size.techSize}`
-              : sku;
-
-            const price = parseNumber(size?.discountedPrice || size?.price || item?.price || 0);
-            if (price <= 0) continue;
-
-            const oldPrice = parseNumber(size?.price || item?.price || 0);
+          // Always use base vendorCode (supplierArticle) as SKU — never append size suffix.
+          // Orders and stocks both use supplierArticle without size, so appending size would
+          // create fragmented product rows with price but zero stock/sales.
+          const price = parseNumber(
+            sizes[0]?.discountedPrice || sizes[0]?.price || item?.price || 0
+          );
+          if (price > 0) {
+            const oldPrice = parseNumber(sizes[0]?.price || item?.price || 0);
             let discountPct: number | undefined;
             if (item?.discount !== undefined) {
               discountPct = parseNumber(item.discount);
             } else if (oldPrice > 0 && oldPrice > price) {
               discountPct = Math.round(((oldPrice - price) / oldPrice) * 100);
             }
-
             allPrices.push({
-              sku: sizesku,
+              sku,
               marketplace: "wb",
               price,
               discountPct: discountPct && discountPct > 0 ? discountPct : undefined,
+              onSale: true,
               updatedAt,
             });
-
-            // Only take first size for simpler display
-            break;
           }
         } else {
           // No sizes - use item-level price
@@ -495,6 +618,7 @@ export const wbConnector: MarketplaceConnector = {
             marketplace: "wb",
             price,
             discountPct: discount > 0 ? discount : undefined,
+            onSale: true, // Listed in WB prices = on sale
             updatedAt,
           });
         }
@@ -535,5 +659,206 @@ export const wbConnector: MarketplaceConnector = {
     }
 
     return allPrices;
+  },
+
+  /**
+   * Fetch customer feedbacks and questions from WB
+   * Uses feedbacks-api.wildberries.ru and questions-api.wildberries.ru
+   */
+  async fetchReviews(creds: WBCredentials, range?: DateRange): Promise<ReviewItem[]> {
+    assertToken(creds);
+
+    if (!REAL_API) {
+      return [
+        {
+          id: "wb-feedback-demo-1",
+          sku: "demo-sku-1",
+          marketplace: "wb",
+          type: "review" as const,
+          author: "Покупатель WB",
+          text: "Хорошая футболка, но размер чуть больше.",
+          rating: 4,
+          createdAt: new Date().toISOString(),
+          status: "published",
+        },
+        {
+          id: "wb-feedback-demo-2",
+          sku: "demo-sku-2",
+          marketplace: "wb",
+          type: "review" as const,
+          author: "Покупатель",
+          text: "Ужасное качество, ткань полиняла после первой стирки.",
+          rating: 1,
+          createdAt: new Date().toISOString(),
+          status: "published",
+        },
+        {
+          id: "wb-question-demo-1",
+          sku: "demo-sku-1",
+          marketplace: "wb",
+          type: "question" as const,
+          author: "Покупатель",
+          text: "Есть ли в наличии черный цвет?",
+          createdAt: new Date().toISOString(),
+          status: "unanswered",
+        },
+      ];
+    }
+
+    const WB_FEEDBACKS_API = "https://feedbacks-api.wildberries.ru";
+    const WB_QUESTIONS_API = "https://questions-api.wildberries.ru";
+    const reviews: ReviewItem[] = [];
+
+    // Fetch feedbacks (reviews)
+    try {
+      let hasNext = true;
+      let skip = 0;
+      const take = 100;
+      let pageCount = 0;
+      const MAX_PAGES = 20;
+
+      while (hasNext && pageCount < MAX_PAGES) {
+        const url = new URL("/api/v1/feedbacks", WB_FEEDBACKS_API);
+        url.searchParams.set("isAnswered", "false");
+        url.searchParams.set("take", String(take));
+        url.searchParams.set("skip", String(skip));
+        url.searchParams.set("order", "dateDesc");
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            Authorization: creds.token,
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          console.warn(`WB feedbacks API returned ${response.status}`);
+          break;
+        }
+
+        const data = await response.json();
+        const items: any[] = data?.data?.feedbacks || [];
+
+        if (items.length === 0) break;
+
+        for (const item of items) {
+          const id = String(item?.id || `wb-f-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`);
+          const text = String(item?.text || "").trim();
+          if (!text) continue;
+
+          reviews.push({
+            id: `wb-feedback-${id}`,
+            sku: String(item?.subjectId || item?.nmId || item?.productDetails?.nmId || ""),
+            marketplace: "wb",
+            type: "review",
+            author: String(item?.userName || "Покупатель"),
+            text,
+            rating: typeof item?.productValuation === "number" ? item.productValuation : undefined,
+            createdAt: item?.createdDate || new Date().toISOString(),
+            status: item?.answer ? "answered" : "unanswered",
+            answer: item?.answer?.text || undefined,
+            answeredAt: item?.answer?.createdDate || undefined,
+          });
+        }
+
+        hasNext = items.length === take;
+        skip += take;
+        pageCount++;
+      }
+
+      // Also fetch answered feedbacks
+      try {
+        const url = new URL("/api/v1/feedbacks", WB_FEEDBACKS_API);
+        url.searchParams.set("isAnswered", "true");
+        url.searchParams.set("take", "50");
+        url.searchParams.set("skip", "0");
+        url.searchParams.set("order", "dateDesc");
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            Authorization: creds.token,
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const items: any[] = data?.data?.feedbacks || [];
+          for (const item of items) {
+            const id = String(item?.id || `wb-f-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`);
+            const text = String(item?.text || "").trim();
+            if (!text) continue;
+
+            reviews.push({
+              id: `wb-feedback-${id}`,
+              sku: String(item?.subjectId || item?.nmId || item?.productDetails?.nmId || ""),
+              marketplace: "wb",
+              type: "review",
+              author: String(item?.userName || "Покупатель"),
+              text,
+              rating: typeof item?.productValuation === "number" ? item.productValuation : undefined,
+              createdAt: item?.createdDate || new Date().toISOString(),
+              status: "answered",
+              answer: item?.answer?.text || undefined,
+              answeredAt: item?.answer?.createdDate || undefined,
+            });
+          }
+        }
+      } catch {
+        // non-critical
+      }
+    } catch (err) {
+      console.warn("WB feedbacks fetch failed (non-critical):", err instanceof Error ? err.message : err);
+    }
+
+    // Fetch questions
+    try {
+      const url = new URL("/api/v1/questions", WB_QUESTIONS_API);
+      url.searchParams.set("isAnswered", "false");
+      url.searchParams.set("take", "100");
+      url.searchParams.set("skip", "0");
+      url.searchParams.set("order", "dateDesc");
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: creds.token,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const items: any[] = data?.data?.questions || [];
+
+        for (const item of items) {
+          const id = String(item?.id || `wb-q-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`);
+          const text = String(item?.text || "").trim();
+          if (!text) continue;
+
+          reviews.push({
+            id: `wb-question-${id}`,
+            sku: String(item?.subjectId || item?.nmId || item?.productDetails?.nmId || ""),
+            marketplace: "wb",
+            type: "question",
+            author: String(item?.userName || "Покупатель"),
+            text,
+            createdAt: item?.createdDate || new Date().toISOString(),
+            status: item?.answer ? "answered" : "unanswered",
+            answer: item?.answer?.text || undefined,
+            answeredAt: item?.answer?.createdDate || undefined,
+          });
+        }
+      }
+    } catch (err) {
+      console.warn("WB questions fetch failed (non-critical):", err instanceof Error ? err.message : err);
+    }
+
+    return reviews;
   },
 };

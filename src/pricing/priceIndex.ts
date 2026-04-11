@@ -26,8 +26,37 @@ export function selectOzonPricePairs(pairs: PriceIndexPair[]): PriceIndexPair[] 
     .slice(0, OZON_MAX_PAIRS);
 }
 
-export function evaluateOzonPriceIndex(pairs: PriceIndexPair[]): OzonPriceIndexResult {
+/**
+ * Map real Ozon color_index string to our state.
+ * Ozon returns: "GREEN", "YELLOW", "RED", "WITHOUT_INDEX"
+ */
+export function mapOzonColorIndex(colorIndex: string | undefined): OzonPriceIndexState | null {
+  if (!colorIndex) return null;
+  const upper = colorIndex.toUpperCase();
+  if (upper === "GREEN") return "GOOD";
+  if (upper === "YELLOW") return "MODERATE";
+  if (upper === "RED") return "BAD";
+  if (upper === "WITHOUT_INDEX") return "NONE";
+  return null;
+}
+
+export function evaluateOzonPriceIndex(
+  pairs: PriceIndexPair[],
+  ozonColorIndex?: string
+): OzonPriceIndexResult {
   const usedPairs = selectOzonPricePairs(pairs);
+
+  // If we have real Ozon color_index, use it as the authoritative state
+  const realState = mapOzonColorIndex(ozonColorIndex);
+  if (realState !== null && usedPairs.length > 0) {
+    const ratios = usedPairs.map((pair) => pair.ownPrice / pair.marketPrice);
+    return { state: realState, ratios, usedPairs };
+  }
+  if (realState !== null && usedPairs.length === 0) {
+    return { state: realState, ratios: [], usedPairs: [] };
+  }
+
+  // Fallback: calculate from pairs
   if (usedPairs.length === 0) {
     return { state: "NONE", ratios: [], usedPairs: [] };
   }
@@ -44,4 +73,3 @@ export function evaluateOzonPriceIndex(pairs: PriceIndexPair[]): OzonPriceIndexR
   }
   return { state: "MODERATE", ratios, usedPairs };
 }
-

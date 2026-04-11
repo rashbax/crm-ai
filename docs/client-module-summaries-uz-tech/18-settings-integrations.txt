@@ -1,0 +1,52 @@
+Sahifa: Settings - Integrations
+Route: `/settings`
+
+Maqsad
+Marketplace connection, sync health, capability boshqaruvi va data-flow nazorati uchun markaziy konfiguratsiya sahifasi.
+
+Page arxitekturasi
+- Settings shell hozircha bitta active tab bilan ishlaydi: `integrations`
+- Asosiy business logika `components/IntegrationsSection.tsx` ichida
+
+Asosiy API lar
+- `GET /api/integrations`
+- `GET /api/integrations/sync-status`
+- `POST /api/integrations/sync`
+- `POST /api/integrations/sync-ads`
+- `POST /api/integrations/toggle`
+- `POST /api/integrations/remove`
+- `POST /api/integrations/capability`
+
+Health modeli
+- Connection freshness: `fresh | stale | critical`
+- Flow health per flow:
+- `orders`
+- `stocks`
+- `ads`
+- `prices`
+- Har flow uchun `enabled`, `lastSyncAt`, `lastError`, `freshness`, `dependentModules`
+
+Connection lifecycle
+- Catalog modal: ulanmagan marketplace lar ro'yxati
+- Wizard:
+- Step 1 credential kiritish
+- Step 2 qaysi data flow lar yoqilishini tanlash
+- Step 3 test connection va save
+- Disconnect
+- Reconnect
+- Remove step 1: keep data yoki delete data tanlash
+- Remove step 2: typed confirmation bilan final delete
+
+Capability darajasi
+- Capability key lar: `core`, `ads`, `premium`
+- Har capability uchun alohida credential set bo'lishi mumkin
+- Save capability oldidan test capability ishlatiladi
+
+Muhim texnik xatti-harakat
+- `sync-ads` butun connection statusini qayta fetch qilmaydi, faqat shu connectionning ads flow holatini patch qiladi
+- Toast feedback success/warning/error holatlarida ko'rsatiladi
+- Mode (`live | demo`) va warnings `GET /api/integrations` javobidan olinadi
+
+Biznes qiymati
+- CRM ichidagi barcha analitika va operatsion modulning data tayanchi shu yerda boshqariladi.
+- Clientga qaysi modul qaysi data flow ga bog'liqligini aniq ko'rsatadi.

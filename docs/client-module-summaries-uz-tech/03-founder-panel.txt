@@ -1,0 +1,65 @@
+Sahifa: Founder Panel
+Route: `/founder-panel`
+
+Maqsad
+Founder yoki CEO uchun real-time boshqaruv paneli. U operatsion risk, execution bottleneck, finance, sales trend, team health va AI xulosani bitta ekranda birlashtiradi.
+
+Asosiy data manbalari
+- `GET /api/founder/dashboard?marketplace=...`
+- `GET /api/orders?marketplace=...`
+- `GET /api/products?marketplace=...`
+- `GET /api/finance?startDate=...&endDate=...&summaryOnly=1&forceLiveBalance=1`
+- `GET /api/ai/summary?lang=...`
+- `POST /api/ai/ask`
+
+Widget bloklari
+- Critical incidents
+- Overdue tasks
+- Pending approvals
+- Owner biriktirilmagan SKU lar
+- Stockout risk SKU lar
+- Loss-risk items
+- Ad-stock conflicts
+- Unanswered appeals
+- SLA-breached appeals
+- Negative appeals
+- Silent incidents
+- Expired approvals
+- Integration alerts
+- Stale tasks
+
+Founder dashboard API hisoblaydigan muhim signallar
+- `silentIncidents`: active incident 12 soatdan ko'proq yangilanmagan.
+- `expiredApprovals`: `pending` va `expiresAt < now`.
+- `staleApprovals`: `pending` va 24 soatdan ko'proq qarorsiz.
+- `criticalEscalations`: `priority=critical`, `isOverdue=true`, `status != done`.
+- `staleTasksList`: founder dashboard ichida 48+ soat update bo'lmagan tasklar.
+
+Sales va finance bloki
+- Quick range: 7, 14, 28 kun.
+- Orders va products dataset birinchi yuklangandan keyin cache-state ichida saqlanadi.
+- Finance summary fon rejimida alohida fetch qilinadi, shuning uchun UI filter o'zgarishi chartni tezroq yangilaydi.
+- Revenue chart `RevenueChart` komponenti orqali ko'rsatiladi.
+
+Alert generator
+- Maksimal 12 alert chiqaradi.
+- `outOfStock`: active SKU, `onHand <= 0` va `inbound <= 0`.
+- `lowOrCriticalSelling`: stock health low/critical va `daysToStockout <= 21`.
+- Trend alert order change asosida qo'shiladi.
+
+AI bloklari
+- AI short summary: rahbariyat uchun qisqa bullet-xulosa.
+- AI Q/A: founder savol beradi, backend AI kontekst bilan javob qaytaradi.
+
+Qo'shimcha bloklar
+- Recent blockers
+- Recent critical incidents
+- Pending approvals list
+- Top risky SKUs
+- Team scorecard
+- Local checklist tasklar (`storage.getTasks()`)
+
+Biznes qiymati
+- Founder uchun alohida status-report yig'ish zaruratini kamaytiradi.
+- Interventsiya faqat kritik joylarga yo'naltiriladi.
+- Operatsion, moliyaviy va customer-risk bir ekranga chiqadi.

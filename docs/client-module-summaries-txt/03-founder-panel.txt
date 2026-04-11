@@ -1,0 +1,34 @@
+Page: Founder Panel
+Route: /founder-panel
+
+Purpose
+This is the executive control dashboard for the founder or CEO. It combines risk monitoring, operational escalation, finance, sales trends, team performance, and AI-generated summaries into one decision screen.
+
+What the page shows
+- Signal cards for the most urgent business issues: critical incidents, overdue tasks, pending approvals, SKUs without owners, stockout risk, loss-risk items, ad-versus-stock conflicts, unanswered appeals, SLA-breached appeals, negative appeals, silent incidents, expired approvals, integration alerts, and stale tasks.
+- Short operational lists for blocked tasks, critical incidents, and approvals waiting for leadership decisions.
+- A dedicated escalation table for critically overdue tasks that need founder intervention.
+- A risky SKU block that ranks products by stockout exposure, incident load, ownership gaps, and risk score.
+- A stale-task block that surfaces work with no recent updates.
+- KPI cards for on-time execution, overdue workload, incident resolution speed, approval delays, founder interventions, and stockout cases.
+- Team scorecards with active work, overdue work, blocked work, incidents, risky SKUs, interventions, and update freshness for each responsible person.
+
+Finance and sales section
+- Current balance and accrued amount for the selected period.
+- Revenue and order trend chart with quick ranges for 7, 14, and 28 days.
+- Average check and average daily order pace.
+- Period-based filtering for leadership review.
+
+Automated intelligence
+- Built-in alert generation based on stock position and sales behavior.
+- AI short summary block that refreshes executive highlights.
+- AI question-and-answer block where leadership can ask follow-up business questions directly from the dashboard.
+
+Additional utilities
+- Quick daily task checklist area for founder-level follow-up items.
+- Deep links from signal cards into Tasks, Incidents, Approvals, Products, CRM Appeals, and Settings.
+
+Business value
+- Replaces fragmented status reporting with one live control room.
+- Makes leadership bottlenecks visible immediately.
+- Helps the founder intervene only where it matters most.

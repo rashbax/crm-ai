@@ -7,6 +7,7 @@ import path from "path";
 import type { EnabledData } from "@/src/connectors/types";
 import type { OrderEvent, StockState, AdsDaily, PriceState } from "@/src/pricing/types";
 import { getConnector } from "@/src/connectors";
+import { resolveOzonProductIdentities } from "@/src/connectors/ozon";
 import { readJsonFile, writeJsonFile, withLock, getConnections, updateConnection } from "./storage";
 import { decryptCredentials } from "@/lib/encryption";
 import type { Connection } from "./types";
@@ -194,7 +195,16 @@ export async function syncMarketplace(
           warnings.push("Orders sync skipped: no connected capability credentials");
         } else {
         const now = new Date();
-        const start = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        // 30-day lookback on subsequent syncs, 90-day on first sync — avoids re-fetching full history every time
+        const existingOrders = await readJsonFile<OrderEvent[]>(ORDERS_FILE, []);
+        const hasExistingOrders = existingOrders.some(
+          (o: any) => o.connectionId === connection.id || (!o.connectionId && o.marketplace === marketplaceId)
+        );
+        // 60-day window on subsequent syncs covers both the current 28-day period
+        // and the previous 28-day comparison window (28+28=56 days needed).
+        // 90-day on first sync to build full history.
+        const lookbackDays = hasExistingOrders ? 60 : 90;
+        const start = new Date(now.getTime() - lookbackDays * 24 * 60 * 60 * 1000);
         const range = {
           startDate: start.toISOString().slice(0, 10),
           endDate: now.toISOString().slice(0, 10),
@@ -206,16 +216,23 @@ export async function syncMarketplace(
 
         await withLock(ORDERS_FILE + ".lock", async () => {
           const existing = await readJsonFile<OrderEvent[]>(ORDERS_FILE, []);
-          const merged = mergeByMarketplace(
-            existing,
-            orders.map((o) => ({
-              ...o,
-              marketplace: marketplaceId,
-              connectionId: connection.id,
-            })),
-            marketplaceId,
-            connection.id,
-            (o) => `${o.sku}-${o.date}`
+          // Range-aware merge: only replace orders within the fetched window;
+          // preserve older history so analytics period comparisons always have data.
+          const filtered = existing.filter((item: any) => {
+            const itemDate = (item.date || "").slice(0, 10);
+            if (item.connectionId) {
+              if (item.connectionId !== connection.id) return true;
+              return itemDate < range.startDate;
+            }
+            if (item.marketplace !== marketplaceId) return true;
+            return itemDate < range.startDate;
+          });
+          const merged = [
+            ...filtered,
+            ...orders.map((o) => ({ ...o, marketplace: marketplaceId, connectionId: connection.id })),
+          ];
+          merged.sort((a: any, b: any) =>
+            (`${a.sku}-${a.date}`).localeCompare(`${b.sku}-${b.date}`)
           );
           await writeJsonFile(ORDERS_FILE, merged);
         });
@@ -263,26 +280,67 @@ export async function syncMarketplace(
         if (!marketplaceCreds) {
           warnings.push("Ads sync skipped: no connected ads capability credentials");
         } else {
-        const ads = await connector.fetchAds(marketplaceCreds);
+        let ads = await connector.fetchAds(marketplaceCreds);
         if (ads.length === 0) {
-          warnings.push("No ads data returned from API");
-        }
+          warnings.push("No ads data returned from API — keeping existing data");
+        } else {
+          // For Ozon: map numeric product SKUs to seller's offer_id (article)
+          // so ads data can be joined reliably while keeping the raw numeric article for display
+          if (marketplaceId === "ozon") {
+            const coreCreds = resolveCreds(getCredentialsForDataType(connection, "orders"));
+            if (coreCreds) {
+              try {
+                const uniqueSkus = Array.from(new Set(ads.map((a) => a.sku).filter(Boolean)));
+                const {
+                  offerIdByIdentifier,
+                  titleByOfferId,
+                  preferredDisplaySkuByOfferId,
+                  unresolvedIdentifiers,
+                } = await resolveOzonProductIdentities(
+                  coreCreds as any,
+                  uniqueSkus
+                );
 
-        await withLock(ADS_FILE + ".lock", async () => {
-          const existing = await readJsonFile<AdsDaily[]>(ADS_FILE, []);
-          const merged = mergeByMarketplace(
-            existing,
-            ads.map((a) => ({
-              ...a,
-              marketplace: marketplaceId,
-              connectionId: connection.id,
-            })),
-            marketplaceId,
-            connection.id,
-            (a) => `${a.sku}-${a.date}`
-          );
-          await writeJsonFile(ADS_FILE, merged);
-        });
+                ads = ads.map((a) => {
+                  const rawSku = String(a.sku || "").trim();
+                  const resolvedSku = offerIdByIdentifier.get(rawSku) || rawSku;
+                  const preferredDisplaySku =
+                    preferredDisplaySkuByOfferId.get(resolvedSku) ||
+                    (/^\d{6,}$/.test(rawSku) ? rawSku : "");
+                  return {
+                    ...a,
+                    sku: preferredDisplaySku || rawSku,
+                    sourceSku: rawSku,
+                    resolvedSku,
+                    title: a.title || titleByOfferId.get(resolvedSku),
+                  };
+                });
+
+                if (unresolvedIdentifiers.length > 0) {
+                  warnings.push(`Ozon ads identity mapping unresolved for ${unresolvedIdentifiers.length} identifier(s)`);
+                }
+              } catch (mapError) {
+                warnings.push(`Ads identity mapping partial: ${mapError instanceof Error ? mapError.message : "Unknown"}`);
+              }
+            }
+          }
+
+          await withLock(ADS_FILE + ".lock", async () => {
+            const existing = await readJsonFile<AdsDaily[]>(ADS_FILE, []);
+            const merged = mergeByMarketplace(
+              existing,
+              ads.map((a) => ({
+                ...a,
+                marketplace: marketplaceId,
+                connectionId: connection.id,
+              })),
+              marketplaceId,
+              connection.id,
+              (a) => `${a.sku}-${a.date}-${(a as any).campaignId ?? ""}`
+            );
+            await writeJsonFile(ADS_FILE, merged);
+          });
+        }
         }
       } catch (error) {
         warnings.push(`Ads sync failed: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -346,20 +404,24 @@ export async function syncMarketplace(
 /**
  * Sync all enabled marketplaces
  */
-export async function syncAll(): Promise<SyncResult[]> {
+export async function syncAll(options?: { excludeOzonAds?: boolean }): Promise<SyncResult[]> {
   const results: SyncResult[] = [];
   const connections = await getConnections(CONNECTIONS_FILE);
 
   for (const connection of connections as Connection[]) {
     if (connection.enabled) {
+      let effectiveData = getEffectiveEnabledData(connection) || {
+        orders: true,
+        stocks: true,
+        ads: true,
+        prices: true,
+      };
+      if (options?.excludeOzonAds && connection.marketplaceId === "ozon") {
+        effectiveData = { ...effectiveData, ads: false };
+      }
       const result = await syncMarketplace(
         connection.marketplaceId,
-        getEffectiveEnabledData(connection) || {
-          orders: true,
-          stocks: true,
-          ads: true,
-          prices: true,
-        },
+        effectiveData,
         connection.id
       );
       results.push(result);

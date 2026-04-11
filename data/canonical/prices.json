@@ -4,7 +4,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -12,23 +13,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 670.64,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 670.64,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "GREEN",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1617,
+        "discountPct": 39
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1617,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Девочки и кот белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "китти голубой",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -36,7 +65,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -44,7 +74,8 @@
     "marketplace": "wb",
     "price": 1241.54,
     "discountPct": 54,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -52,7 +83,8 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -60,15 +92,37 @@
     "marketplace": "ozon",
     "price": 3999,
     "discountPct": 34,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 1578.03,
+        "marketPrice": 2287,
+        "source": "external"
+      }
+    ],
+    "ozonColorIndex": "SUPER",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 4083,
+        "discountPct": -2
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 4083,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "кю черный",
     "marketplace": "wb",
-    "price": 1519.6,
-    "discountPct": 60,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 1443.62,
+    "discountPct": 62,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -76,7 +130,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -84,7 +139,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -92,7 +148,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -100,7 +157,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -108,7 +166,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -116,7 +175,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -124,7 +184,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -132,7 +193,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -140,15 +202,60 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 832.88,
+        "marketPrice": 718,
+        "source": "external"
+      },
+      {
+        "ownPrice": 832.88,
+        "marketPrice": 718,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1760,
+        "discountPct": 39
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1800,
+        "discountPct": 38
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1780,
+        "discountPct": 39
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1760,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "лонгслив в полоску",
     "marketplace": "wb",
-    "price": 1139.7,
-    "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 1063.72,
+    "discountPct": 72,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -156,7 +263,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -164,7 +272,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -172,7 +281,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -180,7 +290,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -188,7 +299,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 34,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -196,7 +308,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -204,7 +317,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -212,7 +326,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -220,7 +335,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -228,7 +344,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -236,7 +353,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -244,7 +362,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -252,7 +371,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -260,7 +380,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -268,7 +389,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 34,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -276,7 +398,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -284,7 +407,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -292,7 +416,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -300,7 +425,8 @@
     "marketplace": "ozon",
     "price": 2899,
     "discountPct": 41,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -308,7 +434,8 @@
     "marketplace": "wb",
     "price": 1139.7,
     "discountPct": 70,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -316,7 +443,28 @@
     "marketplace": "ozon",
     "price": 1950,
     "discountPct": 34,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 956.82,
+        "marketPrice": 862,
+        "source": "external"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2000,
+        "discountPct": -3
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2000,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -324,7 +472,8 @@
     "marketplace": "wb",
     "price": 728.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -332,7 +481,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -340,23 +490,87 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 697.2,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 697.2,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "YELLOW",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3225,
+        "discountPct": -22
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1773,
+        "discountPct": 33
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1664,
+        "discountPct": 37
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1661,
+        "discountPct": 37
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3225,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Паук белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ПЛАНЕТА ЧЕРНЫЙ",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -364,15 +578,29 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Сердце без текста",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -380,7 +608,30 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -388,7 +639,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -396,15 +648,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 946.6700000000001,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 946.6700000000001,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Спящие коты белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -412,15 +691,57 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1961,
+        "discountPct": 26
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1710,
+        "discountPct": 35
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ТОМ ЖЕРРИ ЗЕЛЕН",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -428,15 +749,66 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1961,
+        "discountPct": 26
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1934,
+        "discountPct": 27
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1710,
+        "discountPct": 35
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ТОМ ЖЕРРИ ОРАНЖ",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -444,15 +816,78 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 770.2399999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 770.2399999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1961,
+        "discountPct": 26
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1934,
+        "discountPct": 27
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1710,
+        "discountPct": 35
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ТОМ ЖЕРРИ ФИОЛ",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -460,15 +895,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 808.4699999999999,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 808.4699999999999,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1617,
+        "discountPct": 39
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1617,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "том жерри черный",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -476,15 +938,17 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ТомИДжериРисунок.Б",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -492,15 +956,78 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 750.3199999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 750.3199999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1880,
+        "discountPct": 29
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1855,
+        "discountPct": 30
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1661,
+        "discountPct": 37
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ТомИДжериРисунок.Ч",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -508,7 +1035,8 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -516,7 +1044,8 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 7,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -524,15 +1053,60 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 836.64,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 836.64,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1899,
+        "discountPct": 28
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1701,
+        "discountPct": 36
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "утки коричневый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -540,15 +1114,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 677.28,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 677.28,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "YELLOW",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1617,
+        "discountPct": 39
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1617,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "утки черный",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -556,7 +1157,21 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -564,7 +1179,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -572,7 +1188,33 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 974.31,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 974.31,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2292,
+        "discountPct": 14
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2292,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -580,15 +1222,78 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 750.3199999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 750.3199999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1880,
+        "discountPct": 29
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1855,
+        "discountPct": 30
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1661,
+        "discountPct": 37
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ФУТБОЛКА BLACK CAT",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -596,7 +1301,57 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2332,
+        "discountPct": 12
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1961,
+        "discountPct": 26
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1934,
+        "discountPct": 27
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1805,
+        "discountPct": 32
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1710,
+        "discountPct": 35
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2332,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -604,15 +1359,17 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "ФУТБОЛКА DONALD белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -620,7 +1377,8 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -628,7 +1386,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -636,7 +1395,33 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 670.27,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 670.27,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "GREEN",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1617,
+        "discountPct": 39
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1617,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -644,7 +1429,30 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -652,15 +1460,29 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ФУТБОЛКИ Kitty_Black",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -668,15 +1490,29 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 896.4000000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "ФУТБОЛКИ Kitty_Pink",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -684,7 +1520,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -692,7 +1529,21 @@
     "marketplace": "ozon",
     "price": 2700,
     "discountPct": 34,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3581,
+        "discountPct": -33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3581,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -700,47 +1551,53 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT_summer",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT_summer.BL",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT_summer.BL.2",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT_unique",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "CAT.Milk",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -748,15 +1605,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3281,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1646,
+        "discountPct": 38
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3281,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Cat.milk.BL",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -764,7 +1657,21 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -772,7 +1679,33 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 925.94,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 925.94,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1993.86,
+        "discountPct": 25
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1993.86,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -780,15 +1713,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3273,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3273,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "CAT.unique.BL",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -796,7 +1765,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 919.0300000000001,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 919.0300000000001,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -804,7 +1808,33 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 1029.59,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 1029.59,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -812,7 +1842,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 916.3199999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 916.3199999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3273,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3273,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -820,7 +1885,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 803.4399999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 803.4399999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2169,
+        "discountPct": 18
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1794,
+        "discountPct": 32
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2169,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -828,7 +1928,21 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -836,15 +1950,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3273,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3273,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Girl_BL",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -852,15 +2002,69 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 690.5600000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 690.5600000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "YELLOW",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      },
+      {
+        "actionId": 3463497,
+        "title": "Максимальный бустинг: усиление",
+        "dateStart": "2026-03-22T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1664,
+        "discountPct": 37
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1646,
+        "discountPct": 38
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1559,
+        "discountPct": 41
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Girl_W",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -868,15 +2072,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 889.7600000000001,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3273,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3273,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Heart_BL",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -884,15 +2124,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 922.9599999999999,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 922.9599999999999,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Hellokitty2",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -900,7 +2167,60 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 703.84,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 703.84,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3281,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1683,
+        "discountPct": 36
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1661,
+        "discountPct": 37
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3281,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -908,7 +2228,8 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -916,7 +2237,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -924,15 +2246,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 989.36,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 989.36,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Hotdog",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -940,7 +2289,21 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3273,
+        "discountPct": -24
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3273,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -948,7 +2311,8 @@
     "marketplace": "wb",
     "price": 1025.73,
     "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -956,15 +2320,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 1022.68,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 1022.68,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2631,
+        "discountPct": 1
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2631,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Lufi",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -972,15 +2363,42 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 760.1,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 760.1,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 1983.3,
+        "discountPct": 25
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 1983.3,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Noct белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -988,7 +2406,21 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "ozonColorIndex": "WITHOUT_INDEX",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -996,23 +2428,69 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 760.1,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 760.1,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 2042.94,
+        "discountPct": 23
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1696,
+        "discountPct": 36
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 2042.94,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "Space белый",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
     "sku": "STRAWBERRY",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 949.75,
+    "discountPct": 75,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   },
   {
@@ -1020,7 +2498,65 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 697.2,
+        "marketPrice": 664,
+        "source": "external"
+      },
+      {
+        "ownPrice": 701.3712,
+        "marketPrice": 762.36,
+        "source": "ozon"
+      },
+      {
+        "ownPrice": 697.2,
+        "marketPrice": 664,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "YELLOW",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3281,
+        "discountPct": -24
+      },
+      {
+        "actionId": 3449664,
+        "title": "Максимальный бустинг",
+        "dateStart": "2026-03-17T21:00:00Z",
+        "dateEnd": "2026-04-07T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1683,
+        "discountPct": 36
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      },
+      {
+        "actionId": 3528946,
+        "title": "Максимальный бустинг.",
+        "dateStart": "2026-04-07T21:00:00Z",
+        "dateEnd": "2026-05-12T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1661,
+        "discountPct": 37
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3281,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
@@ -1028,15 +2564,51 @@
     "marketplace": "ozon",
     "price": 2650,
     "discountPct": 12,
-    "updatedAt": "2026-03-16T16:33:34.000Z",
+    "priceIndexPairs": [
+      {
+        "ownPrice": 919.0300000000001,
+        "marketPrice": 691,
+        "source": "external"
+      },
+      {
+        "ownPrice": 919.0300000000001,
+        "marketPrice": 691,
+        "source": "self_marketplace"
+      }
+    ],
+    "ozonColorIndex": "RED",
+    "updatedAt": "2026-04-01T12:09:35.035Z",
+    "promos": [
+      {
+        "actionId": 1977747,
+        "title": "Эластичный бустинг. Без ограничения срока действия",
+        "dateStart": "2025-03-19T21:00:44Z",
+        "dateEnd": "2026-12-31T20:59:59Z",
+        "actionType": "MARKETPLACE_MULTI_LEVEL_DISCOUNT_ON_AMOUNT",
+        "actionPrice": 3515,
+        "discountPct": -33
+      },
+      {
+        "actionId": 3518780,
+        "title": "Тёплый сезон",
+        "dateStart": "2026-04-01T21:00:00Z",
+        "dateEnd": "2026-04-30T20:59:59Z",
+        "actionType": "STOCK_DISCOUNT",
+        "actionPrice": 1776,
+        "discountPct": 33
+      }
+    ],
+    "inPromo": true,
+    "promoPrice": 3515,
     "connectionId": "243cca29-0e28-4627-b5fb-1a35b5c57202"
   },
   {
     "sku": "T&J.B",
     "marketplace": "wb",
-    "price": 1025.73,
-    "discountPct": 73,
-    "updatedAt": "2026-03-16T16:33:12.976Z",
+    "price": 987.74,
+    "discountPct": 74,
+    "onSale": true,
+    "updatedAt": "2026-04-01T11:21:05.705Z",
     "connectionId": "518b1e52-c409-4fdf-b7bc-a6ee3f07fb79"
   }
 ]

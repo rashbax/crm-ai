@@ -8,6 +8,7 @@ import type {
   StockState,
   AdsDaily,
   PriceState,
+  ReviewItem,
 } from "@/src/pricing/types";
 
 export type MarketplaceId = "wb" | "ozon" | "uzum" | "ym";
@@ -94,6 +95,11 @@ export interface MarketplaceConnector {
    * Fetch prices
    */
   fetchPrices(creds: any): Promise<PriceState[]>;
+
+  /**
+   * Fetch customer reviews, questions, and feedback
+   */
+  fetchReviews?(creds: any, range?: DateRange): Promise<ReviewItem[]>;
 }
 
 /**
@@ -104,6 +110,7 @@ export interface EnabledData {
   stocks: boolean;
   ads: boolean;
   prices: boolean;
+  reviews?: boolean;
 }
 
 /**

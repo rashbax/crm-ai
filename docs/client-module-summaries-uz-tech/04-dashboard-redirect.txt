@@ -1,0 +1,9 @@
+Sahifa: Dashboard Redirect
+Route: `/dashboard`
+
+Texnik ishlash
+- Bu route mustaqil dashboard chizmaydi.
+- Darhol `redirect("/founder-panel")` bajaradi.
+
+Maqsad
+- Eski bookmark yoki ichki linklar buzilmasligi.

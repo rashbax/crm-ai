@@ -1,0 +1,25 @@
+Module: Global Shell and Navigation
+Main components: Layout, Topbar, Navigation
+Applies to: Every authenticated page in the system
+
+Purpose
+This is the operational shell around the whole CRM. It controls access, keeps navigation consistent, and applies the two most important global filters: language and marketplace. It is not just visual chrome - it changes what data every module shows.
+
+How it works
+- The shared layout checks authentication on page load. If the user is not logged in, it redirects them to the login page.
+- The top bar shows the brand area, language switcher, marketplace selector, and user profile menu.
+- The main navigation gives direct access to the core operating modules: Founder Panel, Tasks, Responsibilities, Incidents, Approvals, Orders, Products, Automation, Prices, Finance, Analytics, and CRM Appeals.
+
+Key features
+- Bilingual interface. The shell stores the user language and reloads the app so all modules render in Russian or Uzbek.
+- Global marketplace selector. The shell loads enabled marketplace connections and lets the user switch the active data scope. Most pages and APIs read this value and automatically filter their data.
+- Smart marketplace behavior. If only one marketplace is connected, it is auto-selected. If there are no integrations yet, the selector turns into a shortcut to Settings so the user can connect accounts.
+- User profile actions. The profile menu exposes settings access and logout.
+
+Business value
+- Gives leadership and managers one consistent workspace instead of separate disconnected tools.
+- Prevents users from accidentally reviewing the wrong marketplace by making the scope explicit at the top of the screen.
+- Keeps multilingual teams aligned without duplicating functionality.
+
+Important client note
+The marketplace selector is a platform-wide filter. When the user switches from Ozon to Wildberries, dashboards, tables, pricing, finance, analytics, and other modules update to that context.

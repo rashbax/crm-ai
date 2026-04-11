@@ -6,15 +6,16 @@ import {
   getSystemUsers,
   writeAuditLog,
 } from "@/lib/founder-store";
-import type { Incident, IncidentRegistryResponse } from "@/types/founder";
+import type { Incident, IncidentStatus, IncidentRegistryResponse } from "@/types/founder";
 
-// Valid status transitions per T3
-const VALID_TRANSITIONS: Record<string, string[]> = {
-  open: ["in_progress", "escalated"],
-  in_progress: ["resolved", "escalated"],
-  escalated: ["in_progress", "resolved"],
+// GAP 1/2: escalated removed as status (now isEscalated flag); added waiting + reopened
+const VALID_TRANSITIONS: Record<IncidentStatus, IncidentStatus[]> = {
+  open: ["in_progress", "waiting"],
+  in_progress: ["waiting", "resolved"],
+  waiting: ["in_progress", "resolved"],
   resolved: ["closed"],
   closed: [],
+  reopened: ["in_progress", "waiting"],
 };
 
 export async function GET() {
@@ -22,15 +23,24 @@ export async function GET() {
     const incidents = getIncidents();
     const users = getSystemUsers();
 
-    const stats = {
+    const stats: IncidentRegistryResponse["stats"] = {
       total: incidents.length,
       open: incidents.filter((i) => i.status === "open").length,
       inProgress: incidents.filter((i) => i.status === "in_progress").length,
+      waiting: incidents.filter((i) => i.status === "waiting").length,
       resolved: incidents.filter((i) => i.status === "resolved").length,
-      escalated: incidents.filter((i) => i.status === "escalated").length,
+      reopened: incidents.filter((i) => i.status === "reopened").length,
       closed: incidents.filter((i) => i.status === "closed").length,
       critical: incidents.filter((i) => i.severity === "critical").length,
       high: incidents.filter((i) => i.severity === "high").length,
+      // Signals
+      silent: incidents.filter((i) => i.isSilent).length,
+      noOwner: incidents.filter(
+        (i) => !i.ownerId && i.status !== "resolved" && i.status !== "closed"
+      ).length,
+      escalated: incidents.filter(
+        (i) => i.isEscalated && i.status !== "resolved" && i.status !== "closed"
+      ).length,
     };
 
     const response: IncidentRegistryResponse = { incidents, stats, users };
@@ -45,25 +55,21 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Delete action
+    // ── DELETE ──────────────────────────────────────────────────────────────
     if (body.action === "delete") {
-      if (!body.id) {
-        return NextResponse.json({ error: "id majburiy" }, { status: 400 });
-      }
+      if (!body.id) return NextResponse.json({ error: "id majburiy" }, { status: 400 });
       deleteIncident(body.id);
       writeAuditLog("incident", body.id, "deleted", "active", "deleted", body.changedBy || "system");
       return NextResponse.json({ ok: true });
     }
 
-    // Update status action
+    // ── UPDATE STATUS ────────────────────────────────────────────────────────
     if (body.action === "update_status") {
       const incidents = getIncidents();
       const incident = incidents.find((i) => i.id === body.id);
-      if (!incident) {
-        return NextResponse.json({ error: "Incident topilmadi" }, { status: 404 });
-      }
+      if (!incident) return NextResponse.json({ error: "Incident topilmadi" }, { status: 404 });
 
-      const newStatus = body.status;
+      const newStatus: IncidentStatus = body.status;
       const allowed = VALID_TRANSITIONS[incident.status] || [];
       if (!allowed.includes(newStatus)) {
         return NextResponse.json(
@@ -72,71 +78,125 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // T3 rule: Critical incident cannot close without owner
+      // GAP 3: Critical incident must have owner to resolve
       if (newStatus === "resolved" && incident.severity === "critical" && !incident.ownerId) {
-        return NextResponse.json(
-          { error: "Critical incident ownersiz yopib bo'lmaydi" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Kritik muammo ownersiz yopib bo'lmaydi" }, { status: 400 });
+      }
+      // GAP 4: rootCause mandatory when resolving
+      const rootCause = body.rootCause ?? incident.rootCause;
+      if (newStatus === "resolved" && !rootCause?.trim()) {
+        return NextResponse.json({ error: "Hal qilingan muammo uchun sabab (rootCause) majburiy" }, { status: 400 });
+      }
+      // GAP 4: actionPlan mandatory when resolving
+      const actionPlan = body.actionPlan ?? incident.actionPlan;
+      if (newStatus === "resolved" && !actionPlan?.trim()) {
+        return NextResponse.json({ error: "Hal qilingan muammo uchun action plan majburiy" }, { status: 400 });
       }
 
       const oldStatus = incident.status;
-      incident.status = newStatus;
-      incident.updatedAt = new Date().toISOString();
+      const updated: Incident = {
+        ...incident,
+        status: newStatus,
+        rootCause: rootCause || incident.rootCause,
+        actionPlan: actionPlan || incident.actionPlan,
+        updatedAt: new Date().toISOString(),
+        resolvedAt: newStatus === "resolved" ? new Date().toISOString() : incident.resolvedAt,
+        closedAt: newStatus === "closed" ? new Date().toISOString() : incident.closedAt,
+        closerId: newStatus === "closed" ? (body.changedBy || incident.closerId) : incident.closerId,
+      };
 
-      if (newStatus === "resolved") {
-        incident.resolvedAt = new Date().toISOString();
-      }
-      if (newStatus === "escalated") {
-        incident.escalatedAt = new Date().toISOString();
-      }
-      if (body.rootCause) {
-        incident.rootCause = body.rootCause;
-      }
-      if (body.actionPlan) {
-        incident.actionPlan = body.actionPlan;
-      }
-
-      saveIncident(incident);
+      saveIncident(updated);
       writeAuditLog("incident", incident.id, "status", oldStatus, newStatus, body.changedBy || "system");
-      return NextResponse.json({ ok: true, incident });
+      return NextResponse.json({ ok: true, incident: updated });
     }
 
-    // Create / update incident
+    // ── ESCALATE / DE-ESCALATE (GAP 1) ──────────────────────────────────────
+    if (body.action === "escalate" || body.action === "deescalate") {
+      const incidents = getIncidents();
+      const incident = incidents.find((i) => i.id === body.id);
+      if (!incident) return NextResponse.json({ error: "Incident topilmadi" }, { status: 404 });
+
+      const isEscalated = body.action === "escalate";
+      const updated: Incident = {
+        ...incident,
+        isEscalated,
+        escalatedAt: isEscalated ? new Date().toISOString() : incident.escalatedAt,
+        updatedAt: new Date().toISOString(),
+      };
+      saveIncident(updated);
+      writeAuditLog(
+        "incident", incident.id, "isEscalated",
+        String(!isEscalated), String(isEscalated),
+        body.changedBy || "system"
+      );
+      return NextResponse.json({ ok: true, incident: updated });
+    }
+
+    // ── REOPEN (GAP 9) ───────────────────────────────────────────────────────
+    if (body.action === "reopen") {
+      const incidents = getIncidents();
+      const incident = incidents.find((i) => i.id === body.id);
+      if (!incident) return NextResponse.json({ error: "Incident topilmadi" }, { status: 404 });
+      if (incident.status !== "resolved" && incident.status !== "closed") {
+        return NextResponse.json({ error: "Faqat hal qilingan yoki yopilgan muammo qayta ochiladi" }, { status: 400 });
+      }
+
+      const reason = body.reason || "";
+      const updated: Incident = {
+        ...incident,
+        status: "reopened",
+        reopenCount: (incident.reopenCount || 0) + 1,
+        reopenReasons: [...(incident.reopenReasons || []), reason],
+        updatedAt: new Date().toISOString(),
+      };
+      saveIncident(updated);
+      writeAuditLog("incident", incident.id, "status", incident.status, "reopened", body.changedBy || "system");
+      writeAuditLog("incident", incident.id, "reopenReason", "", reason, body.changedBy || "system");
+      return NextResponse.json({ ok: true, incident: updated });
+    }
+
+    // ── CREATE / UPDATE ──────────────────────────────────────────────────────
     const now = new Date().toISOString();
 
-    // Validation per T3
-    if (!body.title) {
-      return NextResponse.json({ error: "title majburiy" }, { status: 400 });
-    }
-    if (!body.ownerId) {
-      return NextResponse.json({ error: "ownerId majburiy" }, { status: 400 });
-    }
-    if (!body.dueDate) {
-      return NextResponse.json({ error: "dueDate majburiy" }, { status: 400 });
-    }
-    if (!body.severity) {
-      return NextResponse.json({ error: "severity majburiy" }, { status: 400 });
-    }
-    if (!body.incidentType) {
-      return NextResponse.json({ error: "incidentType majburiy" }, { status: 400 });
-    }
+    // GAP 4: mandatory fields
+    if (!body.title?.trim()) return NextResponse.json({ error: "title majburiy" }, { status: 400 });
+    if (!body.ownerId) return NextResponse.json({ error: "ownerId majburiy" }, { status: 400 });
+    if (!body.dueDate) return NextResponse.json({ error: "dueDate majburiy" }, { status: 400 });
+    if (!body.severity) return NextResponse.json({ error: "severity majburiy" }, { status: 400 });
+    if (!body.incidentType) return NextResponse.json({ error: "incidentType majburiy" }, { status: 400 });
+    if (!body.rootCause?.trim()) return NextResponse.json({ error: "rootCause majburiy" }, { status: 400 });
+    if (!body.actionPlan?.trim()) return NextResponse.json({ error: "actionPlan majburiy" }, { status: 400 });
 
     const incident: Incident = {
       id: body.id || `inc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       incidentType: body.incidentType,
       marketplace: body.marketplace || "all",
       skuId: body.skuId || undefined,
-      title: body.title,
+      title: body.title.trim(),
       severity: body.severity,
       status: body.status || "open",
       ownerId: body.ownerId,
-      rootCause: body.rootCause || undefined,
-      actionPlan: body.actionPlan || undefined,
+      // GAP 3: role fields
+      createdBy: body.changedBy || "system",
+      reviewerId: body.reviewerId || undefined,
+      closerId: body.closerId || undefined,
+      // GAP 4: mandatory
+      rootCause: body.rootCause.trim(),
+      actionPlan: body.actionPlan.trim(),
+      // GAP 1: escalation flag
+      isEscalated: body.isEscalated || false,
+      isSilent: false,
+      // GAP 9: reopen tracking
+      reopenCount: body.reopenCount || 0,
+      reopenReasons: body.reopenReasons || [],
+      // GAP 8: linked tasks
+      linkedTaskIds: body.linkedTaskIds || [],
+      estimatedLoss: body.estimatedLoss || undefined,
       createdAt: body.createdAt || now,
       dueDate: body.dueDate,
       resolvedAt: body.resolvedAt || undefined,
       escalatedAt: body.escalatedAt || undefined,
+      closedAt: body.closedAt || undefined,
       updatedAt: now,
     };
 
@@ -144,13 +204,12 @@ export async function POST(req: NextRequest) {
     saveIncident(incident);
 
     if (existing) {
-      // Track field changes in audit
-      const fields = ["severity", "ownerId", "status", "rootCause", "actionPlan"] as const;
+      const fields = ["severity", "ownerId", "status", "rootCause", "actionPlan", "isEscalated"] as const;
       fields.forEach((f) => {
-        const oldVal = (existing as any)[f] || "";
-        const newVal = (incident as any)[f] || "";
+        const oldVal = String((existing as any)[f] ?? "");
+        const newVal = String((incident as any)[f] ?? "");
         if (oldVal !== newVal) {
-          writeAuditLog("incident", incident.id, f, String(oldVal), String(newVal), body.changedBy || "system");
+          writeAuditLog("incident", incident.id, f, oldVal, newVal, body.changedBy || "system");
         }
       });
     } else {

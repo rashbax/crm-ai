@@ -76,6 +76,20 @@ export function filterByEnabledConnections<
 }
 
 /**
+ * Get enabled connections filtered by marketplace
+ * If marketplaceId is "all" or undefined, returns all enabled connections
+ */
+export async function getEnabledConnectionsForMarketplace(
+  marketplaceId?: string
+): Promise<EnabledConnection[]> {
+  const all = await getEnabledConnections();
+  if (!marketplaceId || marketplaceId === "all") {
+    return all;
+  }
+  return all.filter((c) => c.marketplaceId === marketplaceId);
+}
+
+/**
  * Check if any connections are enabled
  */
 export async function hasEnabledConnections(): Promise<boolean> {

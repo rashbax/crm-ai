@@ -1,0 +1,25 @@
+Page: Orders
+Route: /orders
+
+Purpose
+This module is the order monitoring and trend-detection screen. It gives managers a detailed list of marketplace orders while also flagging unusual movement automatically.
+
+Main features
+- Summary cards for row count, total quantity, revenue, unique SKUs, returns, and cancellations.
+- Automatic trend signals for surges, drops, rising returns, and rising cancellations.
+- Multi-layer filtering by search, status, date range, problematic-only mode, and trend signal.
+- Pagination for large order sets.
+
+Order table behavior
+- Shows order ID, date, SKU, quantity, unit price, revenue, status, and inline SKU health.
+- Flags problematic rows when the order is returned, cancelled, or delayed in processing.
+- Marks processing delays when an order stays too long in the same operational state.
+- Enriches each row with product health data such as low stock or open incidents.
+
+Cross-module value
+- Connects order issues with product risk, incidents, and task follow-up.
+- Makes trend changes visible without manual comparison in spreadsheets.
+
+Business value
+- Useful for day-to-day marketplace operations.
+- Helps managers react quickly to returns, cancellations, or sudden sales changes before they turn into bigger issues.

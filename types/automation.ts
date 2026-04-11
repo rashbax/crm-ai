@@ -28,19 +28,27 @@ export interface StockItem {
 export type AdPlatform = "Ozon" | "Wildberries";
 export type AdStatus = "active" | "paused" | "archived";
 export type AdAction = "pause" | "reduce" | "keep" | "resume";
+export type AdHealthStatus = "active" | "monitoring" | "wasteful" | "risky";
+export type SystemRecommendation = "pause" | "reduce" | "no_scale" | "keep";
 
 export interface AdCampaign {
   id: string;
   sku: string;
+  resolvedSku?: string;
   name: string;
   platform: AdPlatform;
   status: AdStatus;
+  healthStatus: AdHealthStatus;
+  systemRecommendation: SystemRecommendation;
+  actualDecision?: SystemRecommendation;
+  decisionReason?: string;
   dailyBudget: number;
   currentBudget: number;
   spendToday: number;
   attributedRevenueToday?: number;
   targetAcos?: number;
   spend7d?: number;
+  spend14d?: number;
   conversionsToday?: number;
   conversions7d?: number;
   revenue7d?: number;
@@ -48,6 +56,15 @@ export interface AdCampaign {
   clicks: number;
   conversions: number;
   lastUpdated: string;
+  owner?: string;
+  stockOnHand?: number;
+  dailySales?: number;
+  daysOfStockLeft?: number;
+  stockConflict?: boolean;
+  wasteFlag?: boolean;
+  budgetSpike?: boolean;
+  performanceDrop?: boolean;
+  spendTrend?: "up" | "down" | "stable";
 }
 
 // ============================================
@@ -243,6 +260,19 @@ export interface StockCalculation {
   status: StockStatus;
   shouldReorder: boolean;
   criticalLevel: boolean;
+}
+
+// ============================================
+// AD DECISION OVERRIDE TYPES
+// ============================================
+
+export interface AdDecisionOverride {
+  id: string;
+  campaignKey: string; // marketplace::sku
+  actualDecision: SystemRecommendation;
+  decisionReason: string;
+  decidedBy: string;
+  decidedAt: string;
 }
 
 // All types are exported inline above

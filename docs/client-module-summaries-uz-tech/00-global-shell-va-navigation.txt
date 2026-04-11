@@ -1,0 +1,43 @@
+Sahifa: Global Shell va Navigation
+Qamrovi: barcha authenticated sahifalar
+
+Maqsad
+Bu qatlam butun CRM uchun umumiy ishchi konteyner hisoblanadi. U access control, global til, global marketplace context va asosiy navigatsiyani boshqaradi.
+
+Texnik ishlash
+- `components/Layout.tsx` `next-auth` session holatini tekshiradi.
+- `status === unauthenticated` bo'lsa foydalanuvchi ` /login ` ga redirect qilinadi.
+- Layout ichida `Topbar` va `Navigation` doimiy render qilinadi, asosiy modul kontenti esa `main` ichida almashadi.
+
+Topbar funksiyasi
+- Til `storage.getLang()` va `storage.setLang()` orqali boshqariladi.
+- Til almashtirilganda sahifa to'liq reload qilinadi, shuning uchun barcha modul matnlari bir xil locale bilan qayta chiziladi.
+- Marketplace ro'yxati `GET /api/integrations/enabled` orqali olinadi.
+- Saqlangan marketplace noto'g'ri bo'lsa yoki `all` bo'lsa va bir nechta connection mavjud bo'lsa, Topbar birinchi valid marketplace ni auto-select qiladi.
+- Agar faqat bitta marketplace mavjud bo'lsa, u avtomatik tanlanadi.
+- Agar umuman integration bo'lmasa, selector o'rniga `Settings` sahifasiga olib boruvchi CTA ko'rsatiladi.
+- Logout `signOut({ callbackUrl: "/login" })` orqali bajariladi.
+
+Navigation tarkibi
+- `/founder-panel`
+- `/tasks`
+- `/responsibilities`
+- `/incidents`
+- `/approvals`
+- `/orders`
+- `/products`
+- `/automation`
+- `/prices`
+- `/finance`
+- `/analytics`
+- `/crm`
+
+Muhim texnik izoh
+- Global marketplace qiymati deyarli barcha page va API route lar tomonidan o'qiladi.
+- Shu sabab Topbar'dagi marketplace almashtirilsa, Orders, Products, Finance, Analytics, Founder Panel va boshqa modullar boshqa dataset bilan ishlay boshlaydi.
+- `all` holati kodda qo'llab-quvvatlanadi, lekin amaldagi Topbar flow odatda konkret marketplace ni tanlaydi.
+
+Biznes qiymati
+- Bir xil workspace ichida barcha modul kontekstini ushlab turadi.
+- Noto'g'ri marketplace bo'yicha qaror chiqib ketishining oldini oladi.
+- Ko'p tilli jamoa uchun yagona boshqaruv qatlamini beradi.

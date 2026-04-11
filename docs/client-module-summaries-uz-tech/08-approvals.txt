@@ -1,0 +1,57 @@
+Sahifa: Approvals
+Route: `/approvals`
+
+Maqsad
+Founder qarori talab qilinadigan o'zgarishlar uchun approval queue. Narx, promo, ads budget, stock scale va ownership change kabi thresholddan oshgan harakatlar shu yerda yuritiladi.
+
+API va storage
+- `GET /api/founder/approvals`
+- `POST /api/founder/approvals`
+- Storage: `data/secure/approvals.json`
+- Approved bo'lganda auto-task `data/secure/founder-tasks.json` ga yoziladi
+
+Entity modeli
+- `entityType`: `price | promo | ads_budget | stock_scale | responsibility_change | other`
+- `approvalType`: `price_below_min | promo_loss_risk | budget_over_limit | critical_stock_scale | owner_change | general`
+- `priority`: `critical | high | medium | low`
+- `oldValue`, `newValue`
+- optional `businessImpact`
+- optional `marketplace`, `skuId`, `skuList`, `expiresAt`
+- `status`: `pending | approved | rejected`
+- optional `parentApprovalId`
+
+Validatsiya
+- Create paytida `reason`, `requestedBy`, `entityType`, `oldValue`, `newValue` majburiy.
+- Qaror berishda faqat `pending` approval qabul qilinadi.
+- `decisionComment` approve yoki reject paytida majburiy.
+
+Sorting va signal logikasi
+- Pending lar birinchi chiqadi.
+- Pending ichida `critical -> high -> medium -> low`.
+- `expiresAt` bo'lsa yaqinroq deadline birinchi.
+- `isExpired`: pending va `expiresAt < now`
+- `isStale`: pending va 24+ soat activity yo'q
+
+Auto-task logikasi
+- Approval `approved` bo'lsa execution task avtomatik yaratiladi.
+- `approvalType` dan `taskType` ga mapping mavjud:
+- `price_below_min` va `promo_loss_risk` -> `price_update`
+- `budget_over_limit` -> `ads_optimization`
+- `critical_stock_scale` -> `supply_order`
+- `owner_change` / `general` -> `general`
+- Due date: `expiresAt` bo'lsa shu sana, aks holda `now + 3 kun`
+
+Resubmit logikasi
+- Faqat `rejected` approval qayta yuboriladi.
+- Resubmit yangi `pending` approval yaratadi va `parentApprovalId` orqali eski recordga ulanadi.
+
+UI funksiyalar
+- Status cardlar
+- Critical / expired / stale signallar
+- Create modal
+- Decision modal
+- Resubmit modal
+
+Biznes qiymati
+- Founder nazorati talab qiladigan harakatlar hujjatlashtiriladi.
+- Approved qaror execution taskga aylangani uchun qaror keyinchalik yo'qolib ketmaydi.

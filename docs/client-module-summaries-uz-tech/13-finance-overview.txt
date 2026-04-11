@@ -1,0 +1,51 @@
+Sahifa: Finance Overview
+Route: `/finance`
+
+Maqsad
+Joriy marketplace context uchun finance summary, signal va accrual breakdown beruvchi bosh sahifa.
+
+API
+- `GET /api/finance?startDate=...&endDate=...&marketplace=...`
+
+Snapshot logikasi
+- Response ichida `snapshot.status` bo'ladi: `fresh | stale | missing`
+- Snapshot `fresh` bo'lmasa page 10 soniyadan keyin qayta poll qiladi
+- Maksimal 6 marta retry qiladi
+
+KPI lar
+- `currentBalance`
+- `totalIncome`
+- `totalExpenses`
+- `netIncome`
+- Previous period bilan delta
+
+Signal bloklari
+- `net_income_drop`
+- `refund_rate_high`
+- `commission_pressure`
+- `withdrawal_delay`
+- `adjustments_spike`
+- Signal kartasi bosilsa foydalanuvchi marketplace finance detail sahifasiga `typeFilter` bilan yuboriladi
+
+Additional insight
+- `Why this result` blokida refund, commission, delivery, ads va previous periodga nisbatan profit drop sabablarini bullet ko'rinishida chiqaradi
+- Top SKU profit list
+- Bottom/problem SKU list
+
+Accrual breakdown
+- sales
+- refunds
+- ozonReward
+- deliveryServices
+- agentServices
+- fboServices
+- adsPromotion
+- otherServicesFines
+- compensations
+- withdrawals
+- adjustments
+- totalAccrued
+
+Biznes qiymati
+- Founder va finance manager uchun tezkor moliyaviy holatni beradi.
+- Summary sahifadan detail transaction sahifaga signal-based drilldown mavjud.

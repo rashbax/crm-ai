@@ -1,0 +1,57 @@
+Sahifa: Tasks
+Route: `/tasks`
+
+Maqsad
+Operatsion execution registry. Task yaratish, egasini belgilash, deadline qo'yish, status yuritish, proof yig'ish va audit tarixini ko'rsatish uchun ishlatiladi.
+
+API va storage
+- `GET /api/founder/tasks`
+- `POST /api/founder/tasks`
+- `GET /api/founder/audit?entityType=task&entityId=...&limit=30`
+- Storage: `data/secure/founder-tasks.json`
+- Audit: `data/secure/audit-log.json`
+
+Entity modeli
+- `taskType`: `stock_check | price_update | content_fix | ads_optimization | supply_order | incident_fix | listing_fix | review_response | general`
+- `priority`: `critical | high | medium | low`
+- `impactLevel`: `simple | important | critical`
+- `status`: `new | in_progress | waiting | blocked | need_approval | done`
+- `recurrence`: `none | daily | weekly | monthly`
+- Optional: `marketplace`, `skuId`, `reviewerId`
+
+Validatsiya
+- Backend darajasida ownersiz task qabul qilinmaydi.
+- Backend darajasida deadline bo'lmagan task qabul qilinmaydi.
+- UI darajasida title ham majburiy.
+- `waiting` va `blocked` ga o'tishda reason majburiy.
+- `done` ga o'tishda `proofValue` majburiy.
+
+Status transition qoidalari
+- `new -> in_progress | blocked | waiting`
+- `in_progress -> waiting | blocked | need_approval | done`
+- `waiting -> in_progress | blocked`
+- `blocked -> in_progress | waiting`
+- `need_approval -> in_progress | done`
+- `done ->` transition yo'q
+
+Hisoblangan signal lar
+- `isOverdue`: `dueDate < now`
+- `overdueDays`: real kechikkan kun soni
+- `isStale`: 3+ kun update bo'lmagan va `status != blocked|waiting|done`
+
+Recurring logika
+- Task `done` bo'lsa va recurrence `none` bo'lmasa, backend keyingi instance ni avtomatik yaratadi.
+- Keyingi due date `daily`, `weekly`, `monthly` pattern bo'yicha hisoblanadi.
+
+UI funksiyalar
+- Status counter cardlar
+- Quick filter chiplar: overdue, stale, need founder approval, blocked
+- Search
+- Priority / impact / assignee filter
+- Status change modal
+- History modal
+- Delete action
+
+Biznes qiymati
+- Taskni chat darajasidan operatsion control darajasiga olib chiqadi.
+- Proof va audit sabab task yopilishi tekshiriladigan jarayonga aylanadi.

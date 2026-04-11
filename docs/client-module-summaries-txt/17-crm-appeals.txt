@@ -1,0 +1,32 @@
+Page: CRM Appeals
+Route: /crm
+
+Purpose
+This module manages customer-facing appeals, reviews, complaints, and order-related requests. It acts as the communication registry for inbound marketplace issues.
+
+Appeal model
+- Supports appeal type, status, priority, sentiment, owner, marketplace, optional order ID, optional SKU, and tags.
+- Includes SLA monitoring so time-sensitive cases do not sit without response.
+
+Main features
+- Stats cards for new appeals, in-progress appeals, SLA-breached appeals, negative-sentiment appeals, and total appeals.
+- Search plus filtering by appeal type, status, and priority.
+- Global marketplace context inherited from the top bar.
+- Pagination for long appeal queues.
+
+Operational actions
+- Sync action to import marketplace feedback or appeal items.
+- Manual appeal creation modal for non-imported cases.
+- Reply modal with reply history and structured reply outcome.
+- Status transition modal based on allowed workflow steps.
+- Escalation action for high-priority or critical cases.
+- Delete action for invalid or obsolete records.
+
+Table behavior
+- Highlights SLA-breached and newly arrived cases.
+- Shows customer, message preview, owner, SLA state, status, tags, and escalation markers.
+
+Business value
+- Gives the business a structured way to respond to marketplace-facing customer issues.
+- Helps protect SLA, reputation, and owner accountability.
+- Connects customer pain points back to operational owners instead of leaving them in external portals only.

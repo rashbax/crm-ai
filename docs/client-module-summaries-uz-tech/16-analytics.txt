@@ -1,0 +1,44 @@
+Sahifa: Analytics
+Route: `/analytics`
+
+Maqsad
+Sales performance, cancellation trend va stockout forecast ni analitik ko'rinishda chiqaradi. Reporting emas, action-oriented analytics.
+
+API
+- `GET /api/analytics?days=7|28&marketplace=...`
+
+Hisob-kitob qoidalari
+- Active revenue cancelled/returned orderlarsiz hisoblanadi
+- `estimatedProfit = totalRevenue * (1 - 0.15)`
+- `avgCheckTrend`:
+- `up` agar current avg check > prev * 1.05
+- `down` agar current avg check < prev * 0.95
+- `trendDirection`:
+- current periodning 1-yarmi va 2-yarmi revenue average lari orasida 10% dan katta farq bo'lsa `up` yoki `down`
+
+Signal qoidalari
+- Declining revenue SKU: previous revenue > 1000 va current revenue < previous * 0.8
+- Rising cancel SKU: period ichida kamida 5 order va cancel rate > 20%
+- Bottom SKU count: eng past revenue dagi mahsulotlar soni
+
+Bloklar
+- KPI: revenue, orders, avg check, cancel rate, estimated profit
+- Trend signal kartalari
+- Orders trend chart
+- Top products table
+- Bottom products table
+- Declining revenue SKU table
+- Stockout forecast table
+
+Forecast jadvali
+- `dailyForecast`
+- `stockRemaining`
+- `stockoutInDays`
+- `riskLevel`
+- `potentialLoss`
+- `recommendedReorderQty`
+- Quick action: Tasks yoki Incidents sahifasiga o'tish
+
+Biznes qiymati
+- Revenue pasayishi, cancellation oshishi va stockout riskini bir sahifada oldindan ko'rsatadi.
+- Analitika natijasini to'g'ridan-to'g'ri operatsion harakatga bog'laydi.

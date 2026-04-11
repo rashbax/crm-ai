@@ -1,0 +1,26 @@
+Page: Approvals
+Route: /approvals
+
+Purpose
+This is the founder decision queue. It is used when routine managers want to make a change that crosses a business threshold and must be reviewed before execution.
+
+Approval model
+- Requests can cover price changes, promotions, ad budgets, stock scaling, ownership changes, or other exceptional actions.
+- Each request stores entity type, approval type, priority, requester, reason, current value, new value, optional business impact, optional marketplace and SKU, and optional expiry date.
+
+Main features
+- Status cards for Pending, Approved, and Rejected requests.
+- Signal cards and banners for critical requests, stale requests with no answer for more than 24 hours, and expired requests.
+- Search and priority filtering.
+- Table that clearly shows the proposed change, business impact, requester, status, decision comment, and deadline.
+
+Decision workflow
+- New request modal for manual approval submission.
+- Decision modal for founder approval or rejection.
+- Decision comments are mandatory, which forces documented reasoning.
+- Rejected requests can be resubmitted with an updated reason or updated new value.
+
+Business value
+- Keeps major commercial decisions under control without slowing down routine work.
+- Creates a clean audit trail for who requested a risky change, what exactly was changing, and why leadership approved or rejected it.
+- Reduces the chance of silent margin damage or uncontrolled operational changes.

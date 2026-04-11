@@ -1,0 +1,24 @@
+Page: Finance - Ozon Store Economics
+Route: /finance/ozon
+
+Purpose
+This page is the detailed Ozon finance ledger and economics view. It takes the high-level finance story and breaks it into actual transactions, SKU contribution, and cost patterns for Ozon specifically.
+
+Main features
+- Date range filtering for the reporting window.
+- Search over transaction descriptions, orders, and SKU-related entries.
+- Transaction type filtering for sales, refunds, commissions, withdrawals, and adjustments.
+- Deep-link support from summary finance signals through URL filters.
+
+What the page shows
+- Sales and returns block.
+- Accruals block.
+- Total result block with net income, current balance, total income, and total expenses.
+- Signal cards for refund pressure, commission pressure, withdrawal delays, and adjustment spikes.
+- Top profitable SKUs and problem SKUs for the selected period.
+- Transaction ledger with ID, date, type, description/SKU, amount, and balance.
+- Pagination for large statement sets.
+
+Business value
+- Lets finance and marketplace managers inspect where Ozon profitability is being created or lost.
+- Gives a fast path from high-level alarms to the exact transactions behind them.

@@ -1,0 +1,28 @@
+Page: Products
+Route: /products
+
+Purpose
+This module is the SKU master registry. It answers three core questions at once: what this SKU is, who owns it, and how healthy or risky it is right now.
+
+Main features
+- Summary cards for total SKUs, critical stock, unassigned SKUs, and high-risk SKUs.
+- Quick signal filters for low-stock sellers, ownerless SKUs, incident-linked SKUs, overloaded SKUs with many tasks, and pricing-risk SKUs.
+- Filtering by search, product status, stock health, risk level, and owner.
+- Paginated table with operational metrics per SKU.
+
+Table content
+- Current price, stock on hand, inbound stock, 30-day sales, stock health, owner, open tasks, open incidents, risk level, and product status.
+- Visual badges for critical or low stock, high risk, and missing ownership.
+
+Detail modal
+- Current SKU overview and status.
+- Owner information.
+- Linked open tasks.
+- Linked open incidents.
+- Price history timeline.
+- Audit/change history.
+
+Business value
+- Acts as the operational single source of truth for the catalog.
+- Helps teams move from reactive problem solving to proactive SKU management.
+- Connects tasks, incidents, pricing, and ownership around the same product record.

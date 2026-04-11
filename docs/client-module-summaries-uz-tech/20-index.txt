@@ -1,0 +1,39 @@
+Uzbek Technical Summary Index
+
+Papka maqsadi
+Bu papka loyiha modullarining texnikroq va aniqroq Uzbek tavsiflarini saqlaydi. Inglizcha klient-pack alohida papkada saqlanib qoladi.
+
+Fayl xaritasi
+- 00-global-shell-va-navigation.txt
+- 01-root-entry.txt
+- 02-login.txt
+- 03-founder-panel.txt
+- 04-dashboard-redirect.txt
+- 05-tasks.txt
+- 06-responsibilities.txt
+- 07-incidents.txt
+- 08-approvals.txt
+- 09-orders.txt
+- 10-products.txt
+- 11-automation.txt
+- 12-prices.txt
+- 13-finance-overview.txt
+- 14-finance-ozon.txt
+- 15-finance-wb.txt
+- 16-analytics.txt
+- 17-crm-appeals.txt
+- 18-settings-integrations.txt
+- 19-integrations-redirect.txt
+
+Tavsiya etilgan o'qish tartibi
+- Avval 00-global-shell-va-navigation.txt
+- Keyin 03-founder-panel.txt
+- So'ng operatsion modullar: 05 dan 18 gacha
+
+Texnik qamrov
+- Route
+- API qatlam
+- Data source
+- Status va workflow
+- Signal thresholdlari
+- Modul bog'lanishlari

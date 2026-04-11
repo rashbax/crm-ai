@@ -1,0 +1,40 @@
+Sahifa: Finance Ozon
+Route: `/finance/ozon`
+
+Maqsad
+Ozon uchun transaction-level store economics sahifasi.
+
+API
+- Asosiy source: `GET /api/finance`
+- Query ichida `marketplaceFilter=Ozon`
+- Page size: 15
+- Search input 250 ms debounce bilan ishlaydi
+
+Filterlar
+- Date range
+- Search
+- `typeFilter`: `sale | refund | commission | withdrawal | adjustment`
+
+Ko'rsatiladigan bloklar
+- Sales va returns summary
+- Accrual/expense summary
+- Net income, current balance, total income, total expenses
+- Finance signal cardlari
+- Top profitable SKU lar
+- Problem SKU lar
+- Transaction table
+
+Transaction jadvali
+- `id`
+- `date`
+- `type`
+- `description / sku`
+- `amount`
+- `balance`
+
+Paginatsiya
+- 15 ta yozuv per page
+- Dynamic page number window
+
+Biznes qiymati
+- Ozon kanalidagi profit, refund va commission bosimini detail ko'rishda ishlatiladi.

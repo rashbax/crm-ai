@@ -11,6 +11,7 @@ import type {
   MarketplacePricing,
   PricingDashboardResponse,
   PricingSummary,
+  PricingSignals,
   Marketplace,
   RiskLevel,
 } from "./types";
@@ -132,7 +133,12 @@ function simpleStockRisk(
   dailyForecast: number,
   leadTimeDays: number = 7
 ): { riskLevel: RiskLevel; stockoutInDays: number | null } {
+  // Absolute stock thresholds — even with zero sales, low stock is risky
+  // (matches T3-07 stock health: critical <200, low <500, normal <1000)
   if (dailyForecast <= 0.01) {
+    if (availableUnits <= 0) return { riskLevel: "CRITICAL", stockoutInDays: 0 };
+    if (availableUnits < 200) return { riskLevel: "HIGH", stockoutInDays: null };
+    if (availableUnits < 500) return { riskLevel: "LOW", stockoutInDays: null };
     return { riskLevel: "NONE", stockoutInDays: null };
   }
 
@@ -308,12 +314,15 @@ export function buildPricingRow(
         discountPct: currentDiscount,
         promoPrice: priceState.promoPrice,
       },
+      costPrice: priceState.costPrice || cogsData.cogs,
       listing: {
         status: priceState.status,
         visibility: priceState.visibility,
         onSale: priceState.onSale,
       },
       priceIndexPairs: priceState.priceIndexPairs,
+      ozonColorIndex: priceState.ozonColorIndex,
+      promos: priceState.promos,
       recommended: {
         price: recommended.price,
         discountPct: recommended.discountPct,
@@ -346,6 +355,17 @@ export function buildPricingRow(
   };
 }
 
+export interface OwnerMap {
+  [skuMarketplace: string]: string; // "sku::marketplace" -> ownerName
+}
+
+export interface ApprovalInfo {
+  sku: string;
+  marketplace: Marketplace;
+  status: "pending" | "approved" | "rejected";
+  approvalId: string;
+}
+
 /**
  * Build complete pricing dashboard
  */
@@ -356,7 +376,11 @@ export function buildPricingDashboard(
   orders: any[],
   stocks: any[],
   ads: any[],
-  mode: string = "demo"
+  mode: string = "demo",
+  ownerMap?: OwnerMap,
+  approvals?: ApprovalInfo[],
+  pendingDraftCount?: number,
+  changeHistory?: Array<{ sku: string; marketplace: string; changedAt: string }>
 ): PricingDashboardResponse {
   const warnings: string[] = [];
   const rulesMap = getPricingRulesMap();
@@ -374,6 +398,28 @@ export function buildPricingDashboard(
     const cogsData = cogs.find((c) => c.sku === sku);
     const row = buildPricingRow(sku, prices, cogsData, fees, orders, stocks, ads);
     if (row) {
+      // Enrich with owner, approval, promo, lastChanged
+      for (const mp of row.marketplaces) {
+        const key = `${sku}::${mp.marketplace}`;
+        mp.owner = ownerMap?.[key] || undefined;
+
+        // Promo status — use real inPromo flag from API
+        const priceState = prices.find((p) => p.sku === sku && p.marketplace === mp.marketplace);
+        mp.promoStatus = (priceState?.inPromo || (priceState?.promos && priceState.promos.length > 0)) ? "active" : "none";
+
+        // Approval status
+        const approval = approvals?.find(
+          (a) => a.sku === sku && a.marketplace === mp.marketplace
+        );
+        mp.approvalStatus = approval?.status || "none";
+        mp.approvalId = approval?.approvalId;
+
+        // Last changed
+        const history = changeHistory?.find(
+          (h) => h.sku === sku && h.marketplace === mp.marketplace
+        );
+        mp.lastChanged = history?.changedAt || undefined;
+      }
       rows.push(row);
     }
   }
@@ -395,6 +441,32 @@ export function buildPricingDashboard(
     ).length,
   };
 
+  // Calculate signals
+  const lossRiskSkus: string[] = [];
+  const promoStuckSkus: string[] = [];
+
+  for (const row of rows) {
+    for (const mp of row.marketplaces) {
+      if (mp.guardrails.marginPct < 0) {
+        lossRiskSkus.push(`${row.sku} (${mp.marketplace})`);
+      }
+      if (mp.promoStatus === "active" && mp.guardrails.marginPct < 0.05) {
+        promoStuckSkus.push(`${row.sku} (${mp.marketplace})`);
+      }
+    }
+  }
+
+  const pendingApprovalCount = approvals?.filter((a) => a.status === "pending").length || 0;
+
+  const signals: PricingSignals = {
+    lossRiskCount: lossRiskSkus.length,
+    promoStuckCount: promoStuckSkus.length,
+    pendingApprovals: pendingApprovalCount,
+    unappliedDrafts: pendingDraftCount || 0,
+    lossRiskSkus,
+    promoStuckSkus,
+  };
+
   return {
     mode,
     warnings,
@@ -402,5 +474,6 @@ export function buildPricingDashboard(
     rules: rulesMap,
     rows,
     summary,
+    signals,
   };
 }

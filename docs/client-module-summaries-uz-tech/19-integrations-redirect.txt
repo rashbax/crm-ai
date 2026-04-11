@@ -1,0 +1,9 @@
+Sahifa: Integrations Redirect
+Route: `/integrations`
+
+Texnik ishlash
+- Mustaqil integrations UI yo'q.
+- Route darhol `redirect("/settings")` qiladi.
+
+Maqsad
+- Eski route ni saqlab qolish.

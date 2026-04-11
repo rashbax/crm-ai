@@ -1,0 +1,26 @@
+Page: Analytics
+Route: /analytics
+
+Purpose
+This module converts raw commercial data into business signals and forecasting. It is designed to tell the team what is changing, what is deteriorating, and where money could be lost next.
+
+Main features
+- KPI cards for revenue, total orders, average check, cancellation rate, and estimated profit.
+- Period switching between 7-day and 28-day analysis.
+- Signal cards for declining revenue SKUs, rising cancellations, declining average check, overall trend deterioration, and bottom-SKU count.
+- Orders trend chart with period comparison.
+- Top and bottom product tables.
+
+Forecasting layer
+- Forecast table for stockout risk.
+- Shows daily forecast, current stock, days until stockout, risk level, potential loss, and recommended reorder quantity.
+- Includes quick actions that route the user into Tasks or Incidents when a risk needs operational follow-up.
+
+Cross-module behavior
+- Revenue decline can send the team to Products.
+- Cancellation and order deterioration can send the team to Orders or Incidents.
+- Forecast risk can launch supply tasks or incidents directly.
+
+Business value
+- Helps the company act before a stockout, revenue drop, or conversion problem becomes expensive.
+- Turns analytics into an action module, not just a reporting screen.

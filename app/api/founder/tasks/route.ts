@@ -6,9 +6,9 @@ import {
   getSystemUsers,
   writeAuditLog,
 } from "@/lib/founder-store";
-import type { FounderTask, TaskStatus } from "@/types/founder";
+import type { FounderTask, TaskStatus, RecurrencePattern } from "@/types/founder";
 
-// Validate status transitions
+// Validate status transitions — "overdue" is now a computed signal, not a status
 const VALID_TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
   new: ["in_progress", "blocked", "waiting"],
   in_progress: ["waiting", "blocked", "need_approval", "done"],
@@ -16,8 +16,15 @@ const VALID_TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
   blocked: ["in_progress", "waiting"],
   need_approval: ["in_progress", "done"],
   done: [],
-  overdue: ["in_progress", "blocked", "waiting"],
 };
+
+function nextRecurDate(dueDate: string, pattern: RecurrencePattern): string {
+  const d = new Date(dueDate);
+  if (pattern === "daily") d.setDate(d.getDate() + 1);
+  else if (pattern === "weekly") d.setDate(d.getDate() + 7);
+  else if (pattern === "monthly") d.setMonth(d.getMonth() + 1);
+  return d.toISOString().slice(0, 10);
+}
 
 function validateTransition(from: TaskStatus, to: TaskStatus): string | null {
   if (from === to) return null;
@@ -48,7 +55,8 @@ export async function GET() {
       blocked: tasks.filter((t) => t.status === "blocked").length,
       needApproval: tasks.filter((t) => t.status === "need_approval").length,
       done: tasks.filter((t) => t.status === "done").length,
-      overdue: tasks.filter((t) => t.status === "overdue").length,
+      overdue: tasks.filter((t) => t.isOverdue).length,
+      stale: tasks.filter((t) => t.isStale).length,
     };
 
     return NextResponse.json({ tasks, stats, users });
@@ -106,6 +114,30 @@ export async function POST(req: NextRequest) {
 
       saveFounderTask(task);
       writeAuditLog("task", id, "status", oldStatus, newStatus, changedBy || "system");
+
+      // GAP 3: Auto-create next recurring instance when task is done
+      if (newStatus === "done" && task.recurrence && task.recurrence !== "none") {
+        const nextDue = nextRecurDate(task.dueDate, task.recurrence);
+        const newTask: FounderTask = {
+          ...task,
+          id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          status: "new",
+          dueDate: nextDue,
+          proofType: undefined,
+          proofValue: undefined,
+          blockedReason: undefined,
+          waitingReason: undefined,
+          completedAt: undefined,
+          overdueDays: 0,
+          isOverdue: false,
+          isStale: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        saveFounderTask(newTask);
+        writeAuditLog("task", newTask.id, "created", "", `recurring from ${task.id}`, changedBy || "system");
+      }
+
       return NextResponse.json({ ok: true, task });
     }
 
@@ -128,6 +160,8 @@ export async function POST(req: NextRequest) {
       skuId: body.skuId || undefined,
       taskType: body.taskType || "general",
       priority: body.priority || "medium",
+      impactLevel: body.impactLevel || "simple",
+      recurrence: body.recurrence || "none",
       status: body.status || "new",
       assigneeId: body.assigneeId,
       creatorId: body.creatorId || "system",
@@ -141,6 +175,8 @@ export async function POST(req: NextRequest) {
       updatedAt: now,
       completedAt: body.completedAt,
       overdueDays: 0,
+      isOverdue: false,
+      isStale: false,
     };
 
     saveFounderTask(task);

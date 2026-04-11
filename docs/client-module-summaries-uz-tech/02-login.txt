@@ -1,0 +1,25 @@
+Sahifa: Login
+Route: `/login`
+
+Maqsad
+CRM ga authenticated kirishni ta'minlaydi.
+
+Texnik qatlam
+- `next-auth` credentials provider ishlatiladi.
+- Submit paytida `signIn("credentials", { username, password, redirect: false })` chaqiriladi.
+- Success holatida foydalanuvchi ` /founder-panel ` ga yuboriladi va router refresh qilinadi.
+
+UI xususiyatlari
+- `username` va `password` inputlari.
+- `showPassword` toggle.
+- Inline error state.
+- Loading state.
+
+Til logikasi
+- Avval `storage.getLang()` tekshiriladi.
+- Agar saqlangan til bo'lmasa, browser locale tekshiriladi.
+- `uz` prefiksi bo'lsa Uzbek, aks holda Russian tanlanadi.
+
+Biznes qiymati
+- Moliyaviy, pricing va founder ma'lumotlari uchun yagona kirish nazorati.
+- Birinchi ekrandanoq lokalizatsiya qo'llanadi.

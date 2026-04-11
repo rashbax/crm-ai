@@ -4,9 +4,11 @@ type Status =
   | "active"
   | "draft"
   | "blocked"
-  | "new"
   | "processing"
   | "shipped"
+  | "in_transit"
+  | "delivered"
+  | "returned"
   | "cancelled"
   | "scheduled"
   | "ended"
@@ -26,7 +28,15 @@ type Status =
   | "resolved"
   | "pending"
   | "approved"
-  | "rejected";
+  | "rejected"
+  | "yangi"
+  | "jarayonda"
+  | "kutyapti"
+  | "javob_berilgan"
+  | "yopilgan"
+  | "sla_breached"
+  | "new"
+  | "reopened";
 
 export interface StatusPillProps {
   status: Status;
@@ -39,9 +49,11 @@ export function StatusPill({ status, children, title }: StatusPillProps) {
     active: "bg-success-light text-success border-success",
     draft: "bg-warning-light text-warning border-warning",
     blocked: "bg-danger-light text-danger border-danger",
-    new: "bg-info-light text-info border-info",
     processing: "bg-warning-light text-warning border-warning",
-    shipped: "bg-success-light text-success border-success",
+    shipped: "bg-info-light text-info border-info",
+    in_transit: "bg-blue-100 text-blue-700 border-blue-300",
+    delivered: "bg-success-light text-success border-success",
+    returned: "bg-danger-light text-danger border-danger",
     cancelled: "bg-danger-light text-danger border-danger",
     scheduled: "bg-info-light text-info border-info",
     ended: "bg-gray-100 text-gray-600 border-gray-300",
@@ -62,6 +74,14 @@ export function StatusPill({ status, children, title }: StatusPillProps) {
     pending: "bg-warning-light text-warning border-warning",
     approved: "bg-success-light text-success border-success",
     rejected: "bg-danger-light text-danger border-danger",
+    yangi: "bg-info-light text-info border-info",
+    jarayonda: "bg-warning-light text-warning border-warning",
+    kutyapti: "bg-gray-100 text-gray-600 border-gray-300",
+    javob_berilgan: "bg-success-light text-success border-success",
+    yopilgan: "bg-gray-100 text-gray-600 border-gray-300",
+    sla_breached: "bg-danger-light text-danger border-danger",
+    new: "bg-info-light text-info border-info",
+    reopened: "bg-warning-light text-warning border-warning",
   };
 
   return (

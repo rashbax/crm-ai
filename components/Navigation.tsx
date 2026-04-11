@@ -8,7 +8,7 @@ import { getTranslation } from "@/lib/translations";
 import type { Language } from "@/types";
 
 const navItems = [
-  { href: "/dashboard", key: "nav_main" },
+  { href: "/founder-panel", key: "nav_main" },
   { href: "/tasks", key: "nav_tasks" },
   { href: "/responsibilities", key: "nav_responsibilities" },
   { href: "/incidents", key: "nav_incidents" },
@@ -19,8 +19,7 @@ const navItems = [
   { href: "/prices", key: "nav_prices" },
   { href: "/finance", key: "nav_finance" },
   { href: "/analytics", key: "nav_analytics" },
-  { href: "/integrations", key: "nav_integrations" },
-  { href: "/crm", key: "nav_crm" },
+  { href: "/crm", key: "nav_appeals" },
 ];
 
 export default function Navigation() {

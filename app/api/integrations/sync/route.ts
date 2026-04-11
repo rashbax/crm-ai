@@ -38,22 +38,28 @@ export async function POST(request: Request) {
 			if (!connection.enabled)
 				return NextResponse.json({ ok: false, error: 'Connection is disabled' }, { status: 400 });
 
+			// Ozon Performance ads sync is handled by daily cron — exclude from manual sync
+			let enabledData = getEffectiveEnabledData(connection);
+			if (connection.marketplaceId === 'ozon') {
+				enabledData = { ...enabledData, ads: false };
+			}
 			const result = await syncMarketplace(
 				connection.marketplaceId,
-				getEffectiveEnabledData(connection),
+				enabledData,
 				connection.id,
 			);
 			results = [result];
 		} else if (marketplace) {
+			// Ozon Performance ads sync is handled by daily cron — exclude from manual sync
 			const result = await syncMarketplace(marketplace, {
 				orders: true,
 				stocks: true,
-				ads: true,
+				ads: marketplace !== 'ozon',
 				prices: true,
 			});
 			results = [result];
 		} else {
-			results = await syncAll();
+			results = await syncAll({ excludeOzonAds: true });
 		}
 
 		const hasFailed = results.some((r: any) => !r.ok);

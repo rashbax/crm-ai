@@ -1,0 +1,21 @@
+Page: Finance - Wildberries Store Economics
+Route: /finance/wb
+
+Purpose
+This page is the Wildberries-specific finance ledger and economics view. It mirrors the detailed finance workflow of the Ozon page but isolates Wildberries transactions and contribution.
+
+Main features
+- Date range filtering for the reporting window.
+- Search and transaction-type filtering.
+- Signal-driven deep links from the summary finance page.
+- Summary area for sales, returns, accruals, total financial result, current balance, income, and expenses.
+- Top profitable SKUs and problem SKUs.
+- Transaction ledger with full pagination.
+
+What makes it useful
+- Helps the team separate channel-level performance instead of mixing all marketplaces together.
+- Makes Wildberries commission, refund, and adjustment patterns visible at the statement level.
+
+Business value
+- Supports marketplace-level profitability control.
+- Useful for finance review, founder audits, and category-level decision making on Wildberries.

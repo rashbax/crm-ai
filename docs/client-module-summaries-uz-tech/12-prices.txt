@@ -1,0 +1,57 @@
+Sahifa: Prices
+Route: `/prices`
+
+Maqsad
+Marketplace narxlarini boshqarish, draft qilish, approval trigger qilish va narx tarixini ko'rsatish moduli.
+
+API va data source
+- `GET /api/pricing?marketplace=...`
+- `GET /api/pricing/history?sku=...&marketplace=...`
+- `POST /api/pricing/history`
+- Source: canonical `prices`, `orders`, `stocks`, `ads`, `cogs`, `fees`
+- Owner data responsibilities store dan olinadi
+- Approval holati founder approvals store dan olinadi
+
+Muhim texnik noziklik
+- Draft queue page state ichida yuradi.
+- `applyChanges()` MVP holatda haqiqiy marketplace API chaqirmaydi, faqat alert ko'rsatadi va local draft queue ni tozalaydi.
+- Price history esa draft qo'shish paytida `POST /api/pricing/history` orqali yoziladi.
+
+Empty-state logikasi
+- Enabled connection bo'lmasa `GET /api/pricing` empty state qaytaradi.
+- Connection bor, lekin live pricing data yo'q bo'lsa ham alohida empty state qaytariladi.
+
+Risk/approval qoidalari
+- `newPrice < minPrice` bo'lsa approval warning chiqadi.
+- Agar `(currentPrice - newPrice) / currentPrice > 0.15` bo'lsa 15% dan katta pasayish warning chiqadi.
+- `newDiscount > 30` bo'lsa katta discount warning chiqadi.
+
+Filterlar
+- SKU search
+- sale filter
+- blocked only
+- low margin only
+- high risk only
+
+Jadval fieldlari
+- Current price
+- Draft price
+- COGS
+- Margin
+- Owner
+- Promo status
+- Approval status
+- Stock / risk
+- Recommendation
+- Price index
+- Last changed
+
+Qo'shimcha modal lar
+- Price editor
+- Price history modal
+- Promo detail modal
+- Draft queue modal
+
+Biznes qiymati
+- Narx o'zgarishini "live edit" emas, boshqariladigan workflowga aylantiradi.
+- Approval riskini oldindan ko'rsatadi.
