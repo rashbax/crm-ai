@@ -57,10 +57,13 @@ export async function POST(request: Request) {
         entityType: "ads_budget",
         entityId: campaignKey,
         approvalType: "budget_over_limit",
+        priority: "high",
         reason: `Переопределение: система рекомендует "${systemRecommendation}", запрошено "${actualDecision}" для ${sku || campaignKey}. Причина: ${decisionReason.trim()}`,
         requestedBy: "manager",
         approverId: "founder",
         status: "pending",
+        isExpired: false,
+        isStale: false,
         requestedAt: now,
       };
       saveApproval(approval);
