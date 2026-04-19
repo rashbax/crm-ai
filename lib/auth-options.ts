@@ -14,26 +14,40 @@ interface User {
 	role: string;
 }
 
-// Default admin user fallback (used when users.json doesn't exist, e.g. on Vercel)
-const DEFAULT_ADMIN: User = {
-	id: '0997eb8f-d5e1-4f00-b33d-15b0e0e7963b',
-	username: 'admin',
-	passwordHash: '$2b$10$UvOYt0PdXhQhTTwvN.brCu3NT3AIWO3CNjfaFG8TVhRnhw8ZwsVaK',
-	email: 'admin@example.com',
-	role: 'admin',
-};
+// Admin fallback (used when users.json doesn't exist, e.g. on Vercel).
+// Credentials MUST come from environment — never commit a password hash.
+function getEnvAdmin(): User | null {
+	const passwordHash = process.env.ADMIN_PASSWORD_HASH;
+	if (!passwordHash) return null;
+	return {
+		id: process.env.ADMIN_ID || '0997eb8f-d5e1-4f00-b33d-15b0e0e7963b',
+		username: process.env.ADMIN_USERNAME || 'admin',
+		passwordHash,
+		email: process.env.ADMIN_EMAIL || 'admin@example.com',
+		role: 'admin',
+	};
+}
 
 function loadUsers(): User[] {
+	const envAdmin = getEnvAdmin();
 	try {
 		if (!fs.existsSync(USERS_FILE)) {
-			return [DEFAULT_ADMIN];
+			if (!envAdmin) {
+				console.error(
+					'No users.json and ADMIN_PASSWORD_HASH not set — login disabled',
+				);
+				return [];
+			}
+			return [envAdmin];
 		}
 		const content = fs.readFileSync(USERS_FILE, 'utf-8');
 		const data = JSON.parse(content);
-		return data.users || [DEFAULT_ADMIN];
+		const fileUsers: User[] = data.users || [];
+		if (fileUsers.length > 0) return fileUsers;
+		return envAdmin ? [envAdmin] : [];
 	} catch (error) {
 		console.error('Error loading users:', error);
-		return [DEFAULT_ADMIN];
+		return envAdmin ? [envAdmin] : [];
 	}
 }
 
