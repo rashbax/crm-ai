@@ -42,3 +42,7 @@ next-env.d.ts
 # Secure integration data - DO NOT COMMIT
 data/secure/
 data/secure/*.json
+
+# Canonical marketplace data - populated at runtime by integrations
+data/canonical/
+data/canonical/*.json
