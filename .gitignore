@@ -46,3 +46,8 @@ data/secure/*.json
 # Canonical marketplace data - populated at runtime by integrations
 data/canonical/
 data/canonical/*.json
+
+# Runtime cache (finance snapshots, product identity maps, etc.) - DO NOT COMMIT
+data/cache/
+data/cache/*.json
+data/cache/*.lock
