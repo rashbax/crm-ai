@@ -42,7 +42,7 @@ interface SkuHealth {
   riskLevel: string;
 }
 
-const PROBLEMATIC: Set<OrderStatus> = new Set(["returned", "cancelled"]);
+const PROBLEMATIC: Set<OrderStatus> = new Set<OrderStatus>(["returned", "cancelled"]);
 const DELAYED_PROCESSING_DAYS = 5;
 
 function formatMoney(value: number) {

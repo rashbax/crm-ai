@@ -134,12 +134,15 @@ export async function POST(request: Request) {
         entityType: newDiscount > AGGRESSIVE_PROMO_PCT ? "promo" : "price",
         entityId: `${sku}::${marketplace}`,
         approvalType,
+        priority: newDiscount > AGGRESSIVE_PROMO_PCT ? "high" : "medium",
         reason: newDiscount > AGGRESSIVE_PROMO_PCT
           ? `Aggressive promo: ${oldDiscount || 0}% → ${newDiscount}%. Price: ${oldPrice} → ${newPrice}. ${reason}`
           : `Price change: ${oldPrice} → ${newPrice}. ${reason}`,
         requestedBy: changedBy || "system",
         approverId: "user-001", // founder
         status: "pending",
+        isExpired: false,
+        isStale: false,
         requestedAt: new Date().toISOString(),
       });
     }
